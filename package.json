@@ -1,0 +1,31 @@
+{
+  "name": "omnibus-rxjs",
+  "version": "1.0.0",
+  "license": "MIT",
+  "author": "Dean Radcliffe",
+  "repository": "https://github.com/deanrad/omnibus-rxjs",
+  "main": "dist/omnibus-rxjs.min.js",
+  "module": "dist/omnibus-rxjs.esm.js",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "doc": "typedoc --theme minimal --out docs/ src/",
+    "doctoc": "doctoc .",
+    "prepublishOnly": "npm run lint && npm run build"
+  },
+  "dependencies": {
+    "rxjs": "^7.3.0"
+  },
+  "devDependencies": {
+
+    "typescript-fsa": "^3.0.0"
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  }
+}
