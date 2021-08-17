@@ -11,19 +11,36 @@
     "dist"
   ],
   "scripts": {
+    "test": "yarn test:fast",
+    "test:fast": "jest",
+    "test:full": "yarn build && yarn test:fast && yarn test:fast",
     "doc": "typedoc --theme minimal --out docs/ src/",
     "doctoc": "doctoc .",
-    "prepublishOnly": "npm run lint && npm run build"
+    "prepublishOnly": "yarn test:full",
+    "build": "rimraf dist && tsc && rollup -c rollup.config.js"
   },
   "dependencies": {
-    "rxjs": "^7.3.0"
+    "rxjs": "^7.3.0",
+    "tslib": "^2.3.1"
   },
   "devDependencies": {
-
+    "@babel/core": "^7.15.0",
+    "@babel/preset-env": "^7.15.0",
+    "@babel/preset-typescript": "^7.15.0",
+    "@open-wc/building-rollup": "^1.10.0",
+    "@rollup/plugin-typescript": "^8.2.5",
+    "@types/jest": "^27.0.1",
+    "babel-jest": "^27.0.6",
+    "deepmerge": "^4.2.2",
+    "jest": "^27.0.6",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.56.2",
+    "typescript": "^4.3.5",
     "typescript-fsa": "^3.0.0"
   },
   "prettier": {
     "printWidth": 80,
+    "tabWidth": 2,
     "semi": true,
     "singleQuote": true,
     "trailingComma": "es5"
