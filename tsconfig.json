@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "es2018",                          
+    "module": "esnext",
+    "moduleResolution": "node",                     
+    "noEmitOnError": true,
+    "lib": ["es2017"],                            
+    "strict": true,  
+    "esModuleInterop": false,    
+    "outDir": "dist/tsc",
+    "rootDir": "./",
+    "downlevelIteration": true,             
+    "importHelpers": true,
+    "types": ["node", "jest"]
+  }
+  ,
+  "include": ["./src/**/*.ts"]
+}
