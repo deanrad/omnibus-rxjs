@@ -4,21 +4,21 @@ import { delay } from 'rxjs/operators';
 import { bus } from './bus';
 
 const namespace = actionCreatorFactory('search');
-interface SearchRequest {
+export interface SearchRequest {
   query: string;
   id: number;
 }
-interface SearchLoading {
+export interface SearchLoading {
   request?: { id: number };
 }
-interface SearchComplete {
+export interface SearchComplete {
   request?: { id: number };
 }
-interface SearchError extends Error {
+export interface SearchError extends Error {
   request?: { id: number };
 }
 /**  An individual result*/
-interface SearchResult {
+export interface SearchResult {
   result: string;
   request?: { id: number };
 }
