@@ -1,19 +1,22 @@
 {
   "compilerOptions": {
-    "target": "es2018",                          
+    "target": "es2018",
     "module": "esnext",
-    "moduleResolution": "node",                     
+    "moduleResolution": "node",
     "noEmitOnError": true,
-    "lib": ["es2017"],                            
-    "strict": true,  
-    "esModuleInterop": false,    
+    "lib": ["es2017"],
+    "strict": true,
+    "esModuleInterop": false,
     "outDir": "dist/tsc",
     "rootDir": "./",
-    "downlevelIteration": true,             
+    "downlevelIteration": true,
     "importHelpers": true,
     "types": ["node", "jest"]
-  }
-  ,
+  },
   "include": ["./src/**/*.ts"],
-  "exclude": ["./src/**/*.spec.ts"]
+  "exclude": ["./src/**/*.spec.ts"],
+  "typedocOptions": {
+    "entryPoints": ["src/index.ts"],
+    "out": "docs/api"
+  }
 }
