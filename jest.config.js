@@ -1,5 +1,5 @@
 module.exports = {
   testEnvironment: 'node',
-  modulePathIgnorePatterns: ["temp/tsc"]
-
+  modulePathIgnorePatterns: ['temp/tsc'],
+  verbose: true,
 };

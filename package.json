@@ -13,12 +13,20 @@
   "scripts": {
     "test": "yarn test:fast",
     "test:fast": "jest",
-    "test:full": "yarn build && yarn test:fast && yarn test:fast",
+    "test:quiet": "jest --silent --reporters=jest-silent-reporter",
+    "test:full": "yarn test:fast && yarn test:quiet && echo 'Retest successful' && yarn build",
+    "size": "size-limit",
     "doc": "typedoc --theme minimal --out docs/ src/",
     "doctoc": "doctoc .",
     "prepublishOnly": "yarn test:full",
-    "build": "rimraf dist && tsc && rollup -c rollup.config.js"
+    "build": "rimraf dist && tsc && rollup -c rollup.config.js && yarn size"
   },
+  "size-limit": [
+    {
+      "path": "dist/*.js",
+      "limit": "10 kB"
+    }
+  ],
   "dependencies": {
     "rxjs": "^7.3.0",
     "tslib": "^2.3.1"
@@ -29,12 +37,15 @@
     "@babel/preset-typescript": "^7.15.0",
     "@open-wc/building-rollup": "^1.10.0",
     "@rollup/plugin-typescript": "^8.2.5",
+    "@size-limit/preset-small-lib": "^5.0.3",
     "@types/jest": "^27.0.1",
     "babel-jest": "^27.0.6",
     "deepmerge": "^4.2.2",
     "jest": "^27.0.6",
+    "jest-silent-reporter": "^0.5.0",
     "rimraf": "^3.0.2",
     "rollup": "^2.56.2",
+    "size-limit": "^5.0.3",
     "typescript": "^4.3.5",
     "typescript-fsa": "^3.0.0"
   },
