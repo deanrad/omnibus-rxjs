@@ -25,7 +25,13 @@ interface EventBus<T> {
  *
  * In addition, an Omnibus instance allows delcarative concurrency
  * control, and provides ample means to dispose of resources at the
- * callers' control.
+ * callers' control. When the side-effects are implemented as Observables,
+ * cancelation and declarative concurrency control can be applied, like
+ * RxJS operators.
+ * 
+ * Errors are isolated, and mappable to further-triggered events, via
+ * an Observer that can attach callbacks to the lifecycle events of 
+ * Observables.
  * @see EventBus
  */
 export class Omnibus<T> implements EventBus<T>{

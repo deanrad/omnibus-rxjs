@@ -28,7 +28,7 @@ interface SearchResult {
 export const searchRequestCreator = namespace<SearchRequest>('request');
 //#endregion
 
-//#region "Actions We Listen For"
+//#region "Actions We Respond With"
 /* Output event: we are loading your search.. */
 export const loadingCreator = namespace<SearchLoading>('loading');
 /* Output event containing a single search result */
