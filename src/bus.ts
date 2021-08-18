@@ -1,9 +1,10 @@
 import { Observable, PartialObserver, Subject, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
+
 export type Predicate<T> = (item: T) => boolean;
 export type ResultCreator<T, U> = (item: T) => Observable<U>;
 
-type TapObserver<T> =
+export type TapObserver<T> =
   | PartialObserver<T>
   | {
       start: (item: T) => void;
@@ -84,4 +85,5 @@ export class Omnibus<T> implements EventBus<T>{
     // return it
     return new Subscription();
   }
+
 }
