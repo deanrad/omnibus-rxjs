@@ -1,0 +1,7 @@
+yarn run v1.22.10
+$ size-limit
+  
+  Size limit: 10 kB
+  Size:       3.07 kB with all dependencies, minified and gzipped
+  
+Done in 2.96s.
