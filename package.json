@@ -16,7 +16,7 @@
     "test:quiet": "jest --silent --reporters=jest-silent-reporter",
     "test:full": "yarn test:fast && yarn test:quiet && echo 'Retest successful' && yarn build",
     "size": "size-limit",
-    "doc": "typedoc --theme minimal --out docs/ src/",
+    "doc": "typedoc --theme minimal",
     "doctoc": "doctoc .",
     "prepublishOnly": "yarn test:full",
     "build": "rimraf dist && tsc && rollup -c rollup.config.js && yarn size"
@@ -46,6 +46,7 @@
     "rimraf": "^3.0.2",
     "rollup": "^2.56.2",
     "size-limit": "^5.0.3",
+    "typedoc": "^0.21.5",
     "typescript": "^4.3.5",
     "typescript-fsa": "^3.0.0"
   },

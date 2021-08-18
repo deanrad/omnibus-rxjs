@@ -1,5 +1,5 @@
 import { actionCreatorFactory, Action } from 'typescript-fsa';
-import { from, of, Subscription } from 'rxjs';
+import { of, Subscription } from 'rxjs';
 import { delay } from 'rxjs/operators';
 import { bus } from './bus';
 
@@ -47,7 +47,7 @@ function getResult$(action: ReturnType<typeof searchRequestCreator>) {
     { result: 'application' },
     { result: query },
   ];
-  return of(...results);
+  return of(...results).pipe(delay(5));
 }
 
 // The consumer of an instance of QueryService is any Component
