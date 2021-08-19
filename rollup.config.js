@@ -8,6 +8,7 @@ export default merge(baseConfig, {
   input: './dist/tsc/src/index.js',
   output: {
       dir: 'dist',
+      sourcemap: true
   },
   plugins: [typescript()]
 });

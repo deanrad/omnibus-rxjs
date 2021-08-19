@@ -1,4 +1,5 @@
 import { Subscription, fromEvent } from 'rxjs';
+import { map, distinctUntilChanged } from 'rxjs/operators';
 import { Omnibus } from './bus';
 import { searchRequestCreator } from './searchService';
 
@@ -11,16 +12,21 @@ export class UserService {
   constructor(public bus: Omnibus<any>) {}
   start() {
     const input = document.getElementById('search');
-    debugger
-    this.currentRun = fromEvent<InputEvent>(input, 'change').subscribe({
-      next: (e) => {
-        const event = searchRequestCreator({
-          query: 'foo',
-          id: this.requestId++,
-        });
-        this.bus.trigger(event);
-      },
-    });
+    this.currentRun = fromEvent<InputEvent>(input, 'keyup')
+      .pipe(
+        //@ts-ignore
+        map((e) => e.target.value),
+        distinctUntilChanged()
+      )
+      .subscribe({
+        next: (query:string) => {
+          const event = searchRequestCreator({
+            query,
+            id: this.requestId++,
+          });
+          this.bus.trigger(event);
+        },
+      });
   }
   // Stop is barely needed because start() returns the means to stop(), as RxJS Subscriptions do.
   stop() {

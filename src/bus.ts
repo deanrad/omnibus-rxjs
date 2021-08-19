@@ -1,5 +1,5 @@
 import { Observable, PartialObserver, Subject, Subscription } from 'rxjs';
-import { filter, mergeMap, tap } from 'rxjs/operators';
+import { filter, mergeMap, takeUntil, tap } from 'rxjs/operators';
 export type Predicate<T> = (item: T) => boolean;
 export type ResultCreator<T, TConsequence> = (
   item: T
@@ -38,8 +38,10 @@ interface EventBus<TBusItem> {
  */
 export class Omnibus<TBusItem> implements EventBus<TBusItem> {
   private channel: Subject<TBusItem>;
+  private resets: Subject<void>;
 
   constructor() {
+    this.resets = new Subject();
     this.channel = new Subject();
   }
 
@@ -49,7 +51,9 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
    * @returns
    */
   public query(matcher: Predicate<TBusItem>) {
-    return this.channel.asObservable().pipe(filter(matcher));
+    return this.channel
+      .asObservable()
+      .pipe(filter(matcher), takeUntil(this.resets));
   }
 
   /**
@@ -89,5 +93,9 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     );
 
     return consequences.subscribe((a) => this.trigger(a));
+  }
+
+  public reset(): void {
+    this.resets.next();
   }
 }
