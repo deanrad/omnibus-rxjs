@@ -51,6 +51,7 @@ class UIService {
 
     // this.currentRun = listenFSA(bus, loadingCreator, this.updateUILoading);
     // ^^^ is an alternative to vvv
+    // LEFTOFF - filters are perfect for things that dont trigger more events
     // this.currentRun = bus.listen<Action<SearchLoading>, void>(
     //   loadingCreator.match,
     //   ({ payload }) => {
