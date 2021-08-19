@@ -1,6 +1,5 @@
 import { Observable, PartialObserver, Subject, Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
-
+import { filter, mergeMap, tap } from 'rxjs/operators';
 export type Predicate<T> = (item: T) => boolean;
 export type ResultCreator<T, U> = (item: T) => Observable<U>;
 
@@ -81,7 +80,14 @@ export class Omnibus<T> implements EventBus<T>{
     handler: ResultCreator<SubType, U>,
     observer?: TapObserver<U>
   ) {
-    //
+    // LEFTOFF
+    // //@ts-ignore dynamic
+    // this.query(matcher).pipe(
+    //   //@ts-ignore dynamic
+    //   mergeMap(handler),
+    //   tap(observer)
+    // )
+    // //
     // return it
     return new Subscription();
   }

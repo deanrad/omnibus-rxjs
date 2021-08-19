@@ -49,7 +49,7 @@ class UIService {
     this.currentRun.add(listenFSA(bus, resultCreator, this.updateUIResult));
     this.currentRun.add(listenFSA(bus, completeCreator, this.updateUIComplete));
 
-    // this.currentRun = bus.listenFSA(loadingCreator, this.updateUILoading);
+    // this.currentRun = listenFSA(bus, loadingCreator, this.updateUILoading);
     // ^^^ is an alternative to vvv
     // this.currentRun = bus.listen<Action<SearchLoading>, void>(
     //   loadingCreator.match,

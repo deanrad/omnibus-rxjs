@@ -11,7 +11,8 @@
     "rootDir": "./",
     "downlevelIteration": true,
     "importHelpers": true,
-    "types": ["node", "jest"]
+    "types": ["node", "jest"],
+    "sourceMap": true
   },
   "include": ["./src/**/*.ts"],
   "exclude": ["./src/**/*.spec.ts"],
