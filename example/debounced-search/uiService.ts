@@ -17,14 +17,14 @@ export type Predicate<T> = (item: T) => boolean;
  *  A syntactic sugar that works like listen, but which lets ActionCreators determine the payload types and filter their matching events.
  * Requires the bus only admits Action<any>
  */
-export function listenFSA<E extends Action<any>, T, U>(
+export function listenFSA<E extends Action<any>, TAction, TConsequence>(
   bus: Omnibus<E>,
-  ac: ActionCreator<T>,
-  handler: ResultCreator<Action<T>, U>,
-  observer?: TapObserver<U>
+  ac: ActionCreator<TAction>,
+  handler: ResultCreator<Action<TAction>, TConsequence>,
+  observer?: TapObserver<TConsequence>
 ) {
   // @ts-ignore - It cant be known if the type T could occur on the event bus (and that's ok)
-  return bus.listen<Action<T>, U>(ac.match, handler, observer);
+  return bus.listen<Action<TAction>, TConsequence>(ac.match, handler, observer);
 }
 
 // As long as there is one instance of UI running,
