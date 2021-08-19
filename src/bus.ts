@@ -85,8 +85,7 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     // @ts-ignore dynamic
     const consequences = this.query(matcher).pipe(
       // @ts-ignore dynamic
-      mergeMap(handler),
-      tap(observer)
+      mergeMap((i) => handler(i).pipe(tap(observer)))
     );
 
     return consequences.subscribe((a) => this.trigger(a));

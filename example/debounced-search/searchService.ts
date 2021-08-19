@@ -1,7 +1,7 @@
 import { actionCreatorFactory, Action } from 'typescript-fsa';
 import { of, Subscription } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import { bus } from './bus';
+import { Omnibus } from '../../src/bus';
 
 const namespace = actionCreatorFactory('search');
 export interface SearchRequest {
@@ -47,34 +47,34 @@ export function getResult$(action: ReturnType<typeof searchRequestCreator>) {
     { result: 'apple' },
     { result: 'application' },
     { result: query },
-  ].map(p => resultCreator(p));
+  ].map((p) => resultCreator(p));
   return of(...results).pipe(delay(5));
 }
 
 // The consumer of an instance of QueryService is any Component
 // that can control its lifetime
-export class QueryService {
+export class SearchService {
   private currentRun: Subscription;
+  constructor(public bus: Omnibus<any>) {}
 
   start() {
-    this.currentRun = bus.listen<Action<SearchRequest>, ReturnType<typeof resultCreator>>(
-      searchRequestCreator.match,
-      getResult$,
-      {
-        subscribe() {
-          bus.triggerMap(null, loadingCreator);
-        },
-        complete() {
-          bus.triggerMap(null, completeCreator);
-        },
-        next(item) {
-          bus.trigger(item);
-        },
-        error(err) {
-          bus.triggerMap(err, errorCreator);
-        },
-      }
-    );
+    this.currentRun = this.bus.listen<
+      Action<SearchRequest>,
+      ReturnType<typeof resultCreator>
+    >(searchRequestCreator.match, getResult$, {
+      subscribe: () => {
+        this.bus.triggerMap(null, loadingCreator);
+      },
+      complete: () => {
+        this.bus.triggerMap(null, completeCreator);
+      },
+      next: (item) => {
+        this.bus.trigger(item);
+      },
+      error: (err) => {
+        this.bus.triggerMap(err, errorCreator);
+      },
+    });
   }
   // Stop is barely needed because start() returns the means to stop(), as RxJS Subscriptions do.
   stop() {
