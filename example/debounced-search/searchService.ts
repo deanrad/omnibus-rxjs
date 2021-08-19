@@ -6,13 +6,14 @@ import { bus } from './bus';
 const namespace = actionCreatorFactory('search');
 export interface SearchRequest {
   query: string;
-  id: number;
+  id?: number;
 }
 export interface SearchLoading {
   request?: { id: number };
 }
 export interface SearchComplete {
   request?: { id: number };
+  result: [string];
 }
 export interface SearchError extends Error {
   request?: { id: number };
@@ -39,7 +40,7 @@ export const errorCreator = namespace<SearchError>('error');
 export const completeCreator = namespace<SearchComplete>('complete');
 
 // A mock Observable creator - note - returns results progressively! (not all at the end, as in Promises)
-function getResult$(action: ReturnType<typeof searchRequestCreator>) {
+export function getResult$(action: ReturnType<typeof searchRequestCreator>) {
   const { query } = action.payload;
   const results: Array<SearchResult> = [
     { result: 'abba' },
@@ -56,7 +57,7 @@ export class QueryService {
   private currentRun: Subscription;
 
   start() {
-    this.currentRun = bus.listen<Action<SearchRequest>, SearchResult>(
+    this.currentRun = bus.listen<Action<SearchRequest>, ReturnType<typeof resultCreator>>(
       searchRequestCreator.match,
       getResult$,
       {
