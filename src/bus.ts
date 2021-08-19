@@ -1,7 +1,9 @@
 import { Observable, PartialObserver, Subject, Subscription } from 'rxjs';
 import { filter, mergeMap, tap } from 'rxjs/operators';
 export type Predicate<T> = (item: T) => boolean;
-export type ResultCreator<T, U> = (item: T) => Observable<U>;
+export type ResultCreator<T, TConsequence> = (
+  item: T
+) => Observable<TConsequence>;
 
 export type TapObserver<T> =
   | PartialObserver<T>
@@ -9,13 +11,13 @@ export type TapObserver<T> =
       start: (item: T) => void;
     };
 
-interface EventBus<T> {
-  query(matcher: Predicate<T>): Observable<T>;
-  trigger(item: T): void;
-  listen<U>(
-    matcher: Predicate<T>,
-    handler: ResultCreator<T, U>,
-    observer?: TapObserver<U>
+interface EventBus<TBusItem> {
+  query(matcher: Predicate<TBusItem>): Observable<TBusItem>;
+  trigger(item: TBusItem): void;
+  listen<TConsequence extends TBusItem>(
+    matcher: Predicate<TBusItem>,
+    handler: ResultCreator<TBusItem, TConsequence>,
+    observer?: TapObserver<TConsequence>
   ): Subscription;
 }
 /**
@@ -28,14 +30,14 @@ interface EventBus<T> {
  * callers' control. When the side-effects are implemented as Observables,
  * cancelation and declarative concurrency control can be applied, like
  * RxJS operators.
- * 
+ *
  * Errors are isolated, and mappable to further-triggered events, via
- * an Observer that can attach callbacks to the lifecycle events of 
+ * an Observer that can attach callbacks to the lifecycle events of
  * Observables.
  * @see EventBus
  */
-export class Omnibus<T> implements EventBus<T>{
-  private channel: Subject<T>;
+export class Omnibus<TBusItem> implements EventBus<TBusItem> {
+  private channel: Subject<TBusItem>;
 
   constructor() {
     this.channel = new Subject();
@@ -46,7 +48,7 @@ export class Omnibus<T> implements EventBus<T>{
    * @param matcher A predicate to filter only events for which it returns true
    * @returns
    */
-  public query(matcher: Predicate<T>) {
+  public query(matcher: Predicate<TBusItem>) {
     return this.channel.asObservable().pipe(filter(matcher));
   }
 
@@ -54,7 +56,7 @@ export class Omnibus<T> implements EventBus<T>{
    *
    * @param item The Event or other object to place onto the event bus, once it passes all filters.
    */
-  public trigger(item: T) {
+  public trigger(item: TBusItem) {
     this.channel.next(item);
   }
 
@@ -65,7 +67,7 @@ export class Omnibus<T> implements EventBus<T>{
    * @param mapper the function, usually an actionCreator
    * @returns
    */
-  public triggerMap<X>(item: X, mapper: (i: X) => T) {
+  public triggerMap<X>(item: X, mapper: (i: X) => TBusItem) {
     this.channel.next(mapper(item));
   }
 
@@ -75,21 +77,17 @@ export class Omnibus<T> implements EventBus<T>{
    * @param handler Creates an Observable of work. Called for each matching event. ConcurrencyMode is applied to it.
    * @returns a subscription that can be used to unsubscribe the listener, thereby canceling work in progress.
    */
-  public listen<SubType extends T, U>(
+  public listen<SubType extends TBusItem, TConsequence extends TBusItem>(
     matcher: Predicate<SubType>,
-    handler: ResultCreator<SubType, U>,
-    observer?: TapObserver<U>
+    handler: ResultCreator<SubType, TConsequence>,
+    observer?: TapObserver<TConsequence>
   ) {
-    // LEFTOFF
-    // //@ts-ignore dynamic
-    // this.query(matcher).pipe(
-    //   //@ts-ignore dynamic
-    //   mergeMap(handler),
-    //   tap(observer)
-    // )
-    // //
-    // return it
-    return new Subscription();
-  }
+    // @ts-ignore dynamic
+    const consequences = this.query(matcher).pipe(
+      // @ts-ignore dynamic
+      mergeMap(handler)
+    );
 
+    return consequences.subscribe((a) => this.trigger(a));
+  }
 }
