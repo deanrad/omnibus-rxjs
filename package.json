@@ -1,6 +1,6 @@
 {
   "name": "omnibus-rxjs",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "license": "MIT",
   "author": "Dean Radcliffe",
   "repository": "https://github.com/deanrad/omnibus-rxjs",
@@ -23,7 +23,7 @@
   },
   "size-limit": [
     {
-      "path": "dist/*.js",
+      "path": "dist/omnibus-rxjs.esm.js",
       "limit": "10 kB"
     }
   ],
