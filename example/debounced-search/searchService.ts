@@ -1,7 +1,7 @@
 import { actionCreatorFactory, Action } from 'typescript-fsa';
-import { of, Subscription } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { concat, Subscription } from 'rxjs';
 import { Omnibus } from '../../src/bus';
+import { after } from '../../src/utils'
 
 const namespace = actionCreatorFactory('search');
 export interface SearchRequest {
@@ -41,14 +41,15 @@ export const completeCreator = namespace<SearchComplete>('complete');
 
 // A mock Observable creator - note - returns results progressively! (not all at the end, as in Promises)
 export function getResult$(action: ReturnType<typeof searchRequestCreator>) {
+  console.log('trace: getting result$')
   const { query } = action.payload;
-  const results: Array<Action<SearchResult>> = [
+  const results = [
     { result: 'abba' },
     { result: 'apple' },
     { result: 'application' },
     { result: query },
-  ].map((p) => resultCreator(p));
-  return of(...results).pipe(delay(5));
+  ].map((p) => after(250, resultCreator(p)));
+  return concat(...results);
 }
 
 // The consumer of an instance of QueryService is any Component
