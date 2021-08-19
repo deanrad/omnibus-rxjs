@@ -16,7 +16,7 @@
     "test:quiet": "jest --silent --reporters=jest-silent-reporter",
     "test:full": "yarn test:fast && yarn test:quiet && echo 'Retest successful' && yarn build",
     "size": "size-limit",
-    "doc": "typedoc --theme minimal",
+    "doc": "typedoc",
     "doctoc": "doctoc .",
     "prepublishOnly": "yarn test:full && yarn doc && git add docs/ && git commit -m 'Update docs' -n",
     "build": "rimraf dist && tsc && rollup -c rollup.config.js && yarn size"

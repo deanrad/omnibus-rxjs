@@ -42,12 +42,12 @@ export const completeCreator = namespace<SearchComplete>('complete');
 // A mock Observable creator - note - returns results progressively! (not all at the end, as in Promises)
 export function getResult$(action: ReturnType<typeof searchRequestCreator>) {
   const { query } = action.payload;
-  const results: Array<SearchResult> = [
+  const results: Array<Action<SearchResult>> = [
     { result: 'abba' },
     { result: 'apple' },
     { result: 'application' },
     { result: query },
-  ];
+  ].map(p => resultCreator(p));
   return of(...results).pipe(delay(5));
 }
 
@@ -61,14 +61,14 @@ export class QueryService {
       searchRequestCreator.match,
       getResult$,
       {
-        start() {
-          bus.trigger(loadingCreator(null));
+        subscribe() {
+          bus.triggerMap(null, loadingCreator);
         },
         complete() {
-          bus.trigger(completeCreator(null));
+          bus.triggerMap(null, completeCreator);
         },
         next(item) {
-          bus.triggerMap(item, resultCreator);
+          bus.trigger(item);
         },
         error(err) {
           bus.triggerMap(err, errorCreator);

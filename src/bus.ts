@@ -8,7 +8,7 @@ export type ResultCreator<T, TConsequence> = (
 export type TapObserver<T> =
   | PartialObserver<T>
   | {
-      start: (item: T) => void;
+      subscribe: () => void;
     };
 
 interface EventBus<TBusItem> {
@@ -85,7 +85,8 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     // @ts-ignore dynamic
     const consequences = this.query(matcher).pipe(
       // @ts-ignore dynamic
-      mergeMap(handler)
+      mergeMap(handler),
+      tap(observer)
     );
 
     return consequences.subscribe((a) => this.trigger(a));
