@@ -123,6 +123,7 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="Omnibus.html#channel" class="tsd-kind-icon">channel</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="Omnibus.html#resets" class="tsd-kind-icon">resets</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -130,6 +131,7 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="Omnibus.html#listen" class="tsd-kind-icon">listen</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="Omnibus.html#query" class="tsd-kind-icon">query</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="Omnibus.html#reset" class="tsd-kind-icon">reset</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="Omnibus.html#trigger" class="tsd-kind-icon">trigger</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="Omnibus.html#triggerMap" class="tsd-kind-icon">trigger<wbr>Map</a></li>
 							</ul>
@@ -149,7 +151,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/e671cc7/src/bus.ts#L42">bus.ts:42</a></li>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/ea23787/src/bus.ts#L43">bus.ts:43</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -171,7 +173,17 @@
 					<div class="tsd-signature tsd-kind-icon">channel<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TBusItem</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/e671cc7/src/bus.ts#L40">bus.ts:40</a></li>
+							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/ea23787/src/bus.ts#L40">bus.ts:40</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
+					<a name="resets" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> resets</h3>
+					<div class="tsd-signature tsd-kind-icon">resets<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/ea23787/src/bus.ts#L41">bus.ts:41</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -189,7 +201,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of EventBus.listen</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/e671cc7/src/bus.ts#L80">bus.ts:80</a></li>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/ea23787/src/bus.ts#L84">bus.ts:84</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -235,7 +247,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of EventBus.query</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/e671cc7/src/bus.ts#L51">bus.ts:51</a></li>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/ea23787/src/bus.ts#L53">bus.ts:53</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -252,6 +264,23 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="reset" class="tsd-anchor"></a>
+					<h3>reset</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">reset<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/ea23787/src/bus.ts#L98">bus.ts:98</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="trigger" class="tsd-anchor"></a>
 					<h3>trigger</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -262,7 +291,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of EventBus.trigger</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/e671cc7/src/bus.ts#L59">bus.ts:59</a></li>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/ea23787/src/bus.ts#L63">bus.ts:63</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -288,7 +317,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/e671cc7/src/bus.ts#L70">bus.ts:70</a></li>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/ea23787/src/bus.ts#L74">bus.ts:74</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -363,11 +392,17 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="Omnibus.html#channel" class="tsd-kind-icon">channel</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
+								<a href="Omnibus.html#resets" class="tsd-kind-icon">resets</a>
+							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
 								<a href="Omnibus.html#listen" class="tsd-kind-icon">listen</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="Omnibus.html#query" class="tsd-kind-icon">query</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="Omnibus.html#reset" class="tsd-kind-icon">reset</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="Omnibus.html#trigger" class="tsd-kind-icon">trigger</a>
