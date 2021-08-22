@@ -1,7 +1,7 @@
 import { actionCreatorFactory, Action } from 'typescript-fsa';
 import { concat, Subscription } from 'rxjs';
 import { Omnibus } from '../../src/bus';
-import { after } from '../../src/utils'
+import { after } from '../../src/utils';
 
 const namespace = actionCreatorFactory('search');
 export interface SearchRequest {
@@ -41,10 +41,10 @@ export const completeCreator = namespace<SearchComplete>('complete');
 
 // A mock Observable creator - note - returns results progressively! (not all at the end, as in Promises)
 export function getResult$(action: ReturnType<typeof searchRequestCreator>) {
-  console.log('trace: getting result$')
+  // console.log('trace: getting result$')
   const { query } = action.payload;
   const results = [
-    { result: 'abba' },
+    { result: 'abba', id: 5 },
     { result: 'apple' },
     { result: 'application' },
     { result: query },
@@ -56,7 +56,9 @@ export function getResult$(action: ReturnType<typeof searchRequestCreator>) {
 // that can control its lifetime
 export class SearchService {
   private currentRun: Subscription;
-  constructor(public bus: Omnibus<any>) {}
+  constructor(public bus: Omnibus<any>) {
+    console.log('Search service started');
+  }
 
   start() {
     this.currentRun = this.bus.listen<
