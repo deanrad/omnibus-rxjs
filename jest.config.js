@@ -3,4 +3,5 @@ module.exports = {
   modulePathIgnorePatterns: ['temp/tsc'],
   verbose: true,
   silent: false,
+  coveragePathIgnorePatterns: ['example', 'test'],
 };

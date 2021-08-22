@@ -1,0 +1,49 @@
+PASS src/bus.spec.ts
+  Bus
+    ✓ can be instantiated with the BusItemType it will accept (2 ms)
+    #query
+      ✓ Returns an Observable of matching events (1 ms)
+      ✓ Returns an Observable of filtered events (1 ms)
+    #trigger
+      ✓ puts an action on the bus (1 ms)
+    #triggerMap
+      ✓ puts an action on the bus through a mapping function
+    #listen
+      Handler
+        Returning Observables
+          With a callback-based observer
+            ✓ can trigger new events (3 ms)
+          LEFTOFF With a retriggering observer
+            ✎ todo can trigger new events with elegant syntax :)
+    #reset
+      ✓ ends all listeners
+      ✓ ends all handlers
+
+PASS src/3rd-party.spec.ts
+  Reference: FSA
+    ✓ creates an action
+    ✓ provides a predicate #match
+  Reference: RxJS
+    ○ skipped Subject observers kill the process with an uncaught error
+
+PASS src/utils.spec.ts
+  after
+    delay arg
+      when 0
+        ✎ todo is synchronous
+        ✎ todo is faster than a Promise
+        ✎ todo is faster than a setTimeout(fn,0)
+    value arg
+      when value
+        ✎ todo is produced after the delay
+      when function
+        ✎ todo is produced
+        ✎ todo is produced
+      when Observable
+        ✎ todo is produced
+
+Test Suites: 3 passed, 3 total
+Tests:       1 skipped, 8 todo, 10 passed, 19 total
+Snapshots:   3 passed, 3 total
+Time:        0.823 s, estimated 1 s
+Ran all test suites.
