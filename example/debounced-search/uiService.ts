@@ -30,7 +30,7 @@ export function listenFSA<E extends Action<any>, TAction, TConsequence>(
 // As long as there is one instance of UI running,
 // results triggered by SearchService will update the UI
 // will become an event on the bus that the searchService knows how to listen to.
-class UIService {
+export class UIService {
   private currentRun: Subscription;
 
   private updateUILoading(e: SearchLoading) {
@@ -51,7 +51,6 @@ class UIService {
 
     // this.currentRun = listenFSA(bus, loadingCreator, this.updateUILoading);
     // ^^^ is an alternative to vvv
-    // LEFTOFF - filters are perfect for things that dont trigger more events
     // this.currentRun = bus.listen<Action<SearchLoading>, void>(
     //   loadingCreator.match,
     //   ({ payload }) => {

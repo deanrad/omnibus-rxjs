@@ -88,6 +88,19 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
   ) {
     // @ts-ignore dynamic
     const consequences = this.query(matcher).pipe(
+      // LEFTOFF 0 counts of TS and ES AST tree nodes added to project (tsc/out->esprima->esquery->count->docs/stats/complexity)
+      // LEFTOFF 0.9 mocks can create any observable (NTCE grammar)
+      // LEFTOFF 1 tests for observable events next, complete
+
+      // LEFTOFF 2 create Observer<TConsequence> from Record<Keys<TapObserver>,Thunk<TBusItem>>
+      // LEFTOFF 2.1 widen observer to TapObserver subscribe, unsubscribe, finalize
+
+      // LEFTOFF 3 Concurrency ops passable in
+
+      // LEFTOFF 4 handler returns ObservableInput not only Observable
+
+      // LEFTOFF 5 filters
+
       // @ts-ignore dynamic
       mergeMap((i) => handler(i).pipe(tap(observer)))
     );

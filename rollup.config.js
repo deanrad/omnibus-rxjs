@@ -10,6 +10,7 @@ export default merge(baseConfig, {
     {
       file: './dist/omnibus-rxjs.esm.js',
       format: 'es',
+      exports: 'named',
       sourcemap: true,
     },
     {
