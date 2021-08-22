@@ -11,6 +11,8 @@
     "dist"
   ],
   "scripts": {
+    "start": "npm run example:debounced",
+    "example:debounced": "cd example/debounced-search; parcel index.html",
     "test": "yarn test:fast",
     "test:fast": "jest",
     "test:quiet": "jest --silent --reporters=jest-silent-reporter",

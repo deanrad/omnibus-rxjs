@@ -11,10 +11,10 @@ type TComplete = ReturnType<typeof completeCreator>;
 type TResult = ReturnType<typeof ExampleService.resultCreator>;
 
 function captureEvents<T>(testFn: (arg: T[]) => void | Promise<any>) {
-  return function() {
+  return function () {
     const seen = new Array<T>();
     // @ts-ignore
-    const sub = FSABus.query(() => true).subscribe(event => seen.push(event));
+    const sub = FSABus.query(() => true).subscribe((event) => seen.push(event));
     const result: any = testFn(seen);
     // allow async functions to await - but ensure cleanup
     if (result && result.then) {
@@ -43,21 +43,30 @@ Array [
 `);
   });
   it('provides a predicate #match', () => {
-    expect(ExampleService.searchRequestCreator.match).toMatchInlineSnapshot(`[Function]`);
-  })
+    expect(ExampleService.searchRequestCreator.match).toMatchInlineSnapshot(
+      `[Function]`
+    );
+  });
 });
 describe('Bus', () => {
   it('can be instantiated with the BusItemType it will accept', () => {
     expect(FSABus).toBeTruthy();
   });
-  it('can listen for actions of its type', captureEvents((seen) => {
-    FSABus.listen<TRequest, TResult>(
-      a => a.type === searchRequestCreator.type,
-      (a) => of(ExampleService.resultCreator({ result: 'foo' }))
-    );
-    FSABus.trigger(searchRequestCreator({query: 'app', id: 3.14}))
-    
-    expect(seen).toMatchInlineSnapshot(`
+  it(
+    'can listen for actions of its type',
+    captureEvents((seen) => {
+      FSABus.listen<TRequest, TResult>(
+        (a) => a.type === searchRequestCreator.type,
+        (a) => of(ExampleService.resultCreator({ result: 'foo' })),
+        {
+          next(result) {
+            FSABus.trigger(result);
+          },
+        }
+      );
+      FSABus.trigger(searchRequestCreator({ query: 'app', id: 3.14 }));
+
+      expect(seen).toMatchInlineSnapshot(`
 Array [
   Object {
     "payload": Object {
@@ -74,6 +83,6 @@ Array [
   },
 ]
 `);
-  }));
+    })
+  );
 });
-

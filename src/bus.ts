@@ -92,7 +92,7 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
       mergeMap((i) => handler(i).pipe(tap(observer)))
     );
 
-    return consequences.subscribe((a) => this.trigger(a));
+    return consequences.subscribe();
   }
 
   public reset(): void {
