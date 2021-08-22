@@ -15,6 +15,8 @@
     "example:debounced": "cd example/debounced-search; parcel index.html",
     "test": "yarn test:fast",
     "test:fast": "jest",
+    "test:coverage": "jest --coverage",
+    "stats:save": "jest --coverage 1> docs/stats/coverage-report 2> docs/stats/spec-report",
     "test:quiet": "jest --silent --reporters=jest-silent-reporter",
     "test:full": "yarn test:fast && yarn test:quiet && echo 'Retest successful' && yarn build",
     "size": "size-limit",
