@@ -1,4 +1,14 @@
-// var ast = esprima.parse(sourceNode.value);
+const esprima = require('esprima');
+const esquery = require('esquery');
+
+// for each interesting file
+const dir = 'dist/tsc/src';
+const files = ['bus'];
+const astNodeCount = {};
+files.forEach((f) => {
+  // LEFTOFF!
+});
+// var ast = esprima.parse(str);
 // selectorAst = esquery.parse('*');
 // matches = esquery.match(ast, selectorAst);
 // nodeCount = matches.length;
@@ -7,7 +17,7 @@
 const mockOut = {
   js: {
     astNodeCount: {
-      bus: 66,
+      'bus.js': 66,
     },
   },
 };
