@@ -88,15 +88,14 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
   ) {
     // @ts-ignore dynamic
     const consequences = this.query(matcher).pipe(
-      // LEFTOFF 0.9 mocks can create any observable (NTCE grammar)
       // LEFTOFF 1 tests for observable events next, complete
+      // LEFTOFF 1.2 Concurrency ops passable in
       // LEFTOFF 1.1 widen listen type constraint from  TConsequence extends TBusItem to TConsequence
       // LEFTOFF 2 create Observer<TConsequence> from Record<Keys<TapObserver>,Thunk<TBusItem>>
       // LEFTOFF 2.1 widen observer to TapObserver subscribe, unsubscribe, finalize
 
-      // LEFTOFF 3 Concurrency ops passable in
-
       // LEFTOFF 4 handler returns ObservableInput not only Observable
+      // LEFTOFF 0.9 mocks can create any observable (NTCE grammar)
 
       // LEFTOFF 5 filters
 

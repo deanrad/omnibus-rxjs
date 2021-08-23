@@ -6,14 +6,10 @@ import { anyEvent } from '../test/mockPredicates';
 
 import {
   completeCreator,
+  loadingCreator,
   resultCreator,
   searchRequestCreator,
 } from '../example/debounced-search/searchService';
-
-// TODO this is awkward to have to do, but necessary to type listen for FSAs
-type TRequest = ReturnType<typeof searchRequestCreator>;
-type TComplete = ReturnType<typeof completeCreator>;
-type TResult = ReturnType<typeof resultCreator>;
 
 function capture<T>(
   bus: Omnibus<T>,
@@ -103,30 +99,45 @@ describe('Bus', () => {
                 (a) => a.type === searchRequestCreator.type,
                 (a) => of(resultCreator({ result: 'foo' })),
                 {
+                  subscribe() {
+                    FSABus.triggerMap(null, loadingCreator);
+                  },
                   next(result) {
                     FSABus.trigger(result);
                   },
+                  complete() {
+                    FSABus.triggerMap(null, completeCreator);
+                  },
+                  // error also available
                 }
               );
               FSABus.trigger(searchRequestCreator({ query: 'app', id: 3.14 }));
 
               expect(events).toMatchInlineSnapshot(`
-  Array [
-    Object {
-      "payload": Object {
-        "id": 3.14,
-        "query": "app",
-      },
-      "type": "search/request",
+Array [
+  Object {
+    "payload": Object {
+      "id": 3.14,
+      "query": "app",
     },
-    Object {
-      "payload": Object {
-        "result": "foo",
-      },
-      "type": "search/result",
+    "type": "search/request",
+  },
+  Object {
+    "payload": null,
+    "type": "search/loading",
+  },
+  Object {
+    "payload": Object {
+      "result": "foo",
     },
-  ]
-  `);
+    "type": "search/result",
+  },
+  Object {
+    "payload": null,
+    "type": "search/complete",
+  },
+]
+`);
             })
           );
         });

@@ -1,4 +1,4 @@
-import { actionCreatorFactory, Action } from 'typescript-fsa';
+import { actionCreatorFactory } from 'typescript-fsa';
 import { concat, Subscription } from 'rxjs';
 import { Omnibus } from '../../src/bus';
 import { after } from '../../src/utils';
@@ -61,10 +61,7 @@ export class SearchService {
   }
 
   start() {
-    this.currentRun = this.bus.listen<
-      Action<SearchRequest>,
-      ReturnType<typeof resultCreator>
-    >(searchRequestCreator.match, getResult$, {
+    this.currentRun = this.bus.listen(searchRequestCreator.match, getResult$, {
       subscribe: () => {
         this.bus.triggerMap(null, loadingCreator);
       },
