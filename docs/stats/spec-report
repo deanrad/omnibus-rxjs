@@ -1,31 +1,3 @@
-PASS src/bus.spec.ts
-  Bus
-    ✓ can be instantiated with the BusItemType it will accept (2 ms)
-    #query
-      ✓ Returns an Observable of matching events (1 ms)
-      ✓ Returns an Observable of filtered events (1 ms)
-    #trigger
-      ✓ puts an action on the bus (1 ms)
-    #triggerMap
-      ✓ puts an action on the bus through a mapping function
-    #listen
-      Handler
-        Returning Observables
-          With a callback-based observer
-            ✓ can trigger new events (3 ms)
-          LEFTOFF With a retriggering observer
-            ✎ todo can trigger new events with elegant syntax :)
-    #reset
-      ✓ ends all listeners
-      ✓ ends all handlers
-
-PASS src/3rd-party.spec.ts
-  Reference: FSA
-    ✓ creates an action
-    ✓ provides a predicate #match
-  Reference: RxJS
-    ○ skipped Subject observers kill the process with an uncaught error
-
 PASS src/utils.spec.ts
   after
     delay arg
@@ -42,8 +14,37 @@ PASS src/utils.spec.ts
       when Observable
         ✎ todo is produced
 
+PASS src/3rd-party.spec.ts
+  Reference: FSA
+    ✓ creates an action (2 ms)
+    ✓ provides a predicate #match
+  Reference: RxJS
+    ○ skipped Subject observers kill the process with an uncaught error
+
+PASS src/bus.spec.ts
+  Bus
+    ✓ can be instantiated with the BusItemType it will accept (1 ms)
+    #query
+      ✓ Returns an Observable of matching events (1 ms)
+      ✓ Returns an Observable of filtered events (1 ms)
+      ✎ todo is canceled by a reset
+    #trigger
+      ✓ puts an action on the bus
+    #triggerMap
+      ✓ puts an action on the bus through a mapping function (1 ms)
+    #listen
+      Handler
+        Returning Observables
+          With a callback-based observer
+            ✓ can trigger new events (2 ms)
+          LEFTOFF With a retriggering observer
+            ✎ todo can trigger new events with elegant syntax :)
+    #reset
+      ✓ ends all listeners (1 ms)
+      ✓ ends all handlers (1 ms)
+
 Test Suites: 3 passed, 3 total
-Tests:       1 skipped, 8 todo, 10 passed, 19 total
+Tests:       1 skipped, 9 todo, 10 passed, 20 total
 Snapshots:   3 passed, 3 total
-Time:        0.823 s, estimated 1 s
+Time:        1.042 s, estimated 2 s
 Ran all test suites.

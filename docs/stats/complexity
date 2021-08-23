@@ -1,0 +1,8 @@
+{
+  "astNodeCount": {
+    "dist/tsc/src/bus.js": 148,
+    "src/bus.ts": 311,
+    "dist/tsc/src/utils.js": 107,
+    "src/utils.ts": 188
+  }
+}
