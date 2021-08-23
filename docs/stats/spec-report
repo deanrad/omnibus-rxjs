@@ -6,7 +6,7 @@ PASS src/bus.spec.ts
       ✓ Returns an Observable of filtered events (1 ms)
       ✎ todo is canceled by a reset
     #trigger
-      ✓ puts an action on the bus (1 ms)
+      ✓ puts an action on the bus
     #triggerMap
       ✓ puts an action on the bus through a mapping function
     #listen
@@ -17,7 +17,7 @@ PASS src/bus.spec.ts
           LEFTOFF With a retriggering observer
             ✎ todo can trigger new events with elegant syntax :)
     #reset
-      ✓ ends all listeners (1 ms)
+      ✓ ends all listeners
       ✓ ends all handlers (1 ms)
 
 PASS src/3rd-party.spec.ts
@@ -46,5 +46,5 @@ PASS src/utils.spec.ts
 Test Suites: 3 passed, 3 total
 Tests:       1 skipped, 9 todo, 10 passed, 20 total
 Snapshots:   3 passed, 3 total
-Time:        0.786 s, estimated 1 s
+Time:        0.995 s, estimated 1 s
 Ran all test suites.
