@@ -2,8 +2,8 @@ PASS src/bus.spec.ts
   Bus
     ✓ can be instantiated with the BusItemType it will accept (1 ms)
     #query
-      ✓ Returns an Observable of matching events (1 ms)
-      ✓ Returns an Observable of filtered events
+      ✓ Returns an Observable of matching events (2 ms)
+      ✓ Returns an Observable of filtered events (1 ms)
       ✎ todo is canceled by a reset
     #trigger
       ✓ puts an action on the bus (1 ms)
@@ -17,7 +17,7 @@ PASS src/bus.spec.ts
           LEFTOFF With a retriggering observer
             ✎ todo can trigger new events with elegant syntax :)
     #reset
-      ✓ ends all listeners
+      ✓ ends all listeners (1 ms)
       ✓ ends all handlers (1 ms)
 
 PASS src/3rd-party.spec.ts
@@ -46,5 +46,5 @@ PASS src/utils.spec.ts
 Test Suites: 3 passed, 3 total
 Tests:       1 skipped, 9 todo, 10 passed, 20 total
 Snapshots:   3 passed, 3 total
-Time:        0.815 s, estimated 1 s
+Time:        0.924 s, estimated 1 s
 Ran all test suites.
