@@ -1,32 +1,3 @@
-PASS src/bus.spec.ts
-  Bus
-    ✓ can be instantiated with the BusItemType it will accept (1 ms)
-    #query
-      ✓ Returns an Observable of matching events (2 ms)
-      ✓ Returns an Observable of filtered events (1 ms)
-      ✎ todo is canceled by a reset
-    #trigger
-      ✓ puts an action on the bus (1 ms)
-    #triggerMap
-      ✓ puts an action on the bus through a mapping function
-    #listen
-      Handler
-        Returning Observables
-          With a callback-based observer
-            ✓ can trigger new events (3 ms)
-          LEFTOFF With a retriggering observer
-            ✎ todo can trigger new events with elegant syntax :)
-    #reset
-      ✓ ends all listeners (1 ms)
-      ✓ ends all handlers (1 ms)
-
-PASS src/3rd-party.spec.ts
-  Reference: FSA
-    ✓ creates an action
-    ✓ provides a predicate #match
-  Reference: RxJS
-    ○ skipped Subject observers kill the process with an uncaught error
-
 PASS src/utils.spec.ts
   after
     delay arg
@@ -43,8 +14,37 @@ PASS src/utils.spec.ts
       when Observable
         ✎ todo is produced
 
+PASS src/bus.spec.ts (8.562 s)
+  Bus
+    ✓ can be instantiated with the BusItemType it will accept (4 ms)
+    #query
+      ✓ Returns an Observable of matching events (3 ms)
+      ✓ Returns an Observable of filtered events (1 ms)
+      ✎ todo is canceled by a reset
+    #trigger
+      ✓ puts an action on the bus (1 ms)
+    #triggerMap
+      ✓ puts an action on the bus through a mapping function (1 ms)
+    #listen
+      Handler
+        Returning Observables
+          With a callback-based observer
+            ✓ can trigger new events (5 ms)
+          With a retriggering observer
+            ✓ can trigger new events with elegant syntax :) (2 ms)
+    #reset
+      ✓ ends all listeners (2 ms)
+      ✓ ends all handlers (2 ms)
+
+PASS src/3rd-party.spec.ts (8.631 s)
+  Reference: FSA
+    ✓ creates an action (4 ms)
+    ✓ provides a predicate #match (1 ms)
+  Reference: RxJS
+    ○ skipped Subject observers kill the process with an uncaught error
+
 Test Suites: 3 passed, 3 total
-Tests:       1 skipped, 9 todo, 10 passed, 20 total
-Snapshots:   3 passed, 3 total
-Time:        0.924 s, estimated 1 s
+Tests:       1 skipped, 8 todo, 11 passed, 20 total
+Snapshots:   4 passed, 4 total
+Time:        9.304 s
 Ran all test suites.
