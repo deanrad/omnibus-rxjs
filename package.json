@@ -17,7 +17,7 @@
     "test:fast": "jest",
     "test:coverage": "jest --coverage",
     "stats:save:jest": "jest --coverage 1> docs/stats/coverage-report 2> docs/stats/spec-report",
-    "stats:save:ast": "node scripts/code-stats.js > docs/stats/complexity",
+    "stats:save:ast": "tsc; node scripts/code-stats.js > docs/stats/complexity",
     "stats:save:size": "size-limit > docs/stats/size",
     "stats:commit": "yarn stats:save:jest; yarn stats:save:ast; yarn stats:save:size; git add docs/stats; git commit -m 'Update code stats' -n",
     "test:quiet": "jest --silent --reporters=jest-silent-reporter",

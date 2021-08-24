@@ -10,11 +10,16 @@ export type TapObserver<T> =
   | PartialObserver<T>
   | {
     subscribe: () => void;
+    unsubscribe: () => void;
   };
 
-export interface TriggeringObserver<TConsequence, TBusItem> {
-  next?: (consequence: TConsequence) => TBusItem
-  [key: string]: ((consequence: TConsequence) => TBusItem) | undefined
+/** A map of action creators getObserverFromActionMap  */
+export interface TriggeredItemMap<TConsequence, TBusItem> {
+  next?: (c: TConsequence) => TBusItem
+  error?: (e: any) => TBusItem
+  complete?: (i: any) => TBusItem
+  subscribe?: (i: any) => TBusItem
+  unsubscribe?: (i: any) => TBusItem
 }
 
 interface EventBus<TBusItem> {
@@ -91,23 +96,15 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     matcher: Predicate<SubType>,
     handler: ResultCreator<SubType, TConsequence>,
     observer?: TapObserver<TConsequence>,
-    observerTypes?: TriggeringObserver<TConsequence, TBusItem>
+    observerTypes?: TriggeredItemMap<TConsequence, TBusItem>
   ) {
-    // LEFTOFF 2 create Observer<TConsequence> from Record<Keys<TapObserver>,Thunk<TBusItem>>
-    // LEFTOFF 2.1 widen observer to TapObserver subscribe, unsubscribe, finalize
     // LEFTOFF 3 Concurrency ops passable in
     // LEFTOFF 4 handler returns ObservableInput not only Observable
     // LEFTOFF 0.9 mocks can create any observable (NTCE grammar)
     // LEFTOFF 5 filters
 
     // @ts-ignore
-    const _observer = observer ? observer : observerTypes ? Object.keys(observerTypes).reduce((all, key) => {
-      // @ts-ignore
-      const itemCreator = observerTypes[key] as (c: TConsequence) => TBusItem
-      // @ts-ignore
-      all[key] = (c: TConsequence) => { this.triggerMap(c, itemCreator) }
-      return all
-    }, {} as TapObserver<TConsequence>) : undefined
+    const _observer = observer ? observer : observerTypes ? this.getObserverFromActionMap(observerTypes) : undefined
 
     // @ts-ignore dynamic
     const consequences = this.query(matcher).pipe(
@@ -116,6 +113,18 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     );
 
     return consequences.subscribe();
+  }
+  /** Takes an observer-shaped object of action creators, turns it into
+   * an Observer of callbacks which trigger onto this bus. 
+   */
+  public getObserverFromActionMap<TConsequence, TBusItem>(observerTypes: TriggeredItemMap<TConsequence, TBusItem>) {
+    return Object.keys(observerTypes).reduce((all, key) => {
+      // @ts-ignore
+      const itemCreator = observerTypes[key]// as (c: TConsequence) => TBusItem
+      // @ts-ignore
+      all[key] = (c) => { this.triggerMap(c, itemCreator) }
+      return all
+    }, {} as TapObserver<TConsequence>)
   }
 
   public reset(): void {

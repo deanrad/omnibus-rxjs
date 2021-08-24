@@ -3,11 +3,13 @@ import { Action } from 'typescript-fsa';
 import { asapScheduler as promiseScheduler, of, timer } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { anyEvent } from '../test/mockPredicates';
+import { after } from './utils'
 
 import {
   completeCreator,
   loadingCreator,
   resultCreator,
+  cancelCreator,
   searchRequestCreator,
 } from '../example/debounced-search/searchService';
 
@@ -151,7 +153,7 @@ Array [
                 null,
                 {
                   subscribe: loadingCreator,
-                  next: resultCreator
+                  next: resultCreator,
                 }
               );
               FSABus.trigger(searchRequestCreator({ query: 'app', id: 3.14 }));
@@ -174,6 +176,43 @@ Array [
       "result": "foo",
     },
     "type": "search/result",
+  },
+]
+`);
+            })
+          );
+          it(
+            'can trigger new events with elegant syntax :)',
+            capture(FSABus, (events) => {
+              const listener = FSABus.listen(
+                (a) => a.type === searchRequestCreator.type,
+                (a) => after(1, { result: 'foo' }),
+                null,
+                {
+                  subscribe: loadingCreator,
+                  unsubscribe: cancelCreator
+                }
+              );
+              FSABus.trigger(searchRequestCreator({ query: 'app', id: 3.14 }));
+
+              listener.unsubscribe();
+              // We get the cancel event, and no further will arrive
+              expect(events).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "payload": Object {
+      "id": 3.14,
+      "query": "app",
+    },
+    "type": "search/request",
+  },
+  Object {
+    "payload": undefined,
+    "type": "search/loading",
+  },
+  Object {
+    "payload": undefined,
+    "type": "search/cancel",
   },
 ]
 `);
