@@ -1,11 +1,12 @@
 {
   "name": "omnibus-rxjs",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "license": "MIT",
   "author": "Dean Radcliffe",
   "repository": "https://github.com/deanrad/omnibus-rxjs",
   "main": "dist/omnibus-rxjs.min.js",
   "module": "dist/omnibus-rxjs.esm.js",
+  "typings": "dist/tsc/types/src/index.d.ts",
   "sideEffects": false,
   "files": [
     "dist"

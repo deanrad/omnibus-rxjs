@@ -18,7 +18,9 @@
       "jest"
     ],
     "sourceMap": true,
-    "removeComments": true
+    "removeComments": true,
+    "declaration": true,
+    "declarationDir": "dist/tsc/types"
   },
   "include": [
     "./src/**/*.ts"
