@@ -16,8 +16,8 @@ PASS src/utils.spec.ts
 
 PASS src/3rd-party.spec.ts
   Reference: FSA
-    ✓ creates an action (5 ms)
-    ✓ provides a predicate #match (1 ms)
+    ✓ creates an action (4 ms)
+    ✓ provides a predicate #match
   Reference: RxJS
     ○ skipped Subject observers kill the process with an uncaught error
 
@@ -29,7 +29,7 @@ PASS src/bus.spec.ts
       ✓ Returns an Observable of filtered events (1 ms)
       ✎ todo is canceled by a reset
     #trigger
-      ✓ puts an action on the bus
+      ✓ puts an action on the bus (1 ms)
     #triggerMap
       ✓ puts an action on the bus through a mapping function (1 ms)
     #listen
@@ -39,7 +39,7 @@ PASS src/bus.spec.ts
             ✓ can trigger new events (3 ms)
           With a retriggering observer
             ✓ can trigger new events with elegant syntax :) (2 ms)
-            ✓ can trigger new events with elegant syntax :) (1 ms)
+            ✓ can trigger new events with elegant syntax :) (2 ms)
     #reset
       ✓ ends all listeners (1 ms)
       ✓ ends all handlers (1 ms)
@@ -47,5 +47,5 @@ PASS src/bus.spec.ts
 Test Suites: 3 passed, 3 total
 Tests:       1 skipped, 8 todo, 12 passed, 21 total
 Snapshots:   5 passed, 5 total
-Time:        2.558 s
+Time:        2.261 s, estimated 3 s
 Ran all test suites.
