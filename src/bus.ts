@@ -1,5 +1,6 @@
 import { Observable, PartialObserver, Subject, Subscription } from 'rxjs';
 import { filter, mergeMap, takeUntil, tap } from 'rxjs/operators';
+import { Thunk } from './utils';
 export type Predicate<T> = (item: T) => boolean;
 export type ResultCreator<T, TConsequence> = (
   item: T
@@ -8,8 +9,13 @@ export type ResultCreator<T, TConsequence> = (
 export type TapObserver<T> =
   | PartialObserver<T>
   | {
-      subscribe: () => void;
-    };
+    subscribe: () => void;
+  };
+
+export interface TriggeringObserver<TConsequence, TBusItem> {
+  next?: (consequence: TConsequence) => TBusItem
+  [key: string]: ((consequence: TConsequence) => TBusItem) | undefined
+}
 
 interface EventBus<TBusItem> {
   query(matcher: Predicate<TBusItem>): Observable<TBusItem>;
@@ -81,26 +87,32 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
    * @param handler Creates an Observable of work. Called for each matching event. ConcurrencyMode is applied to it.
    * @returns a subscription that can be used to unsubscribe the listener, thereby canceling work in progress.
    */
-  public listen<SubType extends TBusItem, TConsequence extends TBusItem>(
+  public listen<SubType extends TBusItem, TConsequence>(
     matcher: Predicate<SubType>,
     handler: ResultCreator<SubType, TConsequence>,
-    observer?: TapObserver<TConsequence>
+    observer?: TapObserver<TConsequence>,
+    observerTypes?: TriggeringObserver<TConsequence, TBusItem>
   ) {
+    // LEFTOFF 2 create Observer<TConsequence> from Record<Keys<TapObserver>,Thunk<TBusItem>>
+    // LEFTOFF 2.1 widen observer to TapObserver subscribe, unsubscribe, finalize
+    // LEFTOFF 3 Concurrency ops passable in
+    // LEFTOFF 4 handler returns ObservableInput not only Observable
+    // LEFTOFF 0.9 mocks can create any observable (NTCE grammar)
+    // LEFTOFF 5 filters
+
+    // @ts-ignore
+    const _observer = observer ? observer : observerTypes ? Object.keys(observerTypes).reduce((all, key) => {
+      // @ts-ignore
+      const itemCreator = observerTypes[key] as (c: TConsequence) => TBusItem
+      // @ts-ignore
+      all[key] = (c: TConsequence) => { this.triggerMap(c, itemCreator) }
+      return all
+    }, {} as TapObserver<TConsequence>) : undefined
+
     // @ts-ignore dynamic
     const consequences = this.query(matcher).pipe(
-      // LEFTOFF 1 tests for observable events next, complete
-      // LEFTOFF 1.2 Concurrency ops passable in
-      // LEFTOFF 1.1 widen listen type constraint from  TConsequence extends TBusItem to TConsequence
-      // LEFTOFF 2 create Observer<TConsequence> from Record<Keys<TapObserver>,Thunk<TBusItem>>
-      // LEFTOFF 2.1 widen observer to TapObserver subscribe, unsubscribe, finalize
-
-      // LEFTOFF 4 handler returns ObservableInput not only Observable
-      // LEFTOFF 0.9 mocks can create any observable (NTCE grammar)
-
-      // LEFTOFF 5 filters
-
       // @ts-ignore dynamic
-      mergeMap((i) => handler(i).pipe(tap(observer)))
+      mergeMap((i) => handler(i).pipe(tap(_observer)))
     );
 
     return consequences.subscribe();

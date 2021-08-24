@@ -141,8 +141,44 @@ Array [
             })
           );
         });
-        describe('LEFTOFF With a retriggering observer', () => {
-          it.todo('can trigger new events with elegant syntax :)');
+        describe('With a retriggering observer', () => {
+          it(
+            'can trigger new events with elegant syntax :)',
+            capture(FSABus, (events) => {
+              FSABus.listen(
+                (a) => a.type === searchRequestCreator.type,
+                (a) => of({ result: 'foo' }),
+                null,
+                {
+                  subscribe: loadingCreator,
+                  next: resultCreator
+                }
+              );
+              FSABus.trigger(searchRequestCreator({ query: 'app', id: 3.14 }));
+
+              expect(events).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "payload": Object {
+      "id": 3.14,
+      "query": "app",
+    },
+    "type": "search/request",
+  },
+  Object {
+    "payload": undefined,
+    "type": "search/loading",
+  },
+  Object {
+    "payload": Object {
+      "result": "foo",
+    },
+    "type": "search/result",
+  },
+]
+`);
+            })
+          );
         });
       });
     });
