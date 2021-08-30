@@ -24,7 +24,7 @@
   },
   "include": [
     "./src/**/*.ts"
-  ],
+, "test/utils.spec.ts", "test/bus.spec.ts", "test/3rd-party.spec.ts"  ],
   "exclude": [
     "./src/**/*.spec.ts"
   ],
