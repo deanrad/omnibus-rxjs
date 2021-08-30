@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { actionCreatorFactory } from 'typescript-fsa';
 import { concat, Subscription } from 'rxjs';
 import { Omnibus } from '../../src/bus';

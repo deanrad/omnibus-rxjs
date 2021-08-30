@@ -1,4 +1,4 @@
-import { asapScheduler, from, concat, of, materialize, merge, toArray, asyncScheduler, firstValueFrom } from "rxjs";
+import { asapScheduler, from, concat, of, materialize, merge, toArray, asyncScheduler, firstValueFrom, Observable } from "rxjs";
 import { startWith, zipWith } from "rxjs/operators";
 import { AWAITABLE, DURATION, TestObservable, THRESHOLD, after } from "../src/utils";
 
@@ -184,9 +184,12 @@ Array [
 });
 
 describe('after', () => {
+  it('is an Observable', () => {
+    expect(after(1, 1)).toBeInstanceOf(Observable);
+  })
   it('is awaitable', async () => {
-   const result = await after(1, '1.1');
-   expect(result).toEqual('1.1') 
+    const result = await after(1, '1.1');
+    expect(result).toEqual('1.1')
   });
 
   describe('delay arg', () => {
@@ -197,14 +200,14 @@ describe('after', () => {
         expect(result).toEqual(3)
       });
     });
+    describe('when a Promise', () => {
+      it.todo('TODO resolves with new value')
+    })
   });
-  
+
   describe('value arg', () => {
     describe('when value', () => {
       it.todo('is produced after the delay');
-    });
-    describe('when function', () => {
-      it.todo('is produced');
     });
     describe('when function', () => {
       it.todo('is produced');

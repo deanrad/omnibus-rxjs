@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Omnibus } from '../src/bus';
 import { Action } from 'typescript-fsa';
 import { asapScheduler as promiseScheduler, of, timer } from 'rxjs';
@@ -78,7 +79,7 @@ describe('Bus', () => {
       })
     );
 
-    it.only(
+    it(
       'Is not vulnerable to listener errors',
       capture(miniBus, (events) => {
         const sub = miniBus.listen(() => true, (i) => { throw new Error(`${i}`) })
