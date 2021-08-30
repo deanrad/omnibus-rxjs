@@ -5,6 +5,7 @@ import {
   throwError, timer
 } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
+import invariant from 'tiny-invariant';
 
 // See https://dev.to/deanius/the-thresholds-of-perception-in-ux-435g
 export const THRESHOLD = {
@@ -67,6 +68,8 @@ type ExecKey = keyof [typeof EXECUTION]
 
 /** Factory for Observable executions using mnemonics */
 export const TestObservable = (code: string) => {
+  
+  invariant(code.endsWith('C') || code.endsWith('E'), 'Must end in C or E.')
   const parts = code.split('')
   let all = EMPTY as Observable<unknown>;
   for (let part of parts) {

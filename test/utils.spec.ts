@@ -112,7 +112,7 @@ Array [
 
   it('TV - a value after a timeout', async () => {
     const ticks = from(['t0'], asapScheduler);
-    const subject = merge(TestObservable('TV'), ticks);
+    const subject = merge(TestObservable('TVC'), ticks);
     let events;
     subject.pipe(materialize(), toArray()).subscribe(all => { events = all })
 
