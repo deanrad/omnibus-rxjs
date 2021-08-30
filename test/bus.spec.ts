@@ -75,7 +75,26 @@ describe('Bus', () => {
       capture(miniBus, (events) => {
         miniBus.trigger(5);
         expect(events).toEqual([5]);
-        // expect(true).toBeFalsy();
+      })
+    );
+
+    it.only(
+      'Is not vulnerable to listener errors',
+      capture(miniBus, (events) => {
+        const sub = miniBus.listen(() => true, (i) => { throw new Error(`${i}`) })
+        expect(() => {
+          miniBus.trigger(5);
+        }).not.toThrow();
+
+        // 5 makes it onto the bus regardless
+        expect(events).toEqual([5]);
+
+        // and the bus is still alive
+        miniBus.trigger(6);
+        expect(events).toEqual([5, 6]);
+
+        // but the listener is dead
+        expect(sub).toHaveProperty('closed', true)
       })
     );
   });
