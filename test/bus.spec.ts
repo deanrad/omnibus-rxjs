@@ -1,9 +1,9 @@
-import { Omnibus } from './bus';
+import { Omnibus } from '../src/bus';
 import { Action } from 'typescript-fsa';
 import { asapScheduler as promiseScheduler, of, timer } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { anyEvent } from '../test/mockPredicates';
-import { after } from './utils'
+import { anyEvent } from './mockPredicates';
+import { after } from '../src/utils'
 
 import {
   completeCreator,
