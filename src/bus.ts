@@ -51,9 +51,15 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
   private channel: Subject<TBusItem>;
   private resets: Subject<void>;
 
+  /** While unhandled listener errors terminate the listener,
+   * the cause of that error is available on channel.errors
+   */
+  public errors: Subject<string | Error>;
+
   constructor() {
     this.resets = new Subject();
     this.channel = new Subject();
+    this.errors = new Subject();
   }
 
   /**
@@ -112,11 +118,12 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
       mergeMap((event) => handler(event).pipe(tap(_observer)))
     );
 
-    const rethrower: PartialObserver<unknown> = {
-      error(e: Error) { throw new Error(e.message) }
+    const errorNotifier: PartialObserver<unknown> = {
+      error: (e: Error) => { this.errors.next(e) }
     }
-    return consequences.subscribe(rethrower);
+    return consequences.subscribe(errorNotifier);
   }
+  
   /** Takes an observer-shaped object of action creators, turns it into
    * an Observer of callbacks which trigger onto this bus. 
    */

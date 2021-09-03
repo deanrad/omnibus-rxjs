@@ -1,10 +1,10 @@
 // @ts-nocheck
 import { Omnibus } from '../src/bus';
 import { Action } from 'typescript-fsa';
-import { asapScheduler as promiseScheduler, of, timer } from 'rxjs';
+import { asapScheduler as promiseScheduler, EMPTY, of, timer } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { anyEvent } from './mockPredicates';
-import { after } from '../src/utils'
+import { after, DURATION, TestObservable } from '../src/utils'
 
 import {
   completeCreator,
@@ -81,8 +81,13 @@ describe('Bus', () => {
 
     it(
       'Is not vulnerable to listener errors',
-      capture(miniBus, (events) => {
+      capture(miniBus, async (events) => {
         const sub = miniBus.listen(() => true, (i) => { throw new Error(`${i}`) })
+
+        const seenErrors = [];
+        // this is how an app can monitor the errors
+        miniBus.errors.subscribe(e => seenErrors.push(e));
+
         expect(() => {
           miniBus.trigger(5);
         }).not.toThrow();
@@ -96,6 +101,13 @@ describe('Bus', () => {
 
         // but the listener is dead
         expect(sub).toHaveProperty('closed', true)
+
+        // and we can see the errors
+        expect(seenErrors).toMatchInlineSnapshot(`
+Array [
+  [Error: 5],
+]
+`)
       })
     );
   });
@@ -289,3 +301,57 @@ Array [
     );
   });
 });
+
+const commonObservables = [
+  ['C', 'empty'],
+  ['E', 'syncError'],
+  ['tVC', 'resolvedPromise'],
+  ['tE', 'rejectedPromise'],
+  ['TVC', 'endpointValue'],
+  ['TTE', 'timeout'],
+  ['TE', 'endpointError'],
+  ['TVE', 'dyingStream'],
+  ['TTNNC', 'endpointStream'],
+  ['TNTNC', 'valueStream']
+]
+
+describe.only('Robust Error Handling', () => {
+
+  describe('Errors dont stop triggering, kill the listener, allow other listeners', () => {
+    commonObservables.forEach(([eventCodes, name]) => {
+      it(`${name} observable (${eventCodes})`, capture(miniBus, async (events) => {
+        const subject = miniBus.listen(() => true, (i) => TestObservable(eventCodes))
+        const otherListenerConsequences = []
+        miniBus.listen(() => true, i => { otherListenerConsequences.push(i); return EMPTY })
+        const seenErrors = [];
+        miniBus.errors.subscribe(e => seenErrors.push(e));
+
+        expect(() => {
+          miniBus.trigger(5);
+          // 5 makes it onto the bus regardless
+          expect(events).toEqual([5]);
+        }).not.toThrow();
+
+
+        // and the bus is still alive
+        miniBus.trigger(6);
+        expect(events).toEqual([5, 6]);
+
+        // ensure weve waited a while
+        await DURATION.Timeout()
+        await DURATION.Timeout()
+        await DURATION.Timeout()
+
+        // but the errant listener is dead
+        if (eventCodes.endsWith('E')) {
+          expect(subject).toHaveProperty('closed', true);
+          // and we can see the errors
+          expect(seenErrors[0]).toHaveProperty('message', 'planned error')
+        }
+
+        // and the other listener didn't stop
+        expect(otherListenerConsequences).toEqual([5, 6])
+      }))
+    })
+  })
+})
