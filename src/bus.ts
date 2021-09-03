@@ -1,4 +1,4 @@
-import { Observable, Observer, PartialObserver, Subject, Subscription } from 'rxjs';
+import { from, Observable, Observer, PartialObserver, Subject, Subscription } from 'rxjs';
 import { filter, mergeMap, takeUntil, tap } from 'rxjs/operators';
 import { Thunk } from './utils';
 export type Predicate<T> = (item: T) => boolean;
@@ -115,7 +115,7 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     // @ts-ignore dynamic
     const consequences = this.query(matcher).pipe(
       // @ts-ignore dynamic
-      mergeMap((event) => handler(event).pipe(tap(_observer)))
+      mergeMap((event) => from(handler(event)).pipe(tap(_observer)))
     );
 
     const errorNotifier: PartialObserver<unknown> = {
@@ -123,7 +123,7 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     }
     return consequences.subscribe(errorNotifier);
   }
-  
+
   /** Takes an observer-shaped object of action creators, turns it into
    * an Observer of callbacks which trigger onto this bus. 
    */

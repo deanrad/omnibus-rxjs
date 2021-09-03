@@ -34,12 +34,14 @@ function capture<T>(
 }
 
 const FSABus = new Omnibus<Action<any>>();
+const StringBus = new Omnibus<string>();
 const miniBus = new Omnibus<number>();
 
 describe('Bus', () => {
   beforeEach(() => {
     FSABus.reset();
     miniBus.reset();
+    StringBus.reset();
   });
 
   it('can be instantiated with the BusItemType it will accept', () => {
@@ -67,7 +69,12 @@ describe('Bus', () => {
       miniBus.trigger(2.71828);
       expect(events).toEqual([2.71828]);
     });
-    it.todo('is canceled by a reset');
+    it('is canceled by a reset', () => {
+      const sub = miniBus.query(() => true).subscribe()
+      expect(sub).toHaveProperty('closed', false)
+      miniBus.reset()
+      expect(sub).toHaveProperty('closed', true)
+    });
   });
 
   describe('#trigger', () => {
@@ -252,6 +259,81 @@ Array [
           );
         });
       });
+      describe('Returning Promises', () => {
+        describe('With a callback-based observer', () => {
+          it(
+            'can trigger new events',
+            capture(StringBus, async (events) => {
+              StringBus.listen(
+                (a) => a === 'bang',
+                (a) => Promise.resolve('fooP'),
+                {
+                  next(result) {
+                    StringBus.trigger(result);
+                  },
+                }
+              );
+              StringBus.trigger('bang');
+              await DURATION.Timeout()
+              expect(events).toHaveLength(2)
+              expect(events).toMatchInlineSnapshot(`
+Array [
+  "bang",
+  "fooP",
+]
+`);
+            })
+          );
+        });
+
+      })
+      describe('Can return any ObservableInput', () => {
+        it('Unpacks strings since theyre Iterable', capture(StringBus, (events) => {
+          StringBus.listen(
+            (a) => a === 'bang',
+            (a) => 'whoa',
+            {
+              next(result) {
+                StringBus.trigger(result);
+              },
+            }
+          );
+          StringBus.trigger('bang');
+          expect(events).toHaveLength(5)
+          expect(events).toMatchInlineSnapshot(`
+Array [
+  "bang",
+  "w",
+  "h",
+  "o",
+  "a",
+]
+`);
+
+        }));
+        it('Works with generators', capture(StringBus, async (events) => {
+          StringBus.listen(
+            (a) => a === 'bang',
+            (a) => {
+              const gen = function* () {
+                yield 'one'
+                yield 'two'
+              }
+              // gotta return the iterator
+              return gen()
+            },
+            {
+              next(result) {
+                StringBus.trigger(result);
+              },
+            }
+          );
+          await DURATION.Promise()
+          StringBus.trigger('bang');
+          expect(events).toHaveLength(3)
+          expect(events).toEqual(["bang", "one", "two"])
+        }))
+      })
     });
   });
 
@@ -315,7 +397,7 @@ const commonObservables = [
   ['TNTNC', 'valueStream']
 ]
 
-describe.only('Robust Error Handling', () => {
+describe('Robust Error Handling', () => {
 
   describe('Errors dont stop triggering, kill the listener, allow other listeners', () => {
     commonObservables.forEach(([eventCodes, name]) => {
