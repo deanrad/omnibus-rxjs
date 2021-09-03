@@ -1,11 +1,6 @@
 // @ts-nocheck
-import {
-  asapScheduler,
-  asyncScheduler, concat, empty, EMPTY, Observable, of,
-  throwError, timer
-} from 'rxjs';
+import { Observable, of, timer } from 'rxjs';
 import { delay, map } from 'rxjs/operators';
-import invariant from 'tiny-invariant';
 
 // See https://dev.to/deanius/the-thresholds-of-perception-in-ux-435g
 export const THRESHOLD = {
@@ -27,16 +22,17 @@ export const THRESHOLD = {
   Thought: 1000,
   PageLoadMax: 2000,
   DeepBreath: 4000,
-  Sentence: 5000
-}
+  Sentence: 5000,
+};
 
 /** Observables consuming durations of time including sync,tick,promise,timeout */
 export const DURATION = {
   // @ts-ignore
   Sync: (v?: unknown) => v,
   Promise: (v?: unknown) => Promise.resolve(v),
-  Timeout: (v?: unknown) => new Promise(resolve => setTimeout(() => resolve(v), 0)),
-}
+  Timeout: (v?: unknown) =>
+    new Promise((resolve) => setTimeout(() => resolve(v), 0)),
+};
 
 /** AWAITABLE.Blink */
 export const AWAITABLE = {
@@ -45,44 +41,11 @@ export const AWAITABLE = {
     // @ts-ignore
     all[name] = () => AWAITABLE.Duration(THRESHOLD[name], 'name');
     return all;
-  }, {} as { [key: string]: () => Observable<unknown> })
-
-}
-
-/** Concatenable Observables corresponding to DURATION.
- * Keyed off:
- *   V - a value (synchronous unless preceeded by t/T)
- *   E - an error
- *   t - a microtask tick (Promise resolution)
- *   T - a macrotask tick (setTimeout(fn,0))
- *   C - a completion
- */
-export const EXECUTION = {
-  V: () => of('V'),
-  C: () => EMPTY,
-  E: () => throwError(() => new Error('planned error')),
-  t: () => empty(asapScheduler),
-  T: () => empty(asyncScheduler)
-}
-type ExecKey = keyof [typeof EXECUTION]
-
-/** Factory for Observable executions using mnemonics */
-export const TestObservable = (code: string) => {
-  
-  invariant(code.endsWith('C') || code.endsWith('E'), 'Must end in C or E.')
-  const parts = code.split('')
-  let all = EMPTY as Observable<unknown>;
-  for (let part of parts) {
-    all = concat(all, EXECUTION[part]())
-    if (['C', 'E'].includes(part)) {
-      return all;
-    }
-  }
-  return all;
-}
+  }, {} as { [key: string]: () => Observable<unknown> }),
+};
 
 // #region After
-interface AwaitableObservable<T> extends PromiseLike<T>, Observable<T> { }
+interface AwaitableObservable<T> extends PromiseLike<T>, Observable<T> {}
 
 export interface Thunk<T> {
   (): T;
@@ -107,8 +70,7 @@ export function after<T>(
   ms: number,
   objOrFn?: T | Thunk<T> | Observable<T>
 ): AwaitableObservable<T> {
-  const delay = ms <= 0
-    ? of(0) : timer(ms);
+  const delay = ms <= 0 ? of(0) : timer(ms);
 
   const resultMapper =
     typeof objOrFn === 'function'
