@@ -65,11 +65,5 @@ describe('Reference: RxJS', () => {
       await new Promise(resolve => setTimeout(resolve, 0))
       expect(result).toEqual(2)
     });
-
-    it.skip('subscription error must be rethrown to appear as exception', () => {
-      const subject = throwError(() => new Error('test error: planned'));
-      expect(() => { subject.subscribe({ error(e) { throw e; } }); console.log('error was async') }).toThrow();
-    })
-
   });
 });
