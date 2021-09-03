@@ -1,18 +1,27 @@
 // @ts-nocheck
-import { Omnibus } from '../src/bus';
-import { Action } from 'typescript-fsa';
-import { asapScheduler as promiseScheduler, EMPTY, of, timer } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { anyEvent } from './mockPredicates';
-import { after, DURATION, TestObservable } from '../src/utils'
-
 import {
+  asapScheduler as promiseScheduler,
+  asyncScheduler as timeoutScheduler,
+  concat,
+  empty,
+  EMPTY,
+  of,
+  throwError,
+  timer,
+} from 'rxjs';
+import { tap } from 'rxjs/operators';
+import invariant from 'tiny-invariant';
+import { Action } from 'typescript-fsa';
+import {
+  cancelCreator,
   completeCreator,
   loadingCreator,
   resultCreator,
-  cancelCreator,
   searchRequestCreator,
 } from '../example/debounced-search/searchService';
+import { Omnibus } from '../src/bus';
+import { after, DURATION } from '../src/utils';
+import { anyEvent } from './mockPredicates';
 
 function capture<T>(
   bus: Omnibus<T>,
@@ -33,6 +42,35 @@ function capture<T>(
   };
 }
 
+/** Concatenable Observables corresponding to DURATION.
+ * Keyed off:
+ *   V - a value (synchronous unless preceeded by t/T)
+ *   E - an error
+ *   t - a microtask tick (Promise resolution)
+ *   T - a macrotask tick (setTimeout(fn,0))
+ *   C - a completion
+ */
+export const EXECUTION = {
+  V: () => of('V'),
+  C: () => EMPTY,
+  E: () => throwError(() => new Error('planned error')),
+  t: () => empty(promiseScheduler),
+  T: () => empty(timeoutScheduler),
+};
+
+/** Factory for Observable executions using mnemonics */
+export const TestObservable = (code: string) => {
+  invariant(code.endsWith('C') || code.endsWith('E'), 'Must end in C or E.');
+  const parts = code.split('');
+  let all = EMPTY as Observable<unknown>;
+  for (let part of parts) {
+    all = concat(all, EXECUTION[part]());
+    if (['C', 'E'].includes(part)) {
+      return all;
+    }
+  }
+  return all;
+};
 const FSABus = new Omnibus<Action<any>>();
 const StringBus = new Omnibus<string>();
 const miniBus = new Omnibus<number>();
@@ -70,10 +108,10 @@ describe('Bus', () => {
       expect(events).toEqual([2.71828]);
     });
     it('is canceled by a reset', () => {
-      const sub = miniBus.query(() => true).subscribe()
-      expect(sub).toHaveProperty('closed', false)
-      miniBus.reset()
-      expect(sub).toHaveProperty('closed', true)
+      const sub = miniBus.query(() => true).subscribe();
+      expect(sub).toHaveProperty('closed', false);
+      miniBus.reset();
+      expect(sub).toHaveProperty('closed', true);
     });
   });
 
@@ -89,11 +127,16 @@ describe('Bus', () => {
     it(
       'Is not vulnerable to listener errors',
       capture(miniBus, async (events) => {
-        const sub = miniBus.listen(() => true, (i) => { throw new Error(`${i}`) })
+        const sub = miniBus.listen(
+          () => true,
+          (i) => {
+            throw new Error(`${i}`);
+          }
+        );
 
         const seenErrors = [];
         // this is how an app can monitor the errors
-        miniBus.errors.subscribe(e => seenErrors.push(e));
+        miniBus.errors.subscribe((e) => seenErrors.push(e));
 
         expect(() => {
           miniBus.trigger(5);
@@ -107,14 +150,14 @@ describe('Bus', () => {
         expect(events).toEqual([5, 6]);
 
         // but the listener is dead
-        expect(sub).toHaveProperty('closed', true)
+        expect(sub).toHaveProperty('closed', true);
 
         // and we can see the errors
         expect(seenErrors).toMatchInlineSnapshot(`
 Array [
   [Error: 5],
 ]
-`)
+`);
       })
     );
   });
@@ -229,7 +272,7 @@ Array [
                 null,
                 {
                   subscribe: loadingCreator,
-                  unsubscribe: cancelCreator
+                  unsubscribe: cancelCreator,
                 }
               );
               FSABus.trigger(searchRequestCreator({ query: 'app', id: 3.14 }));
@@ -274,8 +317,8 @@ Array [
                 }
               );
               StringBus.trigger('bang');
-              await DURATION.Timeout()
-              expect(events).toHaveLength(2)
+              await DURATION.Timeout();
+              expect(events).toHaveLength(2);
               expect(events).toMatchInlineSnapshot(`
 Array [
   "bang",
@@ -285,22 +328,23 @@ Array [
             })
           );
         });
-
-      })
+      });
       describe('Can return any ObservableInput', () => {
-        it('Unpacks strings since theyre Iterable', capture(StringBus, (events) => {
-          StringBus.listen(
-            (a) => a === 'bang',
-            (a) => 'whoa',
-            {
-              next(result) {
-                StringBus.trigger(result);
-              },
-            }
-          );
-          StringBus.trigger('bang');
-          expect(events).toHaveLength(5)
-          expect(events).toMatchInlineSnapshot(`
+        it(
+          'Unpacks strings since theyre Iterable',
+          capture(StringBus, (events) => {
+            StringBus.listen(
+              (a) => a === 'bang',
+              (a) => 'whoa',
+              {
+                next(result) {
+                  StringBus.trigger(result);
+                },
+              }
+            );
+            StringBus.trigger('bang');
+            expect(events).toHaveLength(5);
+            expect(events).toMatchInlineSnapshot(`
 Array [
   "bang",
   "w",
@@ -309,31 +353,34 @@ Array [
   "a",
 ]
 `);
-
-        }));
-        it('Works with generators', capture(StringBus, async (events) => {
-          StringBus.listen(
-            (a) => a === 'bang',
-            (a) => {
-              const gen = function* () {
-                yield 'one'
-                yield 'two'
-              }
-              // gotta return the iterator
-              return gen()
-            },
-            {
-              next(result) {
-                StringBus.trigger(result);
+          })
+        );
+        it(
+          'Works with generators',
+          capture(StringBus, async (events) => {
+            StringBus.listen(
+              (a) => a === 'bang',
+              (a) => {
+                const gen = function* () {
+                  yield 'one';
+                  yield 'two';
+                };
+                // gotta return the iterator
+                return gen();
               },
-            }
-          );
-          await DURATION.Promise()
-          StringBus.trigger('bang');
-          expect(events).toHaveLength(3)
-          expect(events).toEqual(["bang", "one", "two"])
-        }))
-      })
+              {
+                next(result) {
+                  StringBus.trigger(result);
+                },
+              }
+            );
+            await DURATION.Promise();
+            StringBus.trigger('bang');
+            expect(events).toHaveLength(3);
+            expect(events).toEqual(['bang', 'one', 'two']);
+          })
+        );
+      });
     });
   });
 
@@ -394,46 +441,56 @@ const commonObservables = [
   ['TE', 'endpointError'],
   ['TVE', 'dyingStream'],
   ['TTNNC', 'endpointStream'],
-  ['TNTNC', 'valueStream']
-]
+  ['TNTNC', 'valueStream'],
+];
 
 describe('Robust Error Handling', () => {
-
   describe('Errors dont stop triggering, kill the listener, allow other listeners', () => {
     commonObservables.forEach(([eventCodes, name]) => {
-      it(`${name} observable (${eventCodes})`, capture(miniBus, async (events) => {
-        const subject = miniBus.listen(() => true, (i) => TestObservable(eventCodes))
-        const otherListenerConsequences = []
-        miniBus.listen(() => true, i => { otherListenerConsequences.push(i); return EMPTY })
-        const seenErrors = [];
-        miniBus.errors.subscribe(e => seenErrors.push(e));
+      it(
+        `${name} observable (${eventCodes})`,
+        capture(miniBus, async (events) => {
+          const subject = miniBus.listen(
+            () => true,
+            (i) => TestObservable(eventCodes)
+          );
+          const otherListenerConsequences = [];
+          miniBus.listen(
+            () => true,
+            (i) => {
+              otherListenerConsequences.push(i);
+              return EMPTY;
+            }
+          );
+          const seenErrors = [];
+          miniBus.errors.subscribe((e) => seenErrors.push(e));
 
-        expect(() => {
-          miniBus.trigger(5);
-          // 5 makes it onto the bus regardless
-          expect(events).toEqual([5]);
-        }).not.toThrow();
+          expect(() => {
+            miniBus.trigger(5);
+            // 5 makes it onto the bus regardless
+            expect(events).toEqual([5]);
+          }).not.toThrow();
 
+          // and the bus is still alive
+          miniBus.trigger(6);
+          expect(events).toEqual([5, 6]);
 
-        // and the bus is still alive
-        miniBus.trigger(6);
-        expect(events).toEqual([5, 6]);
+          // ensure weve waited a while
+          await DURATION.Timeout();
+          await DURATION.Timeout();
+          await DURATION.Timeout();
 
-        // ensure weve waited a while
-        await DURATION.Timeout()
-        await DURATION.Timeout()
-        await DURATION.Timeout()
+          // but the errant listener is dead
+          if (eventCodes.endsWith('E')) {
+            expect(subject).toHaveProperty('closed', true);
+            // and we can see the errors
+            expect(seenErrors[0]).toHaveProperty('message', 'planned error');
+          }
 
-        // but the errant listener is dead
-        if (eventCodes.endsWith('E')) {
-          expect(subject).toHaveProperty('closed', true);
-          // and we can see the errors
-          expect(seenErrors[0]).toHaveProperty('message', 'planned error')
-        }
-
-        // and the other listener didn't stop
-        expect(otherListenerConsequences).toEqual([5, 6])
-      }))
-    })
-  })
-})
+          // and the other listener didn't stop
+          expect(otherListenerConsequences).toEqual([5, 6]);
+        })
+      );
+    });
+  });
+});
