@@ -119,10 +119,11 @@
 								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-has-type-parameter"><a href="Omnibus.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-private tsd-is-private-protected">
+						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="Omnibus.html#channel" class="tsd-kind-icon">channel</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="Omnibus.html#errors" class="tsd-kind-icon">errors</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><a href="Omnibus.html#resets" class="tsd-kind-icon">resets</a></li>
 							</ul>
 						</section>
@@ -131,6 +132,9 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="Omnibus.html#getObserverFromActionMap" class="tsd-kind-icon">get<wbr>Observer<wbr>From<wbr>Action<wbr>Map</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="Omnibus.html#listen" class="tsd-kind-icon">listen</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="Omnibus.html#listenBlocking" class="tsd-kind-icon">listen<wbr>Blocking</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="Omnibus.html#listenQueueing" class="tsd-kind-icon">listen<wbr>Queueing</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="Omnibus.html#listenSwitching" class="tsd-kind-icon">listen<wbr>Switching</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="Omnibus.html#query" class="tsd-kind-icon">query</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="Omnibus.html#reset" class="tsd-kind-icon">reset</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="Omnibus.html#trigger" class="tsd-kind-icon">trigger</a></li>
@@ -152,7 +156,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/439246e/src/bus.ts#L54">bus.ts:54</a></li>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/bc6c4ac/src/bus.ts#L75">src/bus.ts:75</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -166,7 +170,7 @@
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-private tsd-is-private-protected">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="channel" class="tsd-anchor"></a>
@@ -174,9 +178,25 @@
 					<div class="tsd-signature tsd-kind-icon">channel<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TBusItem</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/439246e/src/bus.ts#L51">bus.ts:51</a></li>
+							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/bc6c4ac/src/bus.ts#L67">src/bus.ts:67</a></li>
 						</ul>
 					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="errors" class="tsd-anchor"></a>
+					<h3>errors</h3>
+					<div class="tsd-signature tsd-kind-icon">errors<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/bc6c4ac/src/bus.ts#L73">src/bus.ts:73</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>While unhandled listener errors terminate the listener,
+							the cause of that error is available on channel.errors</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-private">
 					<a name="resets" class="tsd-anchor"></a>
@@ -184,7 +204,7 @@
 					<div class="tsd-signature tsd-kind-icon">resets<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Subject</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/439246e/src/bus.ts#L52">bus.ts:52</a></li>
+							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/bc6c4ac/src/bus.ts#L68">src/bus.ts:68</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -201,7 +221,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/439246e/src/bus.ts#L120">bus.ts:120</a></li>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/bc6c4ac/src/bus.ts#L180">src/bus.ts:180</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -233,14 +253,14 @@
 					<a name="listen" class="tsd-anchor"></a>
 					<h3>listen</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">listen&lt;SubType, TConsequence&gt;<span class="tsd-signature-symbol">(</span>matcher<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Predicate</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SubType</span><span class="tsd-signature-symbol">&gt;</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ResultCreator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SubType</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span>, observer<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">TapObserver</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span>, observerTypes<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">TriggeredItemMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TBusItem</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Subscription</span></li>
+						<li class="tsd-signature tsd-kind-icon">listen&lt;SubType, TConsequence&gt;<span class="tsd-signature-symbol">(</span>matcher<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Predicate</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SubType</span><span class="tsd-signature-symbol">&gt;</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ResultCreator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SubType</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span>, observer<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">TapObserver</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span>, observerTypes<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">TriggeredItemMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TBusItem</span><span class="tsd-signature-symbol">&gt;</span>, operator<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{ </span>&lt;T, O&gt;<span class="tsd-signature-symbol">(</span>project<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">O</span>, concurrent<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">OperatorFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">ObservedValueOf</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">O</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>&lt;T, O&gt;<span class="tsd-signature-symbol">(</span>project<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">O</span>, resultSelector<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span>, concurrent<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">OperatorFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">ObservedValueOf</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">O</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>&lt;T, R, O&gt;<span class="tsd-signature-symbol">(</span>project<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">O</span>, resultSelector<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>outerValue<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, innerValue<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ObservedValueOf</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">O</span><span class="tsd-signature-symbol">&gt;</span>, outerIndex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, innerIndex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">R</span>, concurrent<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">OperatorFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Subscription</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Implementation of EventBus.listen</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/439246e/src/bus.ts#L95">bus.ts:95</a></li>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/bc6c4ac/src/bus.ts#L117">src/bus.ts:117</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -272,9 +292,337 @@
 								<li>
 									<h5><span class="tsd-flag ts-flagOptional">Optional</span> observerTypes: <span class="tsd-signature-type">TriggeredItemMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TBusItem</span><span class="tsd-signature-symbol">&gt;</span></h5>
 								</li>
+								<li>
+									<h5>operator: <span class="tsd-signature-symbol">{ </span>&lt;T, O&gt;<span class="tsd-signature-symbol">(</span>project<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">O</span>, concurrent<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">OperatorFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">ObservedValueOf</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">O</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>&lt;T, O&gt;<span class="tsd-signature-symbol">(</span>project<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">O</span>, resultSelector<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span>, concurrent<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">OperatorFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">ObservedValueOf</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">O</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>&lt;T, R, O&gt;<span class="tsd-signature-symbol">(</span>project<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">O</span>, resultSelector<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>outerValue<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, innerValue<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ObservedValueOf</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">O</span><span class="tsd-signature-symbol">&gt;</span>, outerIndex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, innerIndex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">R</span>, concurrent<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">OperatorFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = ...</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal tsd-has-type-parameter">
+												<li class="tsd-signature tsd-kind-icon">&lt;T, O&gt;<span class="tsd-signature-symbol">(</span>project<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">O</span>, concurrent<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">OperatorFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">ObservedValueOf</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">O</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+												<li class="tsd-signature tsd-kind-icon">&lt;T, O&gt;<span class="tsd-signature-symbol">(</span>project<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">O</span>, resultSelector<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">undefined</span>, concurrent<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">OperatorFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">ObservedValueOf</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">O</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></li>
+												<li class="tsd-signature tsd-kind-icon">&lt;T, R, O&gt;<span class="tsd-signature-symbol">(</span>project<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">O</span>, resultSelector<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>outerValue<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, innerValue<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ObservedValueOf</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">O</span><span class="tsd-signature-symbol">&gt;</span>, outerIndex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, innerIndex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">R</span>, concurrent<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">OperatorFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol">&gt;</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-type-parameters-title">Type parameters</h4>
+													<ul class="tsd-type-parameters">
+														<li>
+															<h4>T</h4>
+														</li>
+														<li>
+															<h4>O<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ObservableInput</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+														</li>
+													</ul>
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>project: <span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">O</span></h5>
+															<ul class="tsd-parameters">
+																<li class="tsd-parameter-signature">
+																	<ul class="tsd-signatures tsd-kind-type-literal">
+																		<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">O</span></li>
+																	</ul>
+																	<ul class="tsd-descriptions">
+																		<li class="tsd-description">
+																			<h4 class="tsd-parameters-title">Parameters</h4>
+																			<ul class="tsd-parameters">
+																				<li>
+																					<h5>value: <span class="tsd-signature-type">T</span></h5>
+																				</li>
+																				<li>
+																					<h5>index: <span class="tsd-signature-type">number</span></h5>
+																				</li>
+																			</ul>
+																			<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">O</span></h4>
+																		</li>
+																	</ul>
+																</li>
+															</ul>
+														</li>
+														<li>
+															<h5><span class="tsd-flag ts-flagOptional">Optional</span> concurrent: <span class="tsd-signature-type">number</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">OperatorFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">ObservedValueOf</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">O</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+												</li>
+												<li class="tsd-description">
+													<div class="tsd-comment tsd-typography">
+														<dl class="tsd-comment-tags">
+															<dt>deprecated</dt>
+															<dd><p>The <code>resultSelector</code> parameter will be removed in v8. Use an inner <code>map</code> instead. Details: <a href="https://rxjs.dev/deprecations/resultSelector">https://rxjs.dev/deprecations/resultSelector</a></p>
+															</dd>
+														</dl>
+													</div>
+													<h4 class="tsd-type-parameters-title">Type parameters</h4>
+													<ul class="tsd-type-parameters">
+														<li>
+															<h4>T</h4>
+														</li>
+														<li>
+															<h4>O<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ObservableInput</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+														</li>
+													</ul>
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>project: <span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">O</span></h5>
+															<ul class="tsd-parameters">
+																<li class="tsd-parameter-signature">
+																	<ul class="tsd-signatures tsd-kind-type-literal">
+																		<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">O</span></li>
+																	</ul>
+																	<ul class="tsd-descriptions">
+																		<li class="tsd-description">
+																			<h4 class="tsd-parameters-title">Parameters</h4>
+																			<ul class="tsd-parameters">
+																				<li>
+																					<h5>value: <span class="tsd-signature-type">T</span></h5>
+																				</li>
+																				<li>
+																					<h5>index: <span class="tsd-signature-type">number</span></h5>
+																				</li>
+																			</ul>
+																			<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">O</span></h4>
+																		</li>
+																	</ul>
+																</li>
+															</ul>
+														</li>
+														<li>
+															<h5>resultSelector: <span class="tsd-signature-type">undefined</span></h5>
+														</li>
+														<li>
+															<h5><span class="tsd-flag ts-flagOptional">Optional</span> concurrent: <span class="tsd-signature-type">number</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">OperatorFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">ObservedValueOf</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">O</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h4>
+												</li>
+												<li class="tsd-description">
+													<div class="tsd-comment tsd-typography">
+														<dl class="tsd-comment-tags">
+															<dt>deprecated</dt>
+															<dd><p>The <code>resultSelector</code> parameter will be removed in v8. Use an inner <code>map</code> instead. Details: <a href="https://rxjs.dev/deprecations/resultSelector">https://rxjs.dev/deprecations/resultSelector</a></p>
+															</dd>
+														</dl>
+													</div>
+													<h4 class="tsd-type-parameters-title">Type parameters</h4>
+													<ul class="tsd-type-parameters">
+														<li>
+															<h4>T</h4>
+														</li>
+														<li>
+															<h4>R</h4>
+														</li>
+														<li>
+															<h4>O<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ObservableInput</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h4>
+														</li>
+													</ul>
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>project: <span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">O</span></h5>
+															<ul class="tsd-parameters">
+																<li class="tsd-parameter-signature">
+																	<ul class="tsd-signatures tsd-kind-type-literal">
+																		<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, index<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">O</span></li>
+																	</ul>
+																	<ul class="tsd-descriptions">
+																		<li class="tsd-description">
+																			<h4 class="tsd-parameters-title">Parameters</h4>
+																			<ul class="tsd-parameters">
+																				<li>
+																					<h5>value: <span class="tsd-signature-type">T</span></h5>
+																				</li>
+																				<li>
+																					<h5>index: <span class="tsd-signature-type">number</span></h5>
+																				</li>
+																			</ul>
+																			<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">O</span></h4>
+																		</li>
+																	</ul>
+																</li>
+															</ul>
+														</li>
+														<li>
+															<h5>resultSelector: <span class="tsd-signature-symbol">(</span>outerValue<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, innerValue<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ObservedValueOf</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">O</span><span class="tsd-signature-symbol">&gt;</span>, outerIndex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, innerIndex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">R</span></h5>
+															<ul class="tsd-parameters">
+																<li class="tsd-parameter-signature">
+																	<ul class="tsd-signatures tsd-kind-type-literal">
+																		<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>outerValue<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, innerValue<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ObservedValueOf</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">O</span><span class="tsd-signature-symbol">&gt;</span>, outerIndex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, innerIndex<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">R</span></li>
+																	</ul>
+																	<ul class="tsd-descriptions">
+																		<li class="tsd-description">
+																			<h4 class="tsd-parameters-title">Parameters</h4>
+																			<ul class="tsd-parameters">
+																				<li>
+																					<h5>outerValue: <span class="tsd-signature-type">T</span></h5>
+																				</li>
+																				<li>
+																					<h5>innerValue: <span class="tsd-signature-type">ObservedValueOf</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">O</span><span class="tsd-signature-symbol">&gt;</span></h5>
+																				</li>
+																				<li>
+																					<h5>outerIndex: <span class="tsd-signature-type">number</span></h5>
+																				</li>
+																				<li>
+																					<h5>innerIndex: <span class="tsd-signature-type">number</span></h5>
+																				</li>
+																			</ul>
+																			<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">R</span></h4>
+																		</li>
+																	</ul>
+																</li>
+															</ul>
+														</li>
+														<li>
+															<h5><span class="tsd-flag ts-flagOptional">Optional</span> concurrent: <span class="tsd-signature-type">number</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">OperatorFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">R</span><span class="tsd-signature-symbol">&gt;</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Subscription</span></h4>
 							<p>a subscription that can be used to unsubscribe the listener, thereby canceling work in progress.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+					<a name="listenBlocking" class="tsd-anchor"></a>
+					<h3>listen<wbr>Blocking</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">listen<wbr>Blocking&lt;SubType, TConsequence&gt;<span class="tsd-signature-symbol">(</span>matcher<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Predicate</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SubType</span><span class="tsd-signature-symbol">&gt;</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ResultCreator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SubType</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span>, observer<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">TapObserver</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span>, observerTypes<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">TriggeredItemMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TBusItem</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Subscription</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/bc6c4ac/src/bus.ts#L168">src/bus.ts:168</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Calls listen with blocking (exhausting) semantics</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>SubType</h4>
+								</li>
+								<li>
+									<h4>TConsequence</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>matcher: <span class="tsd-signature-type">Predicate</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SubType</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>handler: <span class="tsd-signature-type">ResultCreator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SubType</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> observer: <span class="tsd-signature-type">TapObserver</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> observerTypes: <span class="tsd-signature-type">TriggeredItemMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TBusItem</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Subscription</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+					<a name="listenQueueing" class="tsd-anchor"></a>
+					<h3>listen<wbr>Queueing</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">listen<wbr>Queueing&lt;SubType, TConsequence&gt;<span class="tsd-signature-symbol">(</span>matcher<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Predicate</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SubType</span><span class="tsd-signature-symbol">&gt;</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ResultCreator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SubType</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span>, observer<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">TapObserver</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span>, observerTypes<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">TriggeredItemMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TBusItem</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Subscription</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/bc6c4ac/src/bus.ts#L148">src/bus.ts:148</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Calls listen with concatMap (queueing) semantics</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>SubType</h4>
+								</li>
+								<li>
+									<h4>TConsequence</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>matcher: <span class="tsd-signature-type">Predicate</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SubType</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>handler: <span class="tsd-signature-type">ResultCreator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SubType</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> observer: <span class="tsd-signature-type">TapObserver</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> observerTypes: <span class="tsd-signature-type">TriggeredItemMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TBusItem</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Subscription</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+					<a name="listenSwitching" class="tsd-anchor"></a>
+					<h3>listen<wbr>Switching</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">listen<wbr>Switching&lt;SubType, TConsequence&gt;<span class="tsd-signature-symbol">(</span>matcher<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Predicate</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SubType</span><span class="tsd-signature-symbol">&gt;</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ResultCreator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SubType</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span>, observer<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">TapObserver</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span>, observerTypes<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">TriggeredItemMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TBusItem</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Subscription</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/bc6c4ac/src/bus.ts#L158">src/bus.ts:158</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Calls listen with switchMap (restarting) semantics</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>SubType</h4>
+								</li>
+								<li>
+									<h4>TConsequence</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>matcher: <span class="tsd-signature-type">Predicate</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SubType</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>handler: <span class="tsd-signature-type">ResultCreator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">SubType</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> observer: <span class="tsd-signature-type">TapObserver</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> observerTypes: <span class="tsd-signature-type">TriggeredItemMap</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TBusItem</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Subscription</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -289,7 +637,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of EventBus.query</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/439246e/src/bus.ts#L64">bus.ts:64</a></li>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/bc6c4ac/src/bus.ts#L86">src/bus.ts:86</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -315,7 +663,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/439246e/src/bus.ts#L130">bus.ts:130</a></li>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/bc6c4ac/src/bus.ts#L194">src/bus.ts:194</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -333,7 +681,7 @@
 							<aside class="tsd-sources">
 								<p>Implementation of EventBus.trigger</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/439246e/src/bus.ts#L74">bus.ts:74</a></li>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/bc6c4ac/src/bus.ts#L96">src/bus.ts:96</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -359,7 +707,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/439246e/src/bus.ts#L85">bus.ts:85</a></li>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/bc6c4ac/src/bus.ts#L107">src/bus.ts:107</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -434,6 +782,9 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="Omnibus.html#channel" class="tsd-kind-icon">channel</a>
 							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="Omnibus.html#errors" class="tsd-kind-icon">errors</a>
+							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-private">
 								<a href="Omnibus.html#resets" class="tsd-kind-icon">resets</a>
 							</li>
@@ -442,6 +793,15 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
 								<a href="Omnibus.html#listen" class="tsd-kind-icon">listen</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+								<a href="Omnibus.html#listenBlocking" class="tsd-kind-icon">listen<wbr>Blocking</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+								<a href="Omnibus.html#listenQueueing" class="tsd-kind-icon">listen<wbr>Queueing</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
+								<a href="Omnibus.html#listenSwitching" class="tsd-kind-icon">listen<wbr>Switching</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="Omnibus.html#query" class="tsd-kind-icon">query</a>
@@ -469,6 +829,7 @@
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
 			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
 				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
 			</ul>
 			<ul class="tsd-legend">
