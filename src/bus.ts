@@ -1,4 +1,5 @@
 import {
+  EMPTY,
   from,
   Observable,
   Observer,
@@ -120,8 +121,6 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     observerTypes?: TriggeredItemMap<TConsequence, TBusItem>
   ) {
     // LEFTOFF 3 Concurrency ops passable in
-    // LEFTOFF 4 handler returns ObservableInput not only Observable
-    // LEFTOFF 0.9 mocks can create any observable (NTCE grammar)
     // LEFTOFF 5 filters
 
     // @ts-ignore
@@ -134,7 +133,7 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     // @ts-ignore dynamic
     const consequences = this.query(matcher).pipe(
       // @ts-ignore dynamic
-      mergeMap((event) => from(handler(event)).pipe(tap(_observer)))
+      mergeMap((event) => from(handler(event) ?? EMPTY).pipe(tap(_observer)))
     );
     const errorNotifier: PartialObserver<unknown> = {
       error: (e: Error) => {
