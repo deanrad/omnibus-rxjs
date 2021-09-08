@@ -134,7 +134,7 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     // @ts-ignore dynamic
     const consequences = this.query(matcher).pipe(
       // @ts-ignore dynamic
-      mergeMap((event) => from(handler(event) ?? EMPTY).pipe(tap(_observer)))
+      operator((event) => from(handler(event) ?? EMPTY).pipe(tap(_observer)))
     );
     const errorNotifier: PartialObserver<unknown> = {
       error: (e: Error) => {
