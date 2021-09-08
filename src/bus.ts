@@ -118,7 +118,8 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     matcher: Predicate<SubType>,
     handler: ResultCreator<SubType, TConsequence>,
     observer?: TapObserver<TConsequence>,
-    observerTypes?: TriggeredItemMap<TConsequence, TBusItem>
+    observerTypes?: TriggeredItemMap<TConsequence, TBusItem>,
+    operator = mergeMap
   ) {
     // LEFTOFF 3 Concurrency ops passable in
     // LEFTOFF 5 filters
@@ -141,6 +142,36 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
       },
     };
     return consequences.subscribe(errorNotifier);
+  }
+
+  /** Calls listen with concatMap (queueing) semantics */
+  public listenQueueing<SubType extends TBusItem, TConsequence>(
+    matcher: Predicate<SubType>,
+    handler: ResultCreator<SubType, TConsequence>,
+    observer?: TapObserver<TConsequence>,
+    observerTypes?: TriggeredItemMap<TConsequence, TBusItem>
+  ) {
+    return this.listen(matcher, handler, observer, observerTypes, concatMap);
+  }
+
+  /** Calls listen with switchMap (restarting) semantics */
+  public listenSwitching<SubType extends TBusItem, TConsequence>(
+    matcher: Predicate<SubType>,
+    handler: ResultCreator<SubType, TConsequence>,
+    observer?: TapObserver<TConsequence>,
+    observerTypes?: TriggeredItemMap<TConsequence, TBusItem>
+  ) {
+    return this.listen(matcher, handler, observer, observerTypes, switchMap);
+  }
+
+  /** Calls listen with blocking (exhausting) semantics */
+  public listenBlocking<SubType extends TBusItem, TConsequence>(
+    matcher: Predicate<SubType>,
+    handler: ResultCreator<SubType, TConsequence>,
+    observer?: TapObserver<TConsequence>,
+    observerTypes?: TriggeredItemMap<TConsequence, TBusItem>
+  ) {
+    return this.listen(matcher, handler, observer, observerTypes, exhaustMap);
   }
 
   /** Takes an observer-shaped object of action creators, turns it into
