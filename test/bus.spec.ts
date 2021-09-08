@@ -23,7 +23,7 @@ import { Omnibus } from '../src/bus';
 import { after, DURATION } from '../src/utils';
 import { anyEvent } from './mockPredicates';
 
-function capture<T>(
+function capturing<T>(
   bus: Omnibus<T>,
   testFn: (arg: T[]) => void | Promise<any>
 ) {
@@ -118,7 +118,7 @@ describe('Bus', () => {
   describe('#trigger', () => {
     it(
       'puts an action on the bus',
-      capture(miniBus, (events) => {
+      capturing(miniBus, (events) => {
         miniBus.trigger(5);
         expect(events).toEqual([5]);
       })
@@ -126,7 +126,7 @@ describe('Bus', () => {
 
     it(
       'Is not vulnerable to listener errors',
-      capture(miniBus, async (events) => {
+      capturing(miniBus, async (events) => {
         const sub = miniBus.listen(
           () => true,
           (i) => {
@@ -165,7 +165,7 @@ Array [
   describe('#triggerMap', () => {
     it(
       'puts an action on the bus through a mapping function',
-      capture(miniBus, (events) => {
+      capturing(miniBus, (events) => {
         miniBus.triggerMap(5, (n) => n * 2);
         expect(events).toEqual([10]);
       })
@@ -178,7 +178,7 @@ Array [
         describe('With a callback-based observer', () => {
           it(
             'can trigger new events',
-            capture(FSABus, (events) => {
+            capturing(FSABus, (events) => {
               FSABus.listen(
                 (a) => a.type === searchRequestCreator.type,
                 (a) => of(resultCreator({ result: 'foo' })),
@@ -228,7 +228,7 @@ Array [
         describe('With a retriggering observer', () => {
           it(
             'can trigger new events with elegant syntax :)',
-            capture(FSABus, (events) => {
+            capturing(FSABus, (events) => {
               FSABus.listen(
                 (a) => a.type === searchRequestCreator.type,
                 (a) => of({ result: 'foo' }),
@@ -265,7 +265,7 @@ Array [
           );
           it(
             'can trigger new events with elegant syntax :)',
-            capture(FSABus, (events) => {
+            capturing(FSABus, (events) => {
               const listener = FSABus.listen(
                 (a) => a.type === searchRequestCreator.type,
                 (a) => after(1, { result: 'foo' }),
@@ -306,7 +306,7 @@ Array [
         describe('With a callback-based observer', () => {
           it(
             'can trigger new events',
-            capture(StringBus, async (events) => {
+            capturing(StringBus, async (events) => {
               StringBus.listen(
                 (a) => a === 'bang',
                 (a) => Promise.resolve('fooP'),
@@ -332,7 +332,7 @@ Array [
       describe('Can return any ObservableInput', () => {
         it(
           'Unpacks strings since theyre Iterable',
-          capture(StringBus, (events) => {
+          capturing(StringBus, (events) => {
             StringBus.listen(
               (a) => a === 'bang',
               (a) => 'whoa',
@@ -357,7 +357,7 @@ Array [
         );
         it(
           'Works with generators',
-          capture(StringBus, async (events) => {
+          capturing(StringBus, async (events) => {
             StringBus.listen(
               (a) => a === 'bang',
               (a) => {
@@ -378,6 +378,23 @@ Array [
             StringBus.trigger('bang');
             expect(events).toHaveLength(3);
             expect(events).toEqual(['bang', 'one', 'two']);
+          })
+        );
+        it(
+          'allows for no/void return value',
+          capturing(StringBus, (events) => {
+            const seen = [];
+            StringBus.listen(
+              () => true,
+              function voidReturn(e) {
+                seen.push(e);
+              }
+            );
+
+            StringBus.trigger('FIZZ');
+            StringBus.trigger('BUZZ');
+            // The listener ran twice (didnt die on no return)
+            expect(seen).toEqual(['FIZZ', 'BUZZ']);
           })
         );
       });
@@ -405,7 +422,7 @@ Array [
     });
     it(
       'ends all handlers',
-      capture(miniBus, async (events) => {
+      capturing(miniBus, async (events) => {
         // @ts-ignore
         miniBus.listen(
           (n) => n === 1,
@@ -449,7 +466,7 @@ describe('Robust Error Handling', () => {
     commonObservables.forEach(([eventCodes, name]) => {
       it(
         `${name} observable (${eventCodes})`,
-        capture(miniBus, async (events) => {
+        capturing(miniBus, async (events) => {
           const subject = miniBus.listen(
             () => true,
             (i) => TestObservable(eventCodes)
