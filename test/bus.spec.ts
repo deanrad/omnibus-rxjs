@@ -87,31 +87,42 @@ describe('Bus', () => {
   });
 
   describe('#query', () => {
-    it('Returns an Observable of matching events', () => {
-      const events = [];
-      miniBus
-        .query(anyEvent)
-        .pipe(tap((e) => events.push(e)))
-        .subscribe();
-      miniBus.trigger(3.14);
-      miniBus.trigger(2.71828);
-      expect(events).toEqual([3.14, 2.71828]);
+    describe('With a Predicate', () => {
+      it('Returns an Observable of matching events', () => {
+        const events = [];
+        miniBus
+          .query(anyEvent)
+          .pipe(tap((e) => events.push(e)))
+          .subscribe();
+        miniBus.trigger(3.14);
+        miniBus.trigger(2.71828);
+        expect(events).toEqual([3.14, 2.71828]);
+      });
+      it('Returns an Observable of filtered events', () => {
+        const events = [];
+        miniBus
+          .query((n) => n < 3)
+          .pipe(tap((e) => events.push(e)))
+          .subscribe();
+        miniBus.trigger(3.14);
+        miniBus.trigger(2.71828);
+        expect(events).toEqual([2.71828]);
+      });
+      it('is canceled by a reset', () => {
+        const sub = miniBus.query(() => true).subscribe();
+        expect(sub).toHaveProperty('closed', false);
+        miniBus.reset();
+        expect(sub).toHaveProperty('closed', true);
+      });
     });
-    it('Returns an Observable of filtered events', () => {
-      const events = [];
-      miniBus
-        .query((n) => n < 3)
-        .pipe(tap((e) => events.push(e)))
-        .subscribe();
-      miniBus.trigger(3.14);
-      miniBus.trigger(2.71828);
-      expect(events).toEqual([2.71828]);
+    describe('With a raw value', () => {
+      it.todo('matches on equality of a value type');
+      it.todo('matches on subset of an object type');
     });
-    it('is canceled by a reset', () => {
-      const sub = miniBus.query(() => true).subscribe();
-      expect(sub).toHaveProperty('closed', false);
-      miniBus.reset();
-      expect(sub).toHaveProperty('closed', true);
+    describe('With an FSA matcher', () => {
+      it('works just like a predicate', () => {
+        expect.assertions(0);
+      });
     });
   });
 
