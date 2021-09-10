@@ -1,8 +1,8 @@
 import {
+  defer,
   EMPTY,
   from,
   Observable,
-  Observer,
   PartialObserver,
   Subject,
   Subscription,
@@ -16,18 +16,17 @@ import {
   takeUntil,
   tap,
 } from 'rxjs/operators';
-import { Thunk } from './utils';
 export type Predicate<T> = (item: T) => boolean;
 export type ResultCreator<T, TConsequence> = (
   item: T
-) => Observable<TConsequence>;
+) => Observable<TConsequence> | void;
 
 export type TapObserver<T> =
   | PartialObserver<T>
   | {
-      subscribe: () => void;
-      unsubscribe: () => void;
-    };
+    subscribe: () => void;
+    unsubscribe: () => void;
+  };
 
 /** A map of action creators getObserverFromActionMap  */
 export interface TriggeredItemMap<TConsequence, TBusItem> {
@@ -128,13 +127,23 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     const _observer = observer
       ? observer
       : observerTypes
-      ? this.getObserverFromActionMap(observerTypes)
-      : undefined;
+        ? this.getObserverFromActionMap(observerTypes)
+        : undefined;
 
     // @ts-ignore dynamic
     const consequences = this.query(matcher).pipe(
-      // @ts-ignore dynamic
-      operator((event) => from(handler(event) ?? EMPTY).pipe(tap(_observer)))
+      operator((event) => {
+        // @ts-ignore dynamic
+        const oneResult = handler(event)
+        const obsResult =
+          (typeof oneResult === "function")
+            // @ts-ignore
+            ? oneResult.length === 0 ? defer(oneResult) : new Observable(oneResult)
+            // @ts-ignore
+            : from(oneResult ?? EMPTY)
+
+        return obsResult.pipe(tap(_observer))
+      })
     );
     const errorNotifier: PartialObserver<unknown> = {
       error: (e: Error) => {
@@ -174,6 +183,12 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     return this.listen(matcher, handler, observer, observerTypes, exhaustMap);
   }
 
+  /** Listens to all runtime events. */
+  public spy() {
+    return this.listen(() => true, (item) => {
+      console.log(item)
+    })
+  }
   /** Takes an observer-shaped object of action creators, turns it into
    * an Observer of callbacks which trigger onto this bus.
    */
