@@ -1,22 +1,14 @@
 'use strict';
 const React = require('react');
-const {
-	Text,
-	Box,
-	useFocus,
-	useFocusManager,
-	useInput,
-	useApp,
-} = require('ink');
+const { Text, Box, useInput, useApp } = require('ink');
 const InkText = require('ink-text-input');
-const TextInput = InkText.default;
 const { Omnibus } = require('omnibus-rxjs');
 const { useEffect } = require('react');
 const UncontrolledTextInput = InkText.UncontrolledTextInput;
 const { bufferTime } = require('rxjs/operators');
-const { tap } = require('rxjs');
+
 const bus = new Omnibus();
-// bus.spy((e) => console.log(e));
+
 const contents = {};
 const deps = {};
 const values = {};
@@ -34,7 +26,8 @@ const evaluateFormula = (formula) => {
 };
 
 bus.errors.subscribe((e) => console.error(e));
-bus.spy(({ type, content }) => console.log(type, content));
+bus.spy(({ type, ...rest }) => console.log(type, rest));
+
 bus.listen(
 	({ type }) => type === 'cell/content/set',
 	({ content: [field, value] }) => {
@@ -96,6 +89,41 @@ const Cell = ({ label, isActive }) => {
 		</Box>
 	);
 };
+const Current = () => {
+	const [currentValues, setCurrentValues] = React.useState([]);
+	// update React state on each cell/value/set
+	useEffect(() => {
+		bus.listen(
+			(e) => true, // e.type === 'cell/value/set',
+			() => {
+				setCurrentValues(values);
+			}
+		);
+	}, []);
+	const vals = Object.values(currentValues);
+	const displayVals =
+		vals.length < 3 ? vals.concat(new Array(3 - vals.length)) : vals;
+	return (
+		<Box
+			width={72}
+			justifyContent="space-between"
+			borderStyle="single"
+			borderColor="white"
+		>
+			{[
+				<Text key="i" width={10}>
+					|
+				</Text>,
+				...displayVals.map((v, i) => (
+					<Text width={10} key={i}>
+						{v ?? '-'}
+					</Text>
+				)),
+			]}
+		</Box>
+	);
+};
+
 const App = () => {
 	const [active, setActive] = React.useState('A1');
 	const { exit } = useApp();
@@ -143,8 +171,20 @@ const App = () => {
 					return <Cell key={label} label={label} isActive={label === active} />;
 				})}
 			</Box>
+			<Current />
 		</>
 	);
 };
+
+function runTests() {
+	// bus.trigger({ type: 'cell/content/set', content: ['A1', 2] });
+	// const contentVals = [[[1], [1, 0, 0]]];
+	// for (let [contents, vals] of contentVals) {
+	// 	contents.forEach((content, idx) => {
+	// 		bus.trigger({ type: 'cell/content/set', content: ['A1', content] });
+	// 	});
+	// }
+}
+runTests();
 
 module.exports = App;
