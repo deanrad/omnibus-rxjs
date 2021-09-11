@@ -1,19 +1,87 @@
 'use strict';
 const React = require('react');
-const { Text, Box, useFocus, useFocusManager, useInput } = require('ink');
+const {
+	Text,
+	Box,
+	useFocus,
+	useFocusManager,
+	useInput,
+	useApp,
+} = require('ink');
 const InkText = require('ink-text-input');
 const TextInput = InkText.default;
 const { Omnibus } = require('omnibus-rxjs');
+const { useEffect } = require('react');
 const UncontrolledTextInput = InkText.UncontrolledTextInput;
-
+const { bufferTime } = require('rxjs/operators');
+const { tap } = require('rxjs');
 const bus = new Omnibus();
-bus.spy((e) => console.log(e));
+// bus.spy((e) => console.log(e));
+const contents = {};
+const deps = {};
+const values = {};
+
+const evaluateFormula = (formula) => {
+	// console.log({ formula });
+	const depCells = formula.substr(1).split('+');
+	const newValue = depCells.reduce(
+		(total, one) =>
+			total +
+			(Number.parseInt(one, 10) ? Number(one) : Number(values[one] || 0)),
+		0
+	);
+	return [newValue, depCells];
+};
+
+bus.errors.subscribe((e) => console.error(e));
+bus.spy(({ type, content }) => console.log(type, content));
 bus.listen(
-	({ type, content: [field, value] }) => type === 'cell/content/set',
-	() => {
-		console.log(field, value);
+	({ type }) => type === 'cell/content/set',
+	({ content: [field, value] }) => {
+		contents[field] = value;
+		let newValue;
+		if (value.startsWith('=')) {
+			const [val, depCells] = evaluateFormula(value);
+			newValue = val;
+			deps[field] = depCells;
+		} else {
+			newValue = Number(value);
+		}
+		values[field] = newValue;
+		bus.trigger({ type: 'cell/value/set', value: [field, newValue] });
 	}
 );
+
+bus.listen(
+	({ type }) => type === 'cell/value/set',
+	({ value }) => {
+		const [field] = value;
+		// console.log(JSON.stringify(values));
+
+		for (let [key, depArray] of Object.entries(deps)) {
+			if (depArray.includes(field)) {
+				const [newValue] = evaluateFormula(contents[key]);
+				values[key] = newValue;
+				bus.trigger({ type: 'cell/value/set', value: [key, newValue] });
+			}
+		}
+	}
+);
+
+// runaway detection if we exceed 10 in 5 msec
+const runawayDetect = (exit) => () => {
+	bus
+		.query(({ type }) => type === 'cell/value/set')
+		.pipe(bufferTime(5))
+		.subscribe((buffer) => {
+			if (buffer.length > 10) {
+				console.log('Cyclical formula detected');
+				exit();
+				process.exit(1);
+			}
+		});
+};
+
 const Cell = ({ label, isActive }) => {
 	return (
 		<Box borderStyle="single" color={isActive ? 'green' : 'white'}>
@@ -30,7 +98,8 @@ const Cell = ({ label, isActive }) => {
 };
 const App = () => {
 	const [active, setActive] = React.useState('A1');
-
+	const { exit } = useApp();
+	useEffect(runawayDetect(exit), []);
 	useInput((_, key) => {
 		if (key.rightArrow || key.return) {
 			setActive((old) => (old === 'A1' ? 'B1' : old === 'B1' ? 'C1' : 'A1'));
@@ -42,6 +111,10 @@ const App = () => {
 
 	return (
 		<>
+			<Text>Enter to Save. Arrows to move.</Text>
+			<Text>
+				Formula may contain A1,B1,C1, or number, with + (example: =A1+5)
+			</Text>
 			<Box
 				height={4}
 				width={72}
