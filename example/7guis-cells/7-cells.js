@@ -11,7 +11,7 @@ const bus = new Omnibus();
 
 const contents = {};
 const deps = {};
-const values = {};
+const values = { A1: null, B1: null, C1: null };
 
 const evaluateFormula = (formula) => {
 	// console.log({ formula });
@@ -145,15 +145,69 @@ const App = () => {
 	);
 };
 
+const expect = require('chai').expect;
+
 function runTests() {
-	// bus.trigger({ type: 'cell/content/set', payload: ['A1', 2] });
-	// const contentVals = [[[1], [1, 0, 0]]];
-	// for (let [contents, vals] of contentVals) {
-	// 	contents.forEach((content, idx) => {
-	// 		bus.trigger({ type: 'cell/content/set', payload: ['A1', content] });
-	// 	});
-	// }
+	// XXX TESTS ONLY WORK SINGLY
+	const inputsAndExpectedOutputs = Object.entries({
+		// val: {
+		// 	edits: [['A1', '1']],
+		// 	expected: [1, null, null],
+		// },
+		// 'val.float': {
+		// 	edits: [['A1', '1.1']],
+		// 	expected: [1.1, null, null],
+		// },
+		// 'ref.trans': {
+		// 	edits: [
+		// 		['A1', '=B1'],
+		// 		['B1', '=C1'],
+		// 		['C1', '1'],
+		// 	],
+		// 	expected: [1, 1, 1],
+		// },
+		// 'ref.dual': {
+		// 	edits: [
+		// 		['A1', '=B1+C1'],
+		// 		['B1', '2'],
+		// 		['C1', '3'],
+		// 	],
+		// 	expected: [5, 2, 3],
+		// },
+		// 'ref.trans.dual': {
+		// 	edits: [
+		// 		['A1', '=B1+C1'],
+		// 		['B1', '=C1+1'],
+		// 		['C1', '3'],
+		// 	],
+		// 	expected: [7, 4, 3],
+		// },
+		// NOT WORKING YET
+		// 'ref.circular': {
+		// 	edits: [
+		// 		['A1', '=B1'],
+		// 		['B1', '=A1'],
+		// 	],
+		// },
+	});
+
+	for (let [testName, { edits, expected }] of inputsAndExpectedOutputs) {
+		console.log(`Test: ${testName}`);
+		edits.forEach((payload) => {
+			bus.trigger({ type: 'cell/content/set', payload });
+		});
+		expect(Object.values(values)).to.eql(expected);
+		console.log(`Test: ${testName} passed!` + '\n----\n');
+		// reset
+		[values, contents, deps].forEach((store) =>
+			Object.keys(store).forEach((k) => {
+				values[k] = null;
+			})
+		);
+	}
 }
-runTests();
+
+// LEFTOFF - running tests that verify it's working
+// runTests();
 
 module.exports = App;
