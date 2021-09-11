@@ -26,11 +26,14 @@ const evaluateFormula = (formula) => {
 };
 
 bus.errors.subscribe((e) => console.error(e));
-bus.spy(({ type, ...rest }) => console.log(type, rest));
+bus.listen(
+	() => true,
+	({ type, payload }) => console.log(type, payload)
+);
 
 bus.listen(
 	({ type }) => type === 'cell/content/set',
-	({ content: [field, value] }) => {
+	({ payload: [field, value] }) => {
 		contents[field] = value;
 		let newValue;
 		if (value.startsWith('=')) {
@@ -41,27 +44,25 @@ bus.listen(
 			newValue = Number(value);
 		}
 		values[field] = newValue;
-		bus.trigger({ type: 'cell/value/set', value: [field, newValue] });
+		bus.trigger({ type: 'cell/value/set', payload: [field, newValue] });
 	}
 );
 
 bus.listen(
 	({ type }) => type === 'cell/value/set',
-	({ value }) => {
-		const [field] = value;
-		// console.log(JSON.stringify(values));
-
+	({ payload }) => {
+		const [field] = payload;
 		for (let [key, depArray] of Object.entries(deps)) {
 			if (depArray.includes(field)) {
 				const [newValue] = evaluateFormula(contents[key]);
 				values[key] = newValue;
-				bus.trigger({ type: 'cell/value/set', value: [key, newValue] });
+				bus.trigger({ type: 'cell/value/set', payload: [key, newValue] });
 			}
 		}
+		console.log(JSON.stringify(values));
 	}
 );
 
-// runaway detection if we exceed 10 in 5 msec
 const runawayDetect = (exit) => () => {
 	bus
 		.query(({ type }) => type === 'cell/value/set')
@@ -83,43 +84,9 @@ const Cell = ({ label, isActive }) => {
 				focus={isActive}
 				placeholder={isActive ? 'Formula' : ''}
 				onSubmit={(value) =>
-					bus.trigger({ type: 'cell/content/set', content: [label, value] })
+					bus.trigger({ type: 'cell/content/set', payload: [label, value] })
 				}
 			/>
-		</Box>
-	);
-};
-const Current = () => {
-	const [currentValues, setCurrentValues] = React.useState([]);
-	// update React state on each cell/value/set
-	useEffect(() => {
-		bus.listen(
-			(e) => true, // e.type === 'cell/value/set',
-			() => {
-				setCurrentValues(values);
-			}
-		);
-	}, []);
-	const vals = Object.values(currentValues);
-	const displayVals =
-		vals.length < 3 ? vals.concat(new Array(3 - vals.length)) : vals;
-	return (
-		<Box
-			width={72}
-			justifyContent="space-between"
-			borderStyle="single"
-			borderColor="white"
-		>
-			{[
-				<Text key="i" width={10}>
-					|
-				</Text>,
-				...displayVals.map((v, i) => (
-					<Text width={10} key={i}>
-						{v ?? '-'}
-					</Text>
-				)),
-			]}
 		</Box>
 	);
 };
@@ -127,7 +94,10 @@ const Current = () => {
 const App = () => {
 	const [active, setActive] = React.useState('A1');
 	const { exit } = useApp();
+
+	// runaway detection if we exceed 10 in 5 msec
 	useEffect(runawayDetect(exit), []);
+
 	useInput((_, key) => {
 		if (key.rightArrow || key.return) {
 			setActive((old) => (old === 'A1' ? 'B1' : old === 'B1' ? 'C1' : 'A1'));
@@ -171,17 +141,16 @@ const App = () => {
 					return <Cell key={label} label={label} isActive={label === active} />;
 				})}
 			</Box>
-			<Current />
 		</>
 	);
 };
 
 function runTests() {
-	// bus.trigger({ type: 'cell/content/set', content: ['A1', 2] });
+	// bus.trigger({ type: 'cell/content/set', payload: ['A1', 2] });
 	// const contentVals = [[[1], [1, 0, 0]]];
 	// for (let [contents, vals] of contentVals) {
 	// 	contents.forEach((content, idx) => {
-	// 		bus.trigger({ type: 'cell/content/set', content: ['A1', content] });
+	// 		bus.trigger({ type: 'cell/content/set', payload: ['A1', content] });
 	// 	});
 	// }
 }
