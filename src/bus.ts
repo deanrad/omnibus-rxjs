@@ -185,10 +185,11 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     return this.listen(matcher, handler, observer, observerTypes, exhaustMap);
   }
 
-  /** Listens to all runtime events. */
-  public spy(fn) {
+  /** Run a function (synchronously) for all runtime events. Throwing an exception will terminate the spy.*/
+  public spy(fn: (item: TBusItem) => void) {
     return this.listen(() => true, fn);
   }
+
   /** Takes an observer-shaped object of action creators, turns it into
    * an Observer of callbacks which trigger onto this bus.
    */

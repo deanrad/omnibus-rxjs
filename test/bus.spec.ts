@@ -457,6 +457,16 @@ Array [
       })
     );
   });
+
+  describe('#spy', () => {
+    it('calls the function passed to it on any event', () => {
+      const listener = jest.fn();
+      miniBus.spy(listener);
+      miniBus.trigger(5);
+      miniBus.trigger(NaN);
+      expect(listener).toHaveBeenCalledTimes(2);
+    });
+  });
 });
 
 const commonObservables = [
