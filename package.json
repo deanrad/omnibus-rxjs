@@ -26,8 +26,9 @@
     "size": "size-limit",
     "doc": "typedoc",
     "doctoc": "doctoc .",
-    "docs:commit": "yarn doc && git add docs/ && git commit -m 'Update docs' -n",9    "prepublishOnly": "yarn test:full && yarn stats:commit && yarn docs:commit",
-    "build": "rimraf dist && tsc && rollup -c rollup.config.js && yarn size"
+    "docs:commit": "yarn doc && git add docs/ && git commit -m 'Update docs' -n",
+    "prepublishOnly": "yarn test:full && yarn stats:commit && yarn docs:commit",
+    "build": "rimraf dist && tsc && rollup -c rollup.config.js"
   },
   "size-limit": [
     {
