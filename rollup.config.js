@@ -7,7 +7,7 @@ export default {
       file: './dist/omnibus-rxjs.prod.js',
       format: 'es',
       exports: 'named',
-      sourcemap: false,
+      sourcemap: true,
     },
     {
       file: './dist/omnibus-rxjs.esm.js',
