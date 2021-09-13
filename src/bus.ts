@@ -65,6 +65,7 @@ interface EventBus<TBusItem> {
 export class Omnibus<TBusItem> implements EventBus<TBusItem> {
   private channel: Subject<TBusItem>;
   private resets: Subject<void>;
+  private preprocessors: Array<[Predicate<TBusItem>, (item: TBusItem) => void]>;
 
   /** While unhandled listener errors terminate the listener,
    * the cause of that error is available on channel.errors
@@ -75,6 +76,7 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     this.resets = new Subject();
     this.channel = new Subject();
     this.errors = new Subject();
+    this.preprocessors = new Array();
   }
 
   /**
@@ -93,6 +95,12 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
    * @param item The Event or other object to place onto the event bus, once it passes all filters.
    */
   public trigger(item: TBusItem) {
+    this.preprocessors.forEach(([predicate, handler]) => {
+      if (predicate(item)) {
+        handler(item);
+      }
+    });
+
     this.channel.next(item);
   }
 
@@ -185,9 +193,16 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     return this.listen(matcher, handler, observer, observerTypes, exhaustMap);
   }
 
-  /** Run a function (synchronously) for all runtime events. Throwing an exception will terminate the spy.*/
+  /** Run a function (synchronously) for all runtime events, prior to all listeners. Throwing an exception will terminate the spy.*/
   public spy(fn: (item: TBusItem) => void) {
-    return this.listen(() => true, fn);
+    this.preprocessors.push([thunkTrue, fn]);
+
+    return new Subscription(() => {
+      const whereamI = this.preprocessors.findIndex(
+        (pp) => pp[0] === thunkTrue && pp[1] === fn
+      );
+      this.preprocessors.splice(whereamI, 1);
+    });
   }
 
   /** Takes an observer-shaped object of action creators, turns it into
@@ -211,3 +226,5 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     this.resets.next();
   }
 }
+
+const thunkTrue = () => true;

@@ -458,7 +458,7 @@ Array [
     );
   });
 
-  describe.only('#spy', () => {
+  describe('#spy', () => {
     it('calls the function passed to it on any event, before any listener', () => {
       const seen = [];
       const listenerSpy = jest.fn().mockImplementation(() => {
@@ -472,15 +472,24 @@ Array [
       );
 
       miniBus.spy(listenerSpy);
-      miniBus.trigger(5);
       miniBus.trigger(NaN);
-      expect(listenerSpy).toHaveBeenCalledTimes(2);
-      expect(seen).toEqual([
-        'seen by spy',
-        'seen by nonspy',
-        'seen by spy',
-        'seen by nonspy',
-      ]);
+      expect(listenerSpy).toHaveBeenCalledTimes(1);
+      expect(seen).toEqual(['seen by spy', 'seen by nonspy']);
+    });
+
+    it('returns a subscription for cancelation', () => {
+      const seen = [];
+      const listenerSpy = jest.fn().mockImplementation(() => {
+        seen.push('seen by spy');
+      });
+
+      const sub = miniBus.spy(listenerSpy);
+      miniBus.trigger(1);
+      expect(listenerSpy).toHaveBeenCalledTimes(1);
+
+      sub.unsubscribe();
+      miniBus.trigger(1.1);
+      expect(listenerSpy).toHaveBeenCalledTimes(1);
     });
   });
 });
