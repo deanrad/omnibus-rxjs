@@ -28,7 +28,7 @@
     "doctoc": "doctoc .",
     "docs:commit": "yarn doc && git add docs/ && git commit -m 'Update docs' -n",
     "prepublishOnly": "yarn test:full && yarn stats:commit && yarn docs:commit",
-    "build": "rimraf dist && tsc && rollup -c rollup.config.js"
+    "build": "rimraf dist && tsc && timeout --foreground --preserve-status 10 rollup -c rollup.config.js; yarn size"
   },
   "size-limit": [
     {
