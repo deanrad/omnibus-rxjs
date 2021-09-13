@@ -458,13 +458,29 @@ Array [
     );
   });
 
-  describe('#spy', () => {
-    it('calls the function passed to it on any event', () => {
-      const listener = jest.fn();
-      miniBus.spy(listener);
+  describe.only('#spy', () => {
+    it('calls the function passed to it on any event, before any listener', () => {
+      const seen = [];
+      const listenerSpy = jest.fn().mockImplementation(() => {
+        seen.push('seen by spy');
+      });
+      miniBus.listen(
+        () => true,
+        () => {
+          seen.push('seen by nonspy');
+        }
+      );
+
+      miniBus.spy(listenerSpy);
       miniBus.trigger(5);
       miniBus.trigger(NaN);
-      expect(listener).toHaveBeenCalledTimes(2);
+      expect(listenerSpy).toHaveBeenCalledTimes(2);
+      expect(seen).toEqual([
+        'seen by spy',
+        'seen by nonspy',
+        'seen by spy',
+        'seen by nonspy',
+      ]);
     });
   });
 });
