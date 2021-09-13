@@ -7,6 +7,7 @@
 		"node": ">=10"
 	},
 	"scripts": {
+		"start": "node cli.js",
 		"test": "xo && ava"
 	},
 	"files": [
@@ -14,6 +15,7 @@
 		"ui.js"
 	],
 	"dependencies": {
+		"clear": "^0.1.0",
 		"import-jsx": "^4.0.0",
 		"ink": "^3.0.9",
 		"ink-text-input": "^4.0.1",
