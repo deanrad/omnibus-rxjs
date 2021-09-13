@@ -6,28 +6,69 @@ PASS test/3rd-party.spec.ts
     ○ skipped Subject observers kill the process with an uncaught error
     Observable subscriptions
       ✓ can deliver events synchronously (2 ms)
-      ✓ can deliver events with Promise (microqueue) timing (2 ms)
-      ✓ can deliver events with setTimeout(0) (macroqueue) timing (2 ms)
+      ✓ can deliver events with Promise (microqueue) timing (3 ms)
+      ✓ can deliver events with setTimeout(0) (macroqueue) timing (6 ms)
 
-PASS dist/tsc/test/3rd-party.spec.js
-  Reference: FSA
-    ✓ creates an action (9 ms)
-    ✓ provides a predicate #match (1 ms)
-  Reference: RxJS
-    ○ skipped Subject observers kill the process with an uncaught error
-    Observable subscriptions
-      ✓ can deliver events synchronously (2 ms)
-      ✓ can deliver events with Promise (microqueue) timing (2 ms)
-      ✓ can deliver events with setTimeout(0) (macroqueue) timing (3 ms)
+PASS test/bus.spec.ts
+  Bus
+    ✓ can be instantiated with the BusItemType it will accept (2 ms)
+    #query
+      With a Predicate
+        ✓ Returns an Observable of matching events (5 ms)
+        ✓ Returns an Observable of filtered events (1 ms)
+        ✓ is canceled by a reset (1 ms)
+      With a raw value
+        ✎ todo matches on equality of a value type
+        ✎ todo matches on subset of an object type
+      With an FSA matcher
+        ✓ works just like a predicate
+    #trigger
+      ✓ puts an action on the bus (2 ms)
+      ✓ Is not vulnerable to listener errors (6 ms)
+    #triggerMap
+      ✓ puts an action on the bus through a mapping function (1 ms)
+    #listen
+      Handler
+        Returning Observables
+          With a callback-based observer
+            ✓ can trigger new events (3 ms)
+          With a retriggering observer
+            ✓ can trigger new events with elegant syntax :) (2 ms)
+            ✓ can trigger new events with elegant syntax :) (3 ms)
+        Returning Promises
+          With a callback-based observer
+            ✓ can trigger new events (4 ms)
+        Can return any ObservableInput
+          ✓ Unpacks strings since theyre Iterable (2 ms)
+          ✓ Works with generators (1 ms)
+          ✓ allows for no/void return value (1 ms)
+    #reset
+      ✓ ends all listeners (1 ms)
+      ✓ ends all handlers (2 ms)
+    #spy
+      ✓ calls the function passed to it on any event, before any listener (14 ms)
+      ✓ returns a subscription for cancelation (2 ms)
+  Robust Error Handling
+    Errors dont stop triggering, kill the listener, allow other listeners
+      ✓ empty observable (C) (12 ms)
+      ✓ syncError observable (E) (6 ms)
+      ✓ resolvedPromise observable (tVC) (5 ms)
+      ✓ rejectedPromise observable (tE) (12 ms)
+      ✓ endpointValue observable (TVC) (5 ms)
+      ✓ timeout observable (TTE) (9 ms)
+      ✓ endpointError observable (TE) (7 ms)
+      ✓ dyingStream observable (TVE) (5 ms)
+      ✓ endpointStream observable (TTNNC) (19 ms)
+      ✓ valueStream observable (TNTNC) (13 ms)
 
 PASS dist/tsc/test/utils.spec.js
   Bus
     ✓ can be instantiated with the BusItemType it will accept (3 ms)
     #query
       With a Predicate
-        ✓ Returns an Observable of matching events (5 ms)
+        ✓ Returns an Observable of matching events (4 ms)
         ✓ Returns an Observable of filtered events (2 ms)
-        ✓ is canceled by a reset (1 ms)
+        ✓ is canceled by a reset (2 ms)
       With a raw value
         ✎ todo matches on equality of a value type
         ✎ todo matches on subset of an object type
@@ -37,55 +78,58 @@ PASS dist/tsc/test/utils.spec.js
       ✓ puts an action on the bus (1 ms)
       ✓ Is not vulnerable to listener errors (6 ms)
     #triggerMap
-      ✓ puts an action on the bus through a mapping function
+      ✓ puts an action on the bus through a mapping function (1 ms)
     #listen
       Handler
         Returning Observables
           With a callback-based observer
-            ✓ can trigger new events (14 ms)
+            ✓ can trigger new events (3 ms)
           With a retriggering observer
             ✓ can trigger new events with elegant syntax :) (2 ms)
             ✓ can trigger new events with elegant syntax :) (3 ms)
         Returning Promises
           With a callback-based observer
-            ✓ can trigger new events (5 ms)
+            ✓ can trigger new events (2 ms)
         Can return any ObservableInput
-          ✓ Unpacks strings since theyre Iterable (2 ms)
-          ✓ Works with generators (2 ms)
-          ✓ allows for no/void return value (1 ms)
+          ✓ Unpacks strings since theyre Iterable (1 ms)
+          ✓ Works with generators (1 ms)
+          ✓ allows for no/void return value
     #reset
       ✓ ends all listeners (1 ms)
       ✓ ends all handlers (2 ms)
+    #spy
+      ✓ calls the function passed to it on any event, before any listener (2 ms)
+      ✓ returns a subscription for cancelation (7 ms)
   Robust Error Handling
     Errors dont stop triggering, kill the listener, allow other listeners
-      ✓ empty observable (C) (20 ms)
+      ✓ empty observable (C) (9 ms)
       ✓ syncError observable (E) (5 ms)
-      ✓ resolvedPromise observable (tVC) (6 ms)
-      ✓ rejectedPromise observable (tE) (6 ms)
-      ✓ endpointValue observable (TVC) (8 ms)
+      ✓ resolvedPromise observable (tVC) (5 ms)
+      ✓ rejectedPromise observable (tE) (7 ms)
+      ✓ endpointValue observable (TVC) (6 ms)
       ✓ timeout observable (TTE) (7 ms)
       ✓ endpointError observable (TE) (6 ms)
       ✓ dyingStream observable (TVE) (6 ms)
-      ✓ endpointStream observable (TTNNC) (8 ms)
+      ✓ endpointStream observable (TTNNC) (7 ms)
       ✓ valueStream observable (TNTNC) (8 ms)
   TestDurations
     ✓ Sync
     ✓ Promise (1 ms)
-    ✓ Timeout (1 ms)
+    ✓ Timeout (2 ms)
   TestObservbles
-    ✓ VC - a synchronous value and completion (1 ms)
-    ✓ tVC - a promise resolved after a tick (2 ms)
-    ✓ tE - a rejected Promise (2 ms)
-    ✓ TV - a value after a timeout (4 ms)
+    ✓ VC - a synchronous value and completion (2 ms)
+    ✓ tVC - a promise resolved after a tick (7 ms)
+    ✓ tE - a rejected Promise (3 ms)
+    ✓ TV - a value after a timeout (3 ms)
     ✓ VVC - a mutivalued sync iterable (1 ms)
     Awaitable intervals of time
-      ✓ tests ok (17 ms)
+      ✓ tests ok (18 ms)
   after
     ✓ is an Observable
     ✓ is awaitable (2 ms)
     delay arg
       when 0
-        ✓ is synchronous
+        ✓ is synchronous (1 ms)
       when a Promise
         ✎ todo TODO resolves with new value
     value arg
@@ -96,12 +140,12 @@ PASS dist/tsc/test/utils.spec.js
       when Observable
         ✎ todo is produced
 
-PASS test/utils.spec.ts
+PASS dist/tsc/test/bus.spec.js
   Bus
     ✓ can be instantiated with the BusItemType it will accept (1 ms)
     #query
       With a Predicate
-        ✓ Returns an Observable of matching events (3 ms)
+        ✓ Returns an Observable of matching events (2 ms)
         ✓ Returns an Observable of filtered events (1 ms)
         ✓ is canceled by a reset (1 ms)
       With a raw value
@@ -110,49 +154,115 @@ PASS test/utils.spec.ts
       With an FSA matcher
         ✓ works just like a predicate
     #trigger
-      ✓ puts an action on the bus (1 ms)
-      ✓ Is not vulnerable to listener errors (4 ms)
+      ✓ puts an action on the bus
+      ✓ Is not vulnerable to listener errors (3 ms)
     #triggerMap
       ✓ puts an action on the bus through a mapping function (1 ms)
     #listen
       Handler
         Returning Observables
           With a callback-based observer
-            ✓ can trigger new events (2 ms)
+            ✓ can trigger new events (1 ms)
           With a retriggering observer
             ✓ can trigger new events with elegant syntax :) (2 ms)
-            ✓ can trigger new events with elegant syntax :) (2 ms)
+            ✓ can trigger new events with elegant syntax :) (1 ms)
         Returning Promises
           With a callback-based observer
             ✓ can trigger new events (3 ms)
         Can return any ObservableInput
-          ✓ Unpacks strings since theyre Iterable (2 ms)
+          ✓ Unpacks strings since theyre Iterable (1 ms)
           ✓ Works with generators (1 ms)
           ✓ allows for no/void return value (1 ms)
     #reset
       ✓ ends all listeners (1 ms)
       ✓ ends all handlers (1 ms)
+    #spy
+      ✓ calls the function passed to it on any event, before any listener (2 ms)
+      ✓ returns a subscription for cancelation (2 ms)
   Robust Error Handling
     Errors dont stop triggering, kill the listener, allow other listeners
-      ✓ empty observable (C) (6 ms)
+      ✓ empty observable (C) (4 ms)
       ✓ syncError observable (E) (6 ms)
       ✓ resolvedPromise observable (tVC) (6 ms)
       ✓ rejectedPromise observable (tE) (6 ms)
       ✓ endpointValue observable (TVC) (6 ms)
-      ✓ timeout observable (TTE) (5 ms)
+      ✓ timeout observable (TTE) (6 ms)
       ✓ endpointError observable (TE) (6 ms)
-      ✓ dyingStream observable (TVE) (7 ms)
-      ✓ endpointStream observable (TTNNC) (7 ms)
-      ✓ valueStream observable (TNTNC) (7 ms)
+      ✓ dyingStream observable (TVE) (15 ms)
+      ✓ endpointStream observable (TTNNC) (6 ms)
+      ✓ valueStream observable (TNTNC) (12 ms)
+
+PASS dist/tsc/test/3rd-party.spec.js
+  Reference: FSA
+    ✓ creates an action (1 ms)
+    ✓ provides a predicate #match (1 ms)
+  Reference: RxJS
+    ○ skipped Subject observers kill the process with an uncaught error
+    Observable subscriptions
+      ✓ can deliver events synchronously (1 ms)
+      ✓ can deliver events with Promise (microqueue) timing (1 ms)
+      ✓ can deliver events with setTimeout(0) (macroqueue) timing (3 ms)
+
+PASS test/utils.spec.ts
+  Bus
+    ✓ can be instantiated with the BusItemType it will accept
+    #query
+      With a Predicate
+        ✓ Returns an Observable of matching events
+        ✓ Returns an Observable of filtered events (1 ms)
+        ✓ is canceled by a reset (1 ms)
+      With a raw value
+        ✎ todo matches on equality of a value type
+        ✎ todo matches on subset of an object type
+      With an FSA matcher
+        ✓ works just like a predicate (1 ms)
+    #trigger
+      ✓ puts an action on the bus
+      ✓ Is not vulnerable to listener errors (2 ms)
+    #triggerMap
+      ✓ puts an action on the bus through a mapping function (1 ms)
+    #listen
+      Handler
+        Returning Observables
+          With a callback-based observer
+            ✓ can trigger new events (1 ms)
+          With a retriggering observer
+            ✓ can trigger new events with elegant syntax :) (1 ms)
+            ✓ can trigger new events with elegant syntax :) (2 ms)
+        Returning Promises
+          With a callback-based observer
+            ✓ can trigger new events (9 ms)
+        Can return any ObservableInput
+          ✓ Unpacks strings since theyre Iterable (2 ms)
+          ✓ Works with generators
+          ✓ allows for no/void return value (1 ms)
+    #reset
+      ✓ ends all listeners (1 ms)
+      ✓ ends all handlers (1 ms)
+    #spy
+      ✓ calls the function passed to it on any event, before any listener (1 ms)
+      ✓ returns a subscription for cancelation (9 ms)
+  Robust Error Handling
+    Errors dont stop triggering, kill the listener, allow other listeners
+      ✓ empty observable (C) (24 ms)
+      ✓ syncError observable (E) (5 ms)
+      ✓ resolvedPromise observable (tVC) (4 ms)
+      ✓ rejectedPromise observable (tE) (6 ms)
+      ✓ endpointValue observable (TVC) (6 ms)
+      ✓ timeout observable (TTE) (6 ms)
+      ✓ endpointError observable (TE) (5 ms)
+      ✓ dyingStream observable (TVE) (5 ms)
+      ✓ endpointStream observable (TTNNC) (6 ms)
+      ✓ valueStream observable (TNTNC) (6 ms)
   TestDurations
-    ✓ Sync (1 ms)
+    ✓ Sync
     ✓ Promise (1 ms)
-    ✓ Timeout (2 ms)
+    ✓ Timeout (1 ms)
   TestObservbles
-    ✓ VC - a synchronous value and completion (2 ms)
-    ✓ tVC - a promise resolved after a tick (8 ms)
-    ✓ tE - a rejected Promise (3 ms)
-    ✓ TV - a value after a timeout (4 ms)
+    ✓ VC - a synchronous value and completion
+    ✓ tVC - a promise resolved after a tick (2 ms)
+    ✓ tE - a rejected Promise (2 ms)
+    ✓ TV - a value after a timeout (3 ms)
     ✓ VVC - a mutivalued sync iterable (1 ms)
     Awaitable intervals of time
       ✓ tests ok (17 ms)
@@ -172,106 +282,8 @@ PASS test/utils.spec.ts
       when Observable
         ✎ todo is produced
 
-PASS test/bus.spec.ts
-  Bus
-    ✓ can be instantiated with the BusItemType it will accept (1 ms)
-    #query
-      With a Predicate
-        ✓ Returns an Observable of matching events (2 ms)
-        ✓ Returns an Observable of filtered events
-        ✓ is canceled by a reset (1 ms)
-      With a raw value
-        ✎ todo matches on equality of a value type
-        ✎ todo matches on subset of an object type
-      With an FSA matcher
-        ✓ works just like a predicate
-    #trigger
-      ✓ puts an action on the bus (1 ms)
-      ✓ Is not vulnerable to listener errors (2 ms)
-    #triggerMap
-      ✓ puts an action on the bus through a mapping function (1 ms)
-    #listen
-      Handler
-        Returning Observables
-          With a callback-based observer
-            ✓ can trigger new events (2 ms)
-          With a retriggering observer
-            ✓ can trigger new events with elegant syntax :) (2 ms)
-            ✓ can trigger new events with elegant syntax :) (3 ms)
-        Returning Promises
-          With a callback-based observer
-            ✓ can trigger new events (3 ms)
-        Can return any ObservableInput
-          ✓ Unpacks strings since theyre Iterable (2 ms)
-          ✓ Works with generators (2 ms)
-          ✓ allows for no/void return value
-    #reset
-      ✓ ends all listeners
-      ✓ ends all handlers (1 ms)
-  Robust Error Handling
-    Errors dont stop triggering, kill the listener, allow other listeners
-      ✓ empty observable (C) (10 ms)
-      ✓ syncError observable (E) (5 ms)
-      ✓ resolvedPromise observable (tVC) (3 ms)
-      ✓ rejectedPromise observable (tE) (5 ms)
-      ✓ endpointValue observable (TVC) (6 ms)
-      ✓ timeout observable (TTE) (7 ms)
-      ✓ endpointError observable (TE) (6 ms)
-      ✓ dyingStream observable (TVE) (6 ms)
-      ✓ endpointStream observable (TTNNC) (5 ms)
-      ✓ valueStream observable (TNTNC) (6 ms)
-
-PASS dist/tsc/test/bus.spec.js
-  Bus
-    ✓ can be instantiated with the BusItemType it will accept
-    #query
-      With a Predicate
-        ✓ Returns an Observable of matching events (1 ms)
-        ✓ Returns an Observable of filtered events
-        ✓ is canceled by a reset
-      With a raw value
-        ✎ todo matches on equality of a value type
-        ✎ todo matches on subset of an object type
-      With an FSA matcher
-        ✓ works just like a predicate
-    #trigger
-      ✓ puts an action on the bus
-      ✓ Is not vulnerable to listener errors (1 ms)
-    #triggerMap
-      ✓ puts an action on the bus through a mapping function (1 ms)
-    #listen
-      Handler
-        Returning Observables
-          With a callback-based observer
-            ✓ can trigger new events (1 ms)
-          With a retriggering observer
-            ✓ can trigger new events with elegant syntax :)
-            ✓ can trigger new events with elegant syntax :)
-        Returning Promises
-          With a callback-based observer
-            ✓ can trigger new events (8 ms)
-        Can return any ObservableInput
-          ✓ Unpacks strings since theyre Iterable (1 ms)
-          ✓ Works with generators (1 ms)
-          ✓ allows for no/void return value
-    #reset
-      ✓ ends all listeners (1 ms)
-      ✓ ends all handlers
-  Robust Error Handling
-    Errors dont stop triggering, kill the listener, allow other listeners
-      ✓ empty observable (C) (6 ms)
-      ✓ syncError observable (E) (5 ms)
-      ✓ resolvedPromise observable (tVC) (4 ms)
-      ✓ rejectedPromise observable (tE) (5 ms)
-      ✓ endpointValue observable (TVC) (6 ms)
-      ✓ timeout observable (TTE) (5 ms)
-      ✓ endpointError observable (TE) (6 ms)
-      ✓ dyingStream observable (TVE) (5 ms)
-      ✓ endpointStream observable (TTNNC) (6 ms)
-      ✓ valueStream observable (TNTNC) (5 ms)
-
 Test Suites: 6 passed, 6 total
-Tests:       2 skipped, 16 todo, 142 passed, 160 total
+Tests:       2 skipped, 16 todo, 150 passed, 168 total
 Snapshots:   38 passed, 38 total
-Time:        3.264 s
+Time:        4.424 s
 Ran all test suites.
