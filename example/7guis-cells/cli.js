@@ -19,4 +19,7 @@ const cli = meow(`
 	  Hello, Jane
 `);
 
+const clear = require('clear');
+clear();
+
 render(React.createElement(ui, cli.flags));

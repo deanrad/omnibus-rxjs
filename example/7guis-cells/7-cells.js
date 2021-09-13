@@ -2,12 +2,12 @@
 const React = require('react');
 const { Text, Box, useInput, useApp } = require('ink');
 const InkText = require('ink-text-input');
-const { Omnibus } = require('omnibus-rxjs');
-const { useEffect } = require('react');
+const { useEffect, useState } = require('react');
 const UncontrolledTextInput = InkText.UncontrolledTextInput;
+const TextInput = InkText.default;
 const { bufferTime } = require('rxjs/operators');
 
-const bus = new Omnibus();
+const { bus } = require('./bus');
 
 const contents = {};
 const deps = {};
@@ -24,12 +24,6 @@ const evaluateFormula = (formula) => {
 	);
 	return [newValue, depCells];
 };
-
-bus.errors.subscribe((e) => console.error(e));
-bus.listen(
-	() => true,
-	({ type, payload }) => console.log(type, payload)
-);
 
 bus.listen(
 	({ type }) => type === 'cell/content/set',
@@ -59,7 +53,7 @@ bus.listen(
 				bus.trigger({ type: 'cell/value/set', payload: [key, newValue] });
 			}
 		}
-		console.log(JSON.stringify(values));
+		// console.log(JSON.stringify(values));
 	}
 );
 
@@ -82,11 +76,44 @@ const Cell = ({ label, isActive }) => {
 			<UncontrolledTextInput
 				key={label}
 				focus={isActive}
-				placeholder={isActive ? 'Formula' : ''}
+				placeholder={isActive ? 'Formula' : '-------'}
 				onSubmit={(value) =>
 					bus.trigger({ type: 'cell/content/set', payload: [label, value] })
 				}
 			/>
+		</Box>
+	);
+};
+
+const Current = () => {
+	const [vals, setVals] = useState(values);
+	useEffect(() => {
+		bus.listen(
+			(e) => e.type === 'cell/value/set',
+			() => {
+				setVals({ ...values });
+			}
+		);
+	}, []);
+
+	return (
+		<Box
+			height={5}
+			width={72}
+			color="green"
+			borderStyle="single"
+			borderColor="white"
+			flexGrow="1"
+			justifyContent="space-around"
+		>
+			<Text key="v1">Values: </Text>
+			{Object.keys(vals).map((label) => {
+				return (
+					<Text key={'v' + label}>
+						{vals[label] === null ? ' ' : vals[label]}
+					</Text>
+				);
+			})}
 		</Box>
 	);
 };
@@ -98,21 +125,35 @@ const App = () => {
 	// runaway detection if we exceed 10 in 5 msec
 	useEffect(runawayDetect(exit), []);
 
-	useInput((_, key) => {
+	useInput((input, key) => {
 		if (key.rightArrow || key.return) {
 			setActive((old) => (old === 'A1' ? 'B1' : old === 'B1' ? 'C1' : 'A1'));
 		}
 		if (key.leftArrow) {
 			setActive((old) => (old === 'A1' ? 'C1' : old === 'B1' ? 'A1' : 'B1'));
 		}
+		if (input === 'q') {
+			process.exit(0);
+		}
 	});
 
 	return (
 		<>
-			<Text>Enter to Save. Arrows to move.</Text>
+			<Text>Enter to Save. Arrows to move. 'q' to Quit.</Text>
 			<Text>
 				Formula may contain A1,B1,C1, or number, with + (example: =A1+5)
 			</Text>
+			<Box
+				height={3}
+				width={72}
+				borderStyle="double"
+				borderColor="cyanBright"
+				justifyContent="center"
+			>
+				<Text key="h1" color="cyan" flexGrow="1" bold={true}>
+					7GUIs - Cells
+				</Text>
+			</Box>
 			<Box
 				height={4}
 				width={72}
@@ -122,10 +163,10 @@ const App = () => {
 				flexGrow="1"
 				justifyContent="space-around"
 			>
-				<Text>|</Text>
-				<Text>A</Text>
-				<Text>B</Text>
-				<Text>C</Text>
+				<Text key="h1">\</Text>
+				<Text key="h2">A</Text>
+				<Text key="h3">B</Text>
+				<Text key="h4">C</Text>
 			</Box>
 			<Box
 				height={5}
@@ -136,11 +177,12 @@ const App = () => {
 				flexGrow="1"
 				justifyContent="space-around"
 			>
-				<Text>|</Text>
+				<Text key="c1">Contents:</Text>
 				{['A1', 'B1', 'C1'].map((label) => {
 					return <Cell key={label} label={label} isActive={label === active} />;
 				})}
 			</Box>
+			<Current />
 		</>
 	);
 };
