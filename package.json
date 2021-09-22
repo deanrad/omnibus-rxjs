@@ -16,6 +16,7 @@
     "example:debounced": "cd example/debounced-search; parcel index.html",
     "test": "yarn test:fast",
     "test:fast": "jest",
+    "test:watch": "jest --verbose=false --watch",
     "test:coverage": "jest --coverage",
     "stats:save:jest": "jest --testSequencer=./test/util/byPathSequencer.js --coverage 1> docs/stats/coverage-report 2> docs/stats/spec-report; sed -i.bak 's/ (.*$//g' docs/stats/spec-report; rm docs/stats/spec-report.bak",
     "stats:save:ast": "tsc; node scripts/code-stats.js > docs/stats/complexity",
