@@ -1,34 +1,20 @@
-const esprima = require('esprima');
-const esquery = require('esquery');
 const tsquery = require('@phenomnomnominal/tsquery').tsquery;
 
 const fs = require('fs');
 // for each interesting file
 const files = [
-  'dist/tsc/src/bus.js',
   'src/bus.ts',
-  'dist/tsc/src/utils.js',
   'src/utils.ts',
+  // TODO esprima errors prevent raw JS nodecounts
+  // 'dist/tsc/src/bus.js',
+  // 'dist/tsc/src/utils.js',
 ];
 
 const astNodeCount = {};
 files.forEach((f) => {
-  const nodeCount = getNodeCount(f);
+  const nodeCount = getTSNodeCount(f);
   astNodeCount[f] = nodeCount;
 });
-
-function getNodeCount(f) {
-  const count = f.endsWith('.js') ? getJSNodeCount(f) : getTSNodeCount(f);
-  return count;
-}
-
-function getJSNodeCount(filename) {
-  const contents = fs.readFileSync(filename, 'utf-8');
-  const selector = esquery.parse('*');
-  const ast = esprima.parse(contents, { sourceType: 'module' });
-  const matches = esquery.match(ast, selector);
-  return matches.length;
-}
 
 function getTSNodeCount(filename) {
   const contents = fs.readFileSync(filename, 'utf-8');
