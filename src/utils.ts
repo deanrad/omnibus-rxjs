@@ -1,6 +1,6 @@
 // @ts-nocheck
-import { Observable, of, timer } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
+import { firstValueFrom, Observable, of, timer } from 'rxjs';
+import { delay, map, mergeMap } from 'rxjs/operators';
 
 // See https://dev.to/deanius/the-thresholds-of-perception-in-ux-435g
 export const THRESHOLD = {
@@ -91,7 +91,7 @@ export function after<T>(
   // ref: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await
   // @ts-ignore
   resultObs.then = function (resolve, reject) {
-    return resultObs.toPromise().then(resolve, reject);
+    return firstValueFrom(resultObs).then(resolve, reject);
   };
 
   return resultObs as AwaitableObservable<T>;

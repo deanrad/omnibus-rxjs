@@ -127,6 +127,7 @@ PASS test/utils.spec.ts
   after
     ✓ is an Observable
     ✓ is awaitable
+    ✓ is thenable
     delay arg
       when 0
         ✓ is synchronous
@@ -138,10 +139,11 @@ PASS test/utils.spec.ts
       when function
         ✎ todo is produced
       when Observable
-        ✎ todo is produced
+        ✓ defers subscription
+        ✓ yields the value
 
 Test Suites: 3 passed, 3 total
-Tests:       1 skipped, 8 todo, 75 passed, 84 total
+Tests:       1 skipped, 7 todo, 78 passed, 86 total
 Snapshots:   19 passed, 19 total
-Time:        2.351 s
+Time:        2.779 s
 Ran all test suites.
