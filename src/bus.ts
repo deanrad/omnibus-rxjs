@@ -128,8 +128,7 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     observerTypes?: TriggeredItemMap<TConsequence, TBusItem>,
     operator = mergeMap
   ) {
-    // LEFTOFF 3 Concurrency ops passable in
-    // LEFTOFF 5 filters
+    // LEFTOFF filters
 
     // @ts-ignore
     const _observer = observer

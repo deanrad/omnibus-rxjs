@@ -25,45 +25,43 @@ describe('Reference: FSA', () => {
 });
 
 describe('Reference: RxJS', () => {
-  it.skip('Subject observers kill the process with an uncaught error', async () => {
-    // doesn't throw, but kills the test/process with an uncaught exception that cant be caught
-    // rxjs/dist/cjs/internal/util/reportUnhandledError.js:13
-    const notABus = new Subject();
-    const listener1 = notABus.asObservable().subscribe({ next: syncThrow });
-
-    expect(() => {
-      notABus.next(null);
-    }).not.toThrow();
-  });
+  // doesn't throw, but kills the test/process with an uncaught exception that cant be caught
+  // rxjs/dist/cjs/internal/util/reportUnhandledError.js:13
 
   // An Observable can represent any interleaving of values, sync or async
   // Let's verify that some mnemonically named ones behave as we expect.
   describe('Observable subscriptions', () => {
     it('can deliver events synchronously', () => {
       const subject = of(2);
-      let result
-      subject.subscribe(n => { result = n; });
-      expect(result).toEqual(2)
+      let result;
+      subject.subscribe((n) => {
+        result = n;
+      });
+      expect(result).toEqual(2);
     });
 
     it('can deliver events with Promise (microqueue) timing', async () => {
       const subject = of(2, asapScheduler);
-      let result
-      subject.subscribe(n => { result = n; });
+      let result;
+      subject.subscribe((n) => {
+        result = n;
+      });
       expect(result).toBeUndefined();
       await Promise.resolve();
       expect(result).toEqual(2);
-    })
+    });
 
     it('can deliver events with setTimeout(0) (macroqueue) timing', async () => {
       const subject = of(2, asyncScheduler);
-      let result
-      subject.subscribe(n => { result = n; });
+      let result;
+      subject.subscribe((n) => {
+        result = n;
+      });
       expect(result).toBeUndefined();
       await Promise.resolve();
       expect(result).toBeUndefined();
-      await new Promise(resolve => setTimeout(resolve, 0))
-      expect(result).toEqual(2)
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      expect(result).toEqual(2);
     });
   });
 });
