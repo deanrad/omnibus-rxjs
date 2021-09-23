@@ -411,6 +411,33 @@ Array [
       });
     });
   });
+  describe('#listenQueueing (same signature as #listen, but with concatMap)', () => {
+    it('serializes execution', async () => {
+      const calls = [];
+      const listenerSpy = jest.fn().mockImplementation((i) => {
+        calls.push(`start:${i}`);
+        return after(10, () => calls.push(`done:${i}`));
+      });
+      miniBus.listenQueueing(() => true, listenerSpy);
+      miniBus.trigger(1);
+      miniBus.trigger(2);
+
+      await after(30 + 1);
+      // prettier-ignore
+      expect(calls).toEqual([
+        'start:1',
+        'done:1',
+        'start:2',
+        'done:2'
+      ]);
+    });
+  });
+  describe('#listenSwitching (same signature as #listen, but with switchMap)', () => {
+    it.todo('cancels existing, and starts a new Subscription');
+  });
+  describe('#listenBlocking (same signature as #listen, but with exhaustMap)', () => {
+    it.todo('cancels existing, and starts a new Subscription');
+  });
 
   describe('#reset', () => {
     it('ends all listeners', () => {
