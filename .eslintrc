@@ -1,0 +1,13 @@
+{
+  "ignorePatterns": ["dist/"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2021
+  },
+  "plugins": ["jest"],
+  "extends": ["plugin:jest/style"],
+  "rules": {
+    "jest/no-disabled-tests": "error",
+    "jest/no-focused-tests": "error"
+  }
+}
