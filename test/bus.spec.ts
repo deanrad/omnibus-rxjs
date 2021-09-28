@@ -71,6 +71,14 @@ export const TestObservable = (code: string) => {
   }
   return all;
 };
+
+const withTiming = (events) => {
+  return concat(
+    ...events.map(([time, valOrFn]) => {
+      return after(time, valOrFn);
+    })
+  );
+};
 const FSABus = new Omnibus<Action<any>>();
 const StringBus = new Omnibus<string>();
 const miniBus = new Omnibus<number>();
@@ -340,6 +348,10 @@ Array [
           );
         });
       });
+      describe('LEFTOFF returning functions', () => {
+        it.todo('can return 1-arity function to create an Observable');
+        it.todo('can return 0-arity function to call defer()');
+      });
       describe('Can return any ObservableInput', () => {
         it(
           'Unpacks strings since theyre Iterable',
@@ -433,10 +445,47 @@ Array [
     });
   });
   describe('#listenSwitching (same signature as #listen, but with switchMap)', () => {
-    it.todo('cancels existing, and starts a new Subscription');
+    it('cancels existing, and starts a new Subscription', async () => {
+      const calls = [];
+      const listenerSpy = jest.fn().mockImplementation((i) => {
+        return withTiming([
+          [0, () => calls.push(`start:${i}`)],
+          [10, () => calls.push(`done:${i}`)],
+        ]);
+      });
+      miniBus.listenSwitching(() => true, listenerSpy);
+      miniBus.trigger(1);
+      miniBus.trigger(2);
+
+      await after(30 + 1);
+      // prettier-ignore
+      expect(calls).toEqual([
+        'start:1',
+        'start:2',
+        'done:2'
+      ]);
+    });
   });
   describe('#listenBlocking (same signature as #listen, but with exhaustMap)', () => {
-    it.todo('cancels existing, and starts a new Subscription');
+    it('cancels existing, and starts a new Subscription', async () => {
+      const calls = [];
+      const listenerSpy = jest.fn().mockImplementation((i) => {
+        return withTiming([
+          [0, () => calls.push(`start:${i}`)],
+          [10, () => calls.push(`done:${i}`)],
+        ]);
+      });
+      miniBus.listenBlocking(() => true, listenerSpy);
+      miniBus.trigger(1);
+      miniBus.trigger(2);
+
+      await after(30 + 1);
+      // prettier-ignore
+      expect(calls).toEqual([
+        'start:1',
+        'done:1',
+      ]);
+    });
   });
 
   describe('#reset', () => {
