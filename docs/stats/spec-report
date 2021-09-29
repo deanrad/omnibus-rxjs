@@ -8,6 +8,67 @@ PASS test/3rd-party.spec.ts
       ✓ can deliver events with Promise
       ✓ can deliver events with setTimeout(0)
 
+PASS test/bus.spec.ts
+  Bus
+    ✓ can be instantiated with the BusItemType it will accept
+    #query
+      With a Predicate
+        ✓ Returns an Observable of matching events
+        ✓ Returns an Observable of filtered events
+        ✓ is canceled by a reset
+      With a raw value
+        ✎ todo matches on equality of a value type
+        ✎ todo matches on subset of an object type
+      With an FSA matcher
+        ✓ works just like a predicate
+    #trigger
+      ✓ puts an action on the bus
+      ✓ Is not vulnerable to listener errors
+    #triggerMap
+      ✓ puts an action on the bus through a mapping function
+    #listen
+      Handler
+        Returning Observables
+          With a callback-based observer
+            ✓ can trigger new events
+          With a retriggering observer
+            ✓ can trigger new events with elegant syntax :)
+            ✓ can trigger new events with elegant syntax :)
+        Returning Promises
+          With a callback-based observer
+            ✓ can trigger new events
+        LEFTOFF returning functions
+          ✎ todo can return 1-arity function to create an Observable
+          ✎ todo can return 0-arity function to call defer()
+        Can return any ObservableInput
+          ✓ Unpacks strings since theyre Iterable
+          ✓ Works with generators
+          ✓ allows for no/void return value
+    #listenQueueing
+      ✓ serializes execution
+    #listenSwitching
+      ✓ cancels existing, and starts a new Subscription
+    #listenBlocking
+      ✓ cancels existing, and starts a new Subscription
+    #reset
+      ✓ ends all listeners
+      ✓ ends all handlers
+    #spy
+      ✓ calls the function passed to it on any event, before any listener
+      ✓ returns a subscription for cancelation
+  Robust Error Handling
+    Errors dont stop triggering, kill the listener, allow other listeners
+      ✓ empty observable
+      ✓ syncError observable
+      ✓ resolvedPromise observable
+      ✓ rejectedPromise observable
+      ✓ endpointValue observable
+      ✓ timeout observable
+      ✓ endpointError observable
+      ✓ dyingStream observable
+      ✓ endpointStream observable
+      ✓ valueStream observable
+
 PASS test/utils.spec.ts
   Bus
     ✓ can be instantiated with the BusItemType it will accept
@@ -98,69 +159,8 @@ PASS test/utils.spec.ts
         ✓ defers subscription
         ✓ yields the value
 
-PASS test/bus.spec.ts
-  Bus
-    ✓ can be instantiated with the BusItemType it will accept
-    #query
-      With a Predicate
-        ✓ Returns an Observable of matching events
-        ✓ Returns an Observable of filtered events
-        ✓ is canceled by a reset
-      With a raw value
-        ✎ todo matches on equality of a value type
-        ✎ todo matches on subset of an object type
-      With an FSA matcher
-        ✓ works just like a predicate
-    #trigger
-      ✓ puts an action on the bus
-      ✓ Is not vulnerable to listener errors
-    #triggerMap
-      ✓ puts an action on the bus through a mapping function
-    #listen
-      Handler
-        Returning Observables
-          With a callback-based observer
-            ✓ can trigger new events
-          With a retriggering observer
-            ✓ can trigger new events with elegant syntax :)
-            ✓ can trigger new events with elegant syntax :)
-        Returning Promises
-          With a callback-based observer
-            ✓ can trigger new events
-        LEFTOFF returning functions
-          ✎ todo can return 1-arity function to create an Observable
-          ✎ todo can return 0-arity function to call defer()
-        Can return any ObservableInput
-          ✓ Unpacks strings since theyre Iterable
-          ✓ Works with generators
-          ✓ allows for no/void return value
-    #listenQueueing
-      ✓ serializes execution
-    #listenSwitching
-      ✓ cancels existing, and starts a new Subscription
-    #listenBlocking
-      ✓ cancels existing, and starts a new Subscription
-    #reset
-      ✓ ends all listeners
-      ✓ ends all handlers
-    #spy
-      ✓ calls the function passed to it on any event, before any listener
-      ✓ returns a subscription for cancelation
-  Robust Error Handling
-    Errors dont stop triggering, kill the listener, allow other listeners
-      ✓ empty observable
-      ✓ syncError observable
-      ✓ resolvedPromise observable
-      ✓ rejectedPromise observable
-      ✓ endpointValue observable
-      ✓ timeout observable
-      ✓ endpointError observable
-      ✓ dyingStream observable
-      ✓ endpointStream observable
-      ✓ valueStream observable
-
 Test Suites: 3 passed, 3 total
 Tests:       11 todo, 84 passed, 95 total
 Snapshots:   19 passed, 19 total
-Time:        4.156 s
+Time:        1.986 s
 Ran all test suites.
