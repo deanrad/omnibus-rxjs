@@ -1,6 +1,5 @@
-import { Subject, of, asapScheduler, asyncScheduler, throwError } from 'rxjs';
+import { of, asapScheduler, asyncScheduler } from 'rxjs';
 import * as ExampleService from '../example/debounced-search/searchService';
-import { syncThrow } from './mockListeners';
 
 /** Specs that document how 3rd party libs we may use interact */
 describe('Reference: FSA', () => {
