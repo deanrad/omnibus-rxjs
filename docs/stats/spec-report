@@ -38,8 +38,8 @@ PASS test/bus.spec.ts
           With a callback-based observer
             ✓ can trigger new events
         LEFTOFF returning functions
-          ✎ todo can return 1-arity function to create an Observable
-          ✎ todo can return 0-arity function to call defer()
+          ✓ can return 0-arity function to call defer()
+          ✓ can return 1-arity function to call defer()
         Can return any ObservableInput
           ✓ Unpacks strings since theyre Iterable
           ✓ Works with generators
@@ -99,8 +99,8 @@ PASS test/utils.spec.ts
           With a callback-based observer
             ✓ can trigger new events
         LEFTOFF returning functions
-          ✎ todo can return 1-arity function to create an Observable
-          ✎ todo can return 0-arity function to call defer()
+          ✓ can return 0-arity function to call defer()
+          ✓ can return 1-arity function to call defer()
         Can return any ObservableInput
           ✓ Unpacks strings since theyre Iterable
           ✓ Works with generators
@@ -160,7 +160,7 @@ PASS test/utils.spec.ts
         ✓ yields the value
 
 Test Suites: 3 passed, 3 total
-Tests:       11 todo, 84 passed, 95 total
+Tests:       7 todo, 88 passed, 95 total
 Snapshots:   19 passed, 19 total
-Time:        1.986 s
+Time:        1.577 s
 Ran all test suites.
