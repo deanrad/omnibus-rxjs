@@ -37,9 +37,9 @@ PASS test/bus.spec.ts
         Returning Promises
           With a callback-based observer
             ✓ can trigger new events
-        LEFTOFF returning functions
+        Returning functions
           ✓ can return 0-arity function to call defer()
-          ✓ can return 1-arity function to call defer()
+          ✓ can return 1-arity function to create Observable via new Observable()
         Can return any ObservableInput
           ✓ Unpacks strings since theyre Iterable
           ✓ Works with generators
@@ -98,7 +98,7 @@ PASS test/utils.spec.ts
         Returning Promises
           With a callback-based observer
             ✓ can trigger new events
-        LEFTOFF returning functions
+        Returning functions
           ✓ can return 0-arity function to call defer()
           ✓ can return 1-arity function to call defer()
         Can return any ObservableInput
@@ -162,5 +162,5 @@ PASS test/utils.spec.ts
 Test Suites: 3 passed, 3 total
 Tests:       7 todo, 88 passed, 95 total
 Snapshots:   19 passed, 19 total
-Time:        1.577 s
+Time:        4.7 s
 Ran all test suites.
