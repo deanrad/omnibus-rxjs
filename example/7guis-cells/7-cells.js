@@ -188,6 +188,7 @@ const App = () => {
 
 const expect = require('chai').expect;
 
+// eslint-disable-next-line
 function runTests() {
 	// XXX TESTS ONLY WORK SINGLY
 	const inputsAndExpectedOutputs = Object.entries({
