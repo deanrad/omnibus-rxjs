@@ -29,6 +29,14 @@ export interface TriggeredItemMap<TConsequence, TBusItem> {
   unsubscribe?: (i: any) => TBusItem;
 }
 
+// LEFTOFF  listenEager and kin should share the sig of listen/ListenerFactory
+// type ListenerFactory<TBusItem, TConsequence extends TBusItem> = (
+//   matcher: Predicate<TBusItem>,
+//   handler: ResultCreator<TBusItem, TConsequence>,
+//   observer?: TapObserver<TConsequence>,
+//   observerTypes?: TriggeredItemMap<TConsequence, TBusItem>,
+// ) => Subscription;
+
 export interface EventBus<TBusItem> {
   query(matcher: Predicate<TBusItem>): Observable<TBusItem>;
   trigger(item: TBusItem): void;
@@ -38,6 +46,7 @@ export interface EventBus<TBusItem> {
     observer?: TapObserver<TConsequence>
   ): Subscription;
 }
+
 const thunkTrue = () => true;
 
 //#endregion
@@ -122,9 +131,6 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     observerTypes?: TriggeredItemMap<TConsequence, TBusItem>,
     operator = mergeMap
   ) {
-    // LEFTOFF filters
-
-    // @ts-ignore
     const _observer = observer
       ? observer
       : observerTypes
