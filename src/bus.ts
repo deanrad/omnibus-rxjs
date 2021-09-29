@@ -138,6 +138,7 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
       operator((event) => {
         // @ts-ignore dynamic
         const oneResult = handler(event);
+        // LEFTOFF make this a function call
         const obsResult =
           typeof oneResult === 'function'
             ? // @ts-ignore
@@ -147,6 +148,7 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
             : // @ts-ignore
               from(oneResult ?? EMPTY);
 
+        // @ts-ignore
         return obsResult.pipe(tap(_observer));
       })
     );
@@ -165,6 +167,7 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     observer?: TapObserver<TConsequence>,
     observerTypes?: TriggeredItemMap<TConsequence, TBusItem>
   ) {
+    // LEFTOFF TEST listenQueueing
     return this.listen(matcher, handler, observer, observerTypes, concatMap);
   }
 

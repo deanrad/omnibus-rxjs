@@ -15,6 +15,7 @@
     "start": "npm run example:debounced",
     "example:debounced": "cd example/debounced-search; parcel index.html",
     "lint": "eslint --ext .ts .",
+    "lint:fix": "eslint --ext .ts --fix .",
     "test": "yarn test:fast",
     "test:fast": "jest",
     "test:watch": "jest --verbose=false --watch",
