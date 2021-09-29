@@ -1,4 +1,6 @@
 [![Travis CI](https://api.travis-ci.com/deanrad/omnibus-rxjs.svg?token=jDxJBxYkkXVxwqfuGjmx&branch=master&status=passed)](https://travis-ci.com/deanrad/omnibus-rxjs)
+![Code Coverage](https://shields.io/badge/coverage-100%25-brightgreen)
+[![Maintainability](https://api.codeclimate.com/v1/badges/f7c14c5a3bbbf0d803cc/maintainability)](https://codeclimate.com/github/deanrad/omnibus-rxjs/maintainability)
 
 # omnibus-rxjs
 
