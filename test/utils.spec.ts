@@ -160,7 +160,6 @@ Array [
   });
 
   it('VVC - a mutivalued sync iterable', async () => {
-    const ticks = from(['t0'], asapScheduler);
     const subject = TestObservable('VVC');
     let events;
     subject.pipe(materialize(), toArray()).subscribe((all: any) => {

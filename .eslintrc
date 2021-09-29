@@ -9,6 +9,8 @@
   "rules": {
     "jest/no-disabled-tests": "error",
     "jest/no-focused-tests": "error",
-    "@typescript-eslint/no-unused-vars": ["error"]
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }]
   }
 }
+
+
