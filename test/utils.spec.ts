@@ -228,9 +228,6 @@ describe('after', () => {
         expect(result).toEqual(3);
       });
     });
-    describe('when a Promise', () => {
-      it.todo('TODO resolves with new value');
-    });
   });
 
   describe('value arg', () => {
