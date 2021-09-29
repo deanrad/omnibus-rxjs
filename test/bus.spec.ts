@@ -348,7 +348,7 @@ Array [
           );
         });
       });
-      describe('LEFTOFF returning functions', () => {
+      describe('Returning functions', () => {
         it(
           'can return 0-arity function to call defer()',
           capturing(StringBus, async (events) => {
