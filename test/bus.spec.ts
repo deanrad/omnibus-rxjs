@@ -369,7 +369,7 @@ Array [
           })
         );
         it(
-          'can return 1-arity function to call defer()',
+          'can return 1-arity function to create Observable via new Observable()',
           capturing(StringBus, async (events) => {
             StringBus.listen(
               (s) => s === 'FOO',
