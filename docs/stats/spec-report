@@ -3,7 +3,6 @@ PASS test/3rd-party.spec.ts
     ✓ creates an action
     ✓ provides a predicate #match
   Reference: RxJS
-    ○ skipped Subject observers kill the process with an uncaught error
     Observable subscriptions
       ✓ can deliver events synchronously
       ✓ can deliver events with Promise
@@ -143,7 +142,7 @@ PASS test/utils.spec.ts
         ✓ yields the value
 
 Test Suites: 3 passed, 3 total
-Tests:       1 skipped, 7 todo, 78 passed, 86 total
+Tests:       7 todo, 78 passed, 85 total
 Snapshots:   19 passed, 19 total
-Time:        2.779 s
+Time:        9.63 s
 Ran all test suites.

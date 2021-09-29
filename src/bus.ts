@@ -1,21 +1,13 @@
-import {
-  defer,
-  EMPTY,
-  from,
-  Observable,
-  PartialObserver,
-  Subject,
-  Subscription,
-} from 'rxjs';
-import {
-  filter,
-  mergeMap,
-  switchMap,
-  exhaustMap,
-  concatMap,
-  takeUntil,
-  tap,
-} from 'rxjs/operators';
+//#region imports
+// prettier-ignore-start
+import { Observable, PartialObserver, Subject, Subscription } from 'rxjs';
+import { defer, EMPTY, from } from 'rxjs';
+import { concatMap, exhaustMap, mergeMap, switchMap } from 'rxjs/operators';
+import { filter, takeUntil, tap } from 'rxjs/operators';
+// prettier-ignore-end
+//#endregion
+
+//#region types
 export type Predicate<T> = (item: T) => boolean;
 export type ResultCreator<T, TConsequence> = (
   item: T
@@ -37,7 +29,7 @@ export interface TriggeredItemMap<TConsequence, TBusItem> {
   unsubscribe?: (i: any) => TBusItem;
 }
 
-interface EventBus<TBusItem> {
+export interface EventBus<TBusItem> {
   query(matcher: Predicate<TBusItem>): Observable<TBusItem>;
   trigger(item: TBusItem): void;
   listen<TConsequence extends TBusItem>(
@@ -46,6 +38,10 @@ interface EventBus<TBusItem> {
     observer?: TapObserver<TConsequence>
   ): Subscription;
 }
+const thunkTrue = () => true;
+
+//#endregion
+
 /**
  * An instance of an Omnibus implements the EventBus interface,
  * providing type-safe ways of triggering, filtering, and running
@@ -225,5 +221,3 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     this.resets.next();
   }
 }
-
-const thunkTrue = () => true;
