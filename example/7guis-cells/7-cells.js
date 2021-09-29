@@ -248,7 +248,7 @@ function runTests() {
 	}
 }
 
-// LEFTOFF - running tests that verify it's working
+// Uncomment to verify it's working
 // runTests();
 
 module.exports = App;
