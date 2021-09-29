@@ -349,8 +349,47 @@ Array [
         });
       });
       describe('LEFTOFF returning functions', () => {
-        it.todo('can return 1-arity function to create an Observable');
-        it.todo('can return 0-arity function to call defer()');
+        it(
+          'can return 0-arity function to call defer()',
+          capturing(StringBus, async (events) => {
+            StringBus.listen(
+              (s) => s === 'FOO',
+              // compatible with endpoints
+              () => () => Promise.resolve('BAR'),
+              null,
+              // feed responded events back in
+              {
+                next: (v) => v,
+              }
+            );
+            StringBus.trigger('FOO');
+            StringBus.trigger('NOTFOO');
+            await after(1);
+            expect(events).toEqual(['FOO', 'NOTFOO', 'BAR']);
+          })
+        );
+        it(
+          'can return 1-arity function to call defer()',
+          capturing(StringBus, async (events) => {
+            StringBus.listen(
+              (s) => s === 'FOO',
+              // dont need to import Observable, just return a function
+              () => (o: Observer<String>) => {
+                o.next('BARR');
+                after(1, () => o.next('BART')).subscribe();
+              },
+              null,
+              // feed responded events back in
+              {
+                next: (v) => v,
+              }
+            );
+            StringBus.trigger('FOO');
+            StringBus.trigger('NOTFOO');
+            await after(1);
+            expect(events).toEqual(['FOO', 'BARR', 'NOTFOO', 'BART']);
+          })
+        );
       });
       describe('Can return any ObservableInput', () => {
         it(

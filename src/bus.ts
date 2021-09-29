@@ -92,9 +92,7 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
    */
   public trigger(item: TBusItem) {
     this.preprocessors.forEach(([predicate, handler]) => {
-      if (predicate(item)) {
-        handler(item);
-      }
+      predicate(item) && handler(item);
     });
 
     this.channel.next(item);

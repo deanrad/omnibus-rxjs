@@ -4,7 +4,6 @@ const { Text, Box, useInput, useApp } = require('ink');
 const InkText = require('ink-text-input');
 const { useEffect, useState } = require('react');
 const UncontrolledTextInput = InkText.UncontrolledTextInput;
-const TextInput = InkText.default;
 const { bufferTime } = require('rxjs/operators');
 
 const { bus } = require('./bus');
