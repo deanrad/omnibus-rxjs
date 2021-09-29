@@ -192,7 +192,7 @@ Array [
             capturing(FSABus, (events) => {
               FSABus.listen(
                 (a) => a.type === searchRequestCreator.type,
-                (a) => of(resultCreator({ result: 'foo' })),
+                () => of(resultCreator({ result: 'foo' })),
                 {
                   subscribe() {
                     FSABus.triggerMap(null, loadingCreator);
@@ -242,7 +242,7 @@ Array [
             capturing(FSABus, (events) => {
               FSABus.listen(
                 (a) => a.type === searchRequestCreator.type,
-                (a) => of({ result: 'foo' }),
+                () => of({ result: 'foo' }),
                 null,
                 {
                   subscribe: loadingCreator,
@@ -279,7 +279,7 @@ Array [
             capturing(FSABus, (events) => {
               const listener = FSABus.listen(
                 (a) => a.type === searchRequestCreator.type,
-                (a) => after(1, { result: 'foo' }),
+                () => after(1, { result: 'foo' }),
                 null,
                 {
                   subscribe: loadingCreator,
@@ -320,7 +320,7 @@ Array [
             capturing(StringBus, async (events) => {
               StringBus.listen(
                 (a) => a === 'bang',
-                (a) => Promise.resolve('fooP'),
+                () => Promise.resolve('fooP'),
                 {
                   next(result) {
                     StringBus.trigger(result);
@@ -346,7 +346,7 @@ Array [
           capturing(StringBus, (events) => {
             StringBus.listen(
               (a) => a === 'bang',
-              (a) => 'whoa',
+              () => 'whoa',
               {
                 next(result) {
                   StringBus.trigger(result);
@@ -371,7 +371,7 @@ Array [
           capturing(StringBus, async (events) => {
             StringBus.listen(
               (a) => a === 'bang',
-              (a) => {
+              () => {
                 const gen = function* () {
                   yield 'one';
                   yield 'two';
@@ -393,7 +393,7 @@ Array [
         );
         it(
           'allows for no/void return value',
-          capturing(StringBus, (events) => {
+          capturing(StringBus, () => {
             const seen = [];
             StringBus.listen(
               () => true,
@@ -515,7 +515,7 @@ describe('Robust Error Handling', () => {
         capturing(miniBus, async (events) => {
           const subject = miniBus.listen(
             () => true,
-            (i) => TestObservable(eventCodes)
+            () => TestObservable(eventCodes)
           );
           const otherListenerConsequences = [];
           miniBus.listen(
