@@ -43,7 +43,7 @@ export const errorCreator = searchAction<SearchError>('error');
 /* Output event indicating your search is complete */
 export const completeCreator = searchAction<SearchComplete>('complete');
 
-export const cancelCreator = searchAction<SearchCanceled>('cancel')
+export const cancelCreator = searchAction<SearchCanceled>('cancel');
 
 // A mock Observable creator - note - returns results progressively! (not all at the end, as in Promises)
 export function getResult$(action: ReturnType<typeof searchRequestCreator>) {
@@ -67,20 +67,16 @@ export class SearchService {
   }
 
   start() {
-    this.currentRun = this.bus.listen(searchRequestCreator.match, getResult$, {
-      subscribe: () => {
-        this.bus.triggerMap(null, loadingCreator);
-      },
-      complete: () => {
-        this.bus.triggerMap(null, completeCreator);
-      },
-      next: (item) => {
-        this.bus.trigger(item);
-      },
-      error: (err) => {
-        this.bus.triggerMap(err, errorCreator);
-      },
-    });
+    this.currentRun = this.bus.listen(
+      searchRequestCreator.match,
+      getResult$,
+      this.bus.observeWith({
+        subscribe: loadingCreator,
+        complete: completeCreator,
+        next: (item) => () => item,
+        error: errorCreator,
+      })
+    );
   }
   // Stop is barely needed because start() returns the means to stop(), as RxJS Subscriptions do.
   stop() {

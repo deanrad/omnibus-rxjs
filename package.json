@@ -1,6 +1,6 @@
 {
   "name": "omnibus-rxjs",
-  "version": "0.0.10",
+  "version": "0.9.3",
   "license": "MIT",
   "author": "Dean Radcliffe",
   "repository": "https://github.com/deanrad/omnibus-rxjs",
@@ -25,7 +25,8 @@
     "stats:save:jest": "jest --testSequencer=./test/util/byPathSequencer.js --coverage 1> docs/stats/coverage-report 2> docs/stats/spec-report; sed -i.bak 's/ (.*$//g' docs/stats/spec-report; rm docs/stats/spec-report.bak",
     "stats:save:ast": "tsc; node scripts/code-stats.js > docs/stats/complexity",
     "stats:save:size": "size-limit > docs/stats/size",
-    "stats:commit": "yarn stats:save:jest; yarn stats:save:ast; yarn stats:save:size; git add docs/stats; git commit -m 'Update code stats' -n",
+    "stats:all": "yarn stats:save:jest; yarn stats:save:ast; yarn stats:save:size",
+    "stats:commit": "yarn stats:all; git add docs/stats; git commit -m 'Update code stats' -n",
     "stats:watch": "nodemon -w src/ -e ts scripts/code-stats.js",
     "size": "size-limit",
     "doc": "typedoc",

@@ -11,6 +11,8 @@ PASS test/3rd-party.spec.ts
 PASS test/bus.spec.ts
   Bus
     ✓ can be instantiated with the BusItemType it will accept
+    Typings
+      ✓ types - can make more actions
     #query
       With a Predicate
         ✓ Returns an Observable of matching events
@@ -24,16 +26,13 @@ PASS test/bus.spec.ts
     #trigger
       ✓ puts an action on the bus
       ✓ Is not vulnerable to listener errors
-    #triggerMap
-      ✓ puts an action on the bus through a mapping function
     #listen
       Handler
         Returning Observables
-          With a callback-based observer
-            ✓ can trigger new events
-          With a retriggering observer
-            ✓ can trigger new events with elegant syntax :)
-            ✓ can trigger new events with elegant syntax :)
+          retriggering via observeWith
+            ✓ can send events from effects back through the bus
+          retrigging via observeAll
+            ✓ puts all return values
         Returning Promises
           With a callback-based observer
             ✓ can trigger new events
@@ -56,6 +55,25 @@ PASS test/bus.spec.ts
     #spy
       ✓ calls the function passed to it on any event, before any listener
       ✓ returns a subscription for cancelation
+      #spy #spy
+        ✓ runs spies in the order appended
+    #guard
+      ✎ todo returns a subscription for cancelation
+      callback
+        ✎ todo is called on matching events
+        when it throws
+          ✓ allows rejection of bus items by throwing
+          ✓ doesnt terminate the guard when throwing
+        return value
+          ✓ can mutate the payload
+      #guard #guard
+        ✓ runs guards in the order created
+      #spy #guard
+        ✓ runs guards before any spies
+    #filter
+      ✎ todo returns a subscription for cancelation
+      callback
+        ✓ may replace the action with another, after guards and before spies
   Robust Error Handling
     Errors dont stop triggering, kill the listener, allow other listeners
       ✓ empty observable
@@ -72,6 +90,8 @@ PASS test/bus.spec.ts
 PASS test/utils.spec.ts
   Bus
     ✓ can be instantiated with the BusItemType it will accept
+    Typings
+      ✓ types - can make more actions
     #query
       With a Predicate
         ✓ Returns an Observable of matching events
@@ -85,22 +105,19 @@ PASS test/utils.spec.ts
     #trigger
       ✓ puts an action on the bus
       ✓ Is not vulnerable to listener errors
-    #triggerMap
-      ✓ puts an action on the bus through a mapping function
     #listen
       Handler
         Returning Observables
-          With a callback-based observer
-            ✓ can trigger new events
-          With a retriggering observer
-            ✓ can trigger new events with elegant syntax :)
-            ✓ can trigger new events with elegant syntax :)
+          retriggering via observeWith
+            ✓ can send events from effects back through the bus
+          retrigging via observeAll
+            ✓ puts all return values
         Returning Promises
           With a callback-based observer
             ✓ can trigger new events
         Returning functions
           ✓ can return 0-arity function to call defer()
-          ✓ can return 1-arity function to call defer()
+          ✓ can return 1-arity function to create Observable via new Observable()
         Can return any ObservableInput
           ✓ Unpacks strings since theyre Iterable
           ✓ Works with generators
@@ -117,6 +134,25 @@ PASS test/utils.spec.ts
     #spy
       ✓ calls the function passed to it on any event, before any listener
       ✓ returns a subscription for cancelation
+      #spy #spy
+        ✓ runs spies in the order appended
+    #guard
+      ✎ todo returns a subscription for cancelation
+      callback
+        ✎ todo is called on matching events
+        when it throws
+          ✓ allows rejection of bus items by throwing
+          ✓ doesnt terminate the guard when throwing
+        return value
+          ✓ can mutate the payload
+      #guard #guard
+        ✓ runs guards in the order created
+      #spy #guard
+        ✓ runs guards before any spies
+    #filter
+      ✎ todo returns a subscription for cancelation
+      callback
+        ✓ may replace the action with another, after guards and before spies
   Robust Error Handling
     Errors dont stop triggering, kill the listener, allow other listeners
       ✓ empty observable
@@ -148,8 +184,6 @@ PASS test/utils.spec.ts
     delay arg
       when 0
         ✓ is synchronous
-      when a Promise
-        ✎ todo TODO resolves with new value
     value arg
       when value
         ✎ todo is produced after the delay
@@ -160,7 +194,7 @@ PASS test/utils.spec.ts
         ✓ yields the value
 
 Test Suites: 3 passed, 3 total
-Tests:       7 todo, 88 passed, 95 total
+Tests:       12 todo, 100 passed, 112 total
 Snapshots:   19 passed, 19 total
-Time:        4.7 s
+Time:        3.243 s
 Ran all test suites.

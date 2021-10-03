@@ -6,6 +6,7 @@ import {
   empty,
   EMPTY,
   of,
+  Observable,
   throwError,
   timer,
 } from 'rxjs';
@@ -13,7 +14,6 @@ import { tap } from 'rxjs/operators';
 import invariant from 'tiny-invariant';
 import { Action } from 'typescript-fsa';
 import {
-  cancelCreator,
   completeCreator,
   loadingCreator,
   resultCreator,
@@ -90,6 +90,45 @@ describe('Bus', () => {
     StringBus.reset();
   });
 
+  describe('Typings', () => {
+    interface Foo {
+      foo: string;
+      value?: string;
+    }
+    interface Bar extends Foo {
+      bar: string;
+      value?: string;
+    }
+
+    it('types - can make more actions', async () => {
+      const b = new Omnibus<Foo | Bar>();
+      const seen: Array<Foo | Bar> = [];
+
+      b.spy((foo) => seen.push(foo));
+      // b.listen<Foo,Bar>(
+      b.listen<Bar>(
+        (e) => !!e.foo,
+        (e) => {
+          // return any ObservableInput
+          // return of({ bar: e.foo } as Bar);
+          return Promise.resolve({ bar: `i was: ${e.foo}` } as Bar);
+        },
+        b.observeAll()
+      );
+      b.trigger({ foo: 'im foo' });
+      await Promise.resolve();
+      expect(seen).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "foo": "im foo",
+  },
+  Object {
+    "bar": "i was: im foo",
+  },
+]
+`);
+    });
+  });
   it('can be instantiated with the BusItemType it will accept', () => {
     expect(FSABus).toBeTruthy();
   });
@@ -181,38 +220,24 @@ Array [
     );
   });
 
-  describe('#triggerMap', () => {
-    it(
-      'puts an action on the bus through a mapping function',
-      capturing(miniBus, (events) => {
-        miniBus.triggerMap(5, (n) => n * 2);
-        expect(events).toEqual([10]);
-      })
-    );
-  });
-
   describe('#listen', () => {
     describe('Handler', () => {
       describe('Returning Observables', () => {
-        describe('With a callback-based observer', () => {
+        describe('retriggering via observeWith', () => {
           it(
-            'can trigger new events',
+            'can send events from effects back through the bus',
             capturing(FSABus, (events) => {
+              // Set up the listener:
+              // on events of searchRequest
+              // return an observable of next:{result: 'foo'}
               FSABus.listen(
-                (a) => a.type === searchRequestCreator.type,
-                () => of(resultCreator({ result: 'foo' })),
-                {
-                  subscribe() {
-                    FSABus.triggerMap(null, loadingCreator);
-                  },
-                  next(result) {
-                    FSABus.trigger(result);
-                  },
-                  complete() {
-                    FSABus.triggerMap(null, completeCreator);
-                  },
-                  // error also available
-                }
+                searchRequestCreator.match,
+                () => of({ result: 'foo' }),
+                FSABus.observeWith({
+                  subscribe: loadingCreator,
+                  next: resultCreator,
+                  complete: completeCreator,
+                })
               );
               FSABus.trigger(searchRequestCreator({ query: 'app', id: 3.14 }));
 
@@ -226,7 +251,7 @@ Array [
     "type": "search/request",
   },
   Object {
-    "payload": null,
+    "payload": undefined,
     "type": "search/loading",
   },
   Object {
@@ -236,7 +261,7 @@ Array [
     "type": "search/result",
   },
   Object {
-    "payload": null,
+    "payload": undefined,
     "type": "search/complete",
   },
 ]
@@ -244,79 +269,19 @@ Array [
             })
           );
         });
-        describe('With a retriggering observer', () => {
+        describe('retrigging via observeAll', () => {
           it(
-            'can trigger new events with elegant syntax :)',
-            capturing(FSABus, (events) => {
-              FSABus.listen(
-                (a) => a.type === searchRequestCreator.type,
-                () => of({ result: 'foo' }),
-                null,
-                {
-                  subscribe: loadingCreator,
-                  next: resultCreator,
-                }
+            'puts all return values (not complete/error) directly back on the bus ',
+            capturing(StringBus, async (events) => {
+              StringBus.listen(
+                (s) => s === 'FOO',
+                () => () => Promise.resolve('BAR'),
+                StringBus.observeAll()
               );
-              FSABus.trigger(searchRequestCreator({ query: 'app', id: 3.14 }));
-
-              expect(events).toMatchInlineSnapshot(`
-Array [
-  Object {
-    "payload": Object {
-      "id": 3.14,
-      "query": "app",
-    },
-    "type": "search/request",
-  },
-  Object {
-    "payload": undefined,
-    "type": "search/loading",
-  },
-  Object {
-    "payload": Object {
-      "result": "foo",
-    },
-    "type": "search/result",
-  },
-]
-`);
-            })
-          );
-          it(
-            'can trigger new events with elegant syntax :)',
-            capturing(FSABus, (events) => {
-              const listener = FSABus.listen(
-                (a) => a.type === searchRequestCreator.type,
-                () => after(1, { result: 'foo' }),
-                null,
-                {
-                  subscribe: loadingCreator,
-                  unsubscribe: cancelCreator,
-                }
-              );
-              FSABus.trigger(searchRequestCreator({ query: 'app', id: 3.14 }));
-
-              listener.unsubscribe();
-              // We get the cancel event, and no further will arrive
-              expect(events).toMatchInlineSnapshot(`
-Array [
-  Object {
-    "payload": Object {
-      "id": 3.14,
-      "query": "app",
-    },
-    "type": "search/request",
-  },
-  Object {
-    "payload": undefined,
-    "type": "search/loading",
-  },
-  Object {
-    "payload": undefined,
-    "type": "search/cancel",
-  },
-]
-`);
+              StringBus.trigger('FOO');
+              StringBus.trigger('NOTFOO');
+              await after(1);
+              expect(events).toEqual(['FOO', 'NOTFOO', 'BAR']);
             })
           );
         });
@@ -329,11 +294,9 @@ Array [
               StringBus.listen(
                 (a) => a === 'bang',
                 () => Promise.resolve('fooP'),
-                {
-                  next(result) {
-                    StringBus.trigger(result);
-                  },
-                }
+                StringBus.observeWith({
+                  next: (v) => v,
+                })
               );
               StringBus.trigger('bang');
               await DURATION.Timeout();
@@ -354,13 +317,8 @@ Array [
           capturing(StringBus, async (events) => {
             StringBus.listen(
               (s) => s === 'FOO',
-              // compatible with endpoints
               () => () => Promise.resolve('BAR'),
-              null,
-              // feed responded events back in
-              {
-                next: (v) => v,
-              }
+              StringBus.observeAll()
             );
             StringBus.trigger('FOO');
             StringBus.trigger('NOTFOO');
@@ -368,28 +326,37 @@ Array [
             expect(events).toEqual(['FOO', 'NOTFOO', 'BAR']);
           })
         );
-        it(
-          'can return 1-arity function to create Observable via new Observable()',
-          capturing(StringBus, async (events) => {
-            StringBus.listen(
-              (s) => s === 'FOO',
-              // dont need to import Observable, just return a function
-              () => (o: Observer<String>) => {
-                o.next('BARR');
-                after(1, () => o.next('BART')).subscribe();
-              },
-              null,
-              // feed responded events back in
-              {
-                next: (v) => v,
-              }
-            );
-            StringBus.trigger('FOO');
-            StringBus.trigger('NOTFOO');
-            await after(1);
-            expect(events).toEqual(['FOO', 'BARR', 'NOTFOO', 'BART']);
-          })
-        );
+        it('can return 1-arity function to create Observable via new Observable()', async () => {
+          StringBus.listen(
+            (s) => s === 'FOO',
+            // dont need to import Observable, just return a function
+            () => (o) => {
+              // my next/error/complete get observed in the next argument
+              o.next('BARRR');
+              // succeeds
+              o.next('BAR2');
+              // doesnt come through - WHY?
+              Promise.resolve().then(() => {
+                o.next('BAR3');
+              });
+              o.complete();
+            },
+            // feed responded events back in (optionally mapping)
+            StringBus.observeWith({
+              next: (x) => x,
+            })
+          );
+
+          const seen: Array<string> = [];
+          StringBus.spy((e) => {
+            seen.push(e);
+          });
+
+          StringBus.trigger('FOO');
+          StringBus.trigger('NOTFOO');
+          await Promise.resolve(); //after(200);
+          expect(seen).toEqual(['FOO', 'BARRR', 'BAR2', 'NOTFOO']);
+        });
       });
       describe('Can return any ObservableInput', () => {
         it(
@@ -605,6 +572,192 @@ Array [
       sub.unsubscribe();
       miniBus.trigger(1.1);
       expect(listenerSpy).toHaveBeenCalledTimes(1);
+    });
+
+    describe('#spy #spy', () => {
+      it('runs spies in the order appended', () => {
+        const seen = [];
+        miniBus.spy(() => {
+          seen.push(1);
+        });
+        miniBus.spy(() => {
+          seen.push(2);
+        });
+        miniBus.trigger(Math.PI);
+        expect(seen).toEqual([1, 2]);
+      });
+    });
+  });
+
+  describe('#guard', () => {
+    it.todo('returns a subscription for cancelation');
+
+    describe('callback', () => {
+      it.todo('is called on matching events');
+      describe('when it throws', () => {
+        it('allows rejection of bus items by throwing', () => {
+          const seen = [];
+
+          miniBus.listen(
+            () => true,
+            (i) => {
+              seen.push(i);
+            }
+          );
+          miniBus.guard(
+            (i) => i === 3.14,
+            () => {
+              throw 'No rounded transcendentals!';
+            }
+          );
+
+          miniBus.trigger(3.13);
+          expect(() => {
+            miniBus.trigger(3.14);
+          }).toThrow('No rounded transcendentals!');
+
+          expect(seen).toEqual([3.13]);
+        });
+        it('doesnt terminate the guard when throwing', () => {
+          const seen = [];
+
+          miniBus.spy((i) => seen.push(i));
+          miniBus.guard(
+            (i) => i === 3.14,
+            () => {
+              throw 'No rounded transcendentals!';
+            }
+          );
+
+          miniBus.trigger(3.13);
+          expect(() => {
+            miniBus.trigger(3.14);
+          }).toThrow('No rounded transcendentals!');
+
+          // still errs
+          expect(() => {
+            miniBus.trigger(3.14);
+          }).toThrow('No rounded transcendentals!');
+
+          // didnt break the bus
+          miniBus.trigger(3.15);
+
+          expect(seen).toEqual([3.13, 3.15]);
+        });
+      });
+      describe('return value', () => {
+        it('can mutate the payload', () => {
+          const seen = [];
+
+          FSABus.guard(
+            ({ type }) => type === 'foo',
+            (e) => {
+              e.payload.timestamp = Date.now().toString().substr(0, 3);
+            }
+          );
+          FSABus.listen(
+            () => true,
+            (e) => {
+              seen.push(e);
+            }
+          );
+
+          // mutates the payload
+          const payload = { fooId: 'bazž' };
+          FSABus.trigger({ type: 'foo', payload });
+
+          expect(seen).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "payload": Object {
+      "fooId": "bazž",
+      "timestamp": "163",
+    },
+    "type": "foo",
+  },
+]
+`);
+        });
+
+        // it('LEFTOFF can return a new payload to sub out for listeners', () => {
+        //   const seenTypes: Array<string> = [];
+        //   FSABus.guard(
+        //     ({ type }) => type === 'file/request',
+        //     (e) => {
+        //       return { type: 'auth/check', payload: e.payload };
+        //     }
+        //   );
+        //   FSABus.listen(
+        //     () => true,
+        //     (e) => {
+        //       seenTypes.push(e.type);
+        //     }
+        //   );
+
+        //   FSABus.trigger({
+        //     type: 'file/request',
+        //     payload: { path: '/foo.txt' },
+        //   });
+
+        //   // the filter replaces the event
+        //   expect(seenTypes).toContain('auth/check');
+        // });
+      });
+    });
+
+    describe('#guard #guard', () => {
+      it('runs guards in the order created', () => {
+        const seen = [];
+
+        miniBus.guard(
+          () => true,
+          () => {
+            seen.push(1);
+          }
+        );
+        miniBus.guard(
+          () => true,
+          () => {
+            seen.push(2);
+          }
+        );
+
+        miniBus.trigger('foo'.length);
+        expect(seen).toEqual([1, 2]);
+      });
+    });
+
+    describe('#spy #guard', () => {
+      it('runs guards before any spies', () => {
+        const seen = [];
+
+        miniBus.spy(() => seen.push(2));
+        miniBus.guard(
+          () => true,
+          () => seen.push(1)
+        );
+
+        miniBus.trigger('foo'.length);
+        expect(seen).toEqual([1, 2]);
+      });
+    });
+  });
+
+  describe('#filter', () => {
+    it.todo('returns a subscription for cancelation');
+    describe('callback', () => {
+      it(
+        'may replace the action with another, after guards and before spies',
+        capturing(StringBus, (seen) => {
+          StringBus.filter(
+            () => true,
+            (s) => s.substr(0, 4)
+          );
+          StringBus.trigger('BOOYEAH');
+
+          expect(seen).toEqual(['BOOY']);
+        })
+      );
     });
   });
 });
