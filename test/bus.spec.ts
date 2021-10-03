@@ -606,6 +606,172 @@ Array [
       miniBus.trigger(1.1);
       expect(listenerSpy).toHaveBeenCalledTimes(1);
     });
+
+    describe('#spy #spy', () => {
+      it('runs spies in the order appended', () => {
+        const seen = [];
+        miniBus.spy(() => {
+          seen.push(1);
+        });
+        miniBus.spy(() => {
+          seen.push(2);
+        });
+        miniBus.trigger(Math.PI);
+        expect(seen).toEqual([1, 2]);
+      });
+    });
+  });
+
+  describe('#guard', () => {
+    it.todo('returns a subscription for cancelation');
+
+    describe('callback', () => {
+      it.todo('is called on matching events');
+      describe('when it throws', () => {
+        it('allows rejection of bus items by throwing', () => {
+          const seen = [];
+
+          miniBus.listen(
+            () => true,
+            (i) => seen.push(i)
+          );
+          miniBus.guard(
+            (i) => i === 3.14,
+            () => {
+              throw 'No rounded transcendentals!';
+            }
+          );
+
+          miniBus.trigger(3.13);
+          expect(() => {
+            miniBus.trigger(3.14);
+          }).toThrow('No rounded transcendentals!');
+
+          expect(seen).toEqual([3.13]);
+        });
+        it('doesnt terminate the guard when throwing', () => {
+          const seen = [];
+
+          miniBus.spy((i) => seen.push(i));
+          miniBus.guard(
+            (i) => i === 3.14,
+            () => {
+              throw 'No rounded transcendentals!';
+            }
+          );
+
+          miniBus.trigger(3.13);
+          expect(() => {
+            miniBus.trigger(3.14);
+          }).toThrow('No rounded transcendentals!');
+
+          // still errs
+          expect(() => {
+            miniBus.trigger(3.14);
+          }).toThrow('No rounded transcendentals!');
+
+          // didnt break the bus
+          miniBus.trigger(3.15);
+
+          expect(seen).toEqual([3.13, 3.15]);
+        });
+      });
+      describe('return value', () => {
+        it('can mutate the payload', () => {
+          const seen = [];
+
+          FSABus.guard(
+            ({ type }) => type === 'foo',
+            (e) => {
+              e.payload.timestamp = Date.now().toString().substr(0, 3);
+            }
+          );
+          FSABus.listen(
+            () => true,
+            (e) => {
+              seen.push(e);
+            }
+          );
+
+          // mutates the payload
+          const payload = { fooId: 'bazž' };
+          FSABus.trigger({ type: 'foo', payload });
+
+          expect(seen).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "payload": Object {
+      "fooId": "bazž",
+      "timestamp": "163",
+    },
+    "type": "foo",
+  },
+]
+`);
+        });
+
+        // it('LEFTOFF can return a new payload to sub out for listeners', () => {
+        //   const seenTypes: Array<string> = [];
+        //   FSABus.guard(
+        //     ({ type }) => type === 'file/request',
+        //     (e) => {
+        //       return { type: 'auth/check', payload: e.payload };
+        //     }
+        //   );
+        //   FSABus.listen(
+        //     () => true,
+        //     (e) => {
+        //       seenTypes.push(e.type);
+        //     }
+        //   );
+
+        //   FSABus.trigger({
+        //     type: 'file/request',
+        //     payload: { path: '/foo.txt' },
+        //   });
+
+        //   // the filter replaces the event
+        //   expect(seenTypes).toContain('auth/check');
+        // });
+      });
+    });
+
+    describe('#guard #guard', () => {
+      it('runs guards in the order created', () => {
+        const seen = [];
+
+        miniBus.guard(
+          () => true,
+          () => {
+            seen.push(1);
+          }
+        );
+        miniBus.guard(
+          () => true,
+          () => {
+            seen.push(2);
+          }
+        );
+
+        miniBus.trigger('foo'.length);
+        expect(seen).toEqual([1, 2]);
+      });
+    });
+
+    describe('#spy #guard', () => {
+      it('runs guards before any spies', () => {
+        const seen = [];
+
+        miniBus.spy(() => seen.push(2));
+        miniBus.guard(
+          () => true,
+          () => seen.push(1)
+        );
+
+        miniBus.trigger('foo'.length);
+        expect(seen).toEqual([1, 2]);
+      });
+    });
   });
 });
 

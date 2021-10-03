@@ -1,6 +1,11 @@
 //#region imports
 // prettier-ignore-start
-import { Observable, PartialObserver, Subject, Subscription } from 'rxjs';
+import {
+  Observable,
+  PartialObserver,
+  Subject,
+  Subscription,
+} from 'rxjs';
 import { defer, EMPTY, from } from 'rxjs';
 import { concatMap, exhaustMap, mergeMap, switchMap } from 'rxjs/operators';
 import { filter, takeUntil, tap } from 'rxjs/operators';
@@ -103,7 +108,6 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     this.preprocessors.forEach(([predicate, handler]) => {
       predicate(item) && handler(item);
     });
-
     this.channel.next(item);
   }
 
@@ -199,16 +203,30 @@ export class Omnibus<TBusItem> implements EventBus<TBusItem> {
     return this.listen(matcher, handler, observer, observerTypes, exhaustMap);
   }
 
-  /** Run a function (synchronously) for all runtime events, prior to all listeners. Throwing an exception will terminate the spy.*/
-  public spy(fn: (item: TBusItem) => void) {
-    this.preprocessors.push([thunkTrue, fn]);
-
+  private createRemovalSub(matcher: Function, fn: Function) {
     return new Subscription(() => {
       const whereamI = this.preprocessors.findIndex(
-        (pp) => pp[0] === thunkTrue && pp[1] === fn
+        (pp) => pp[0] === matcher && pp[1] === fn
       );
       this.preprocessors.splice(whereamI, 1);
     });
+  }
+
+  /** Run a function (synchronously) for all runtime events, prior to all listeners. Throwing an exception will terminate the spy.*/
+  public spy(fn: (item: TBusItem) => void) {
+    this.preprocessors.push([thunkTrue, fn]);
+    return this.createRemovalSub(thunkTrue, fn);
+  }
+
+  /** Run a function (synchronously) for all runtime events, prior to all spies and listeners.
+   * Throwing an exception will raise to the triggerer, but not terminate the guard.*/
+  public guard(matcher: Predicate<TBusItem>, fn: (item: TBusItem) => void) {
+    const preprocs = this.preprocessors;
+    const firstSpyIdx = preprocs.findIndex((pp) => pp[0] === thunkTrue);
+    /* istanbul ignore next */ // jest misreports the following line as uncovered
+    const beforeSpies = firstSpyIdx > -1 ? firstSpyIdx : preprocs.length;
+    preprocs.splice(beforeSpies, 0, [matcher, fn]);
+    return this.createRemovalSub(matcher, fn);
   }
 
   /** Takes an observer-shaped object of action creators, turns it into

@@ -56,6 +56,23 @@ PASS test/bus.spec.ts
     #spy
       ✓ calls the function passed to it on any event, before any listener
       ✓ returns a subscription for cancelation
+      #spy #spy
+        ✓ runs spies in the order appended
+    #guard
+      ✎ todo returns a subscription for cancelation
+      callback
+        ✎ todo is called on matching events
+        when it throws
+          ✓ allows rejection of bus items by throwing
+          ✓ doesnt terminate the guard when throwing
+        return value
+          ✓ can mutate the payload
+          ✎ todo when void, passes the event
+          ✎ todo when non-void, replaces the event
+      #guard #guard
+        ✓ runs guards in the order created
+      #spy #guard
+        ✓ runs guards before any spies
   Robust Error Handling
     Errors dont stop triggering, kill the listener, allow other listeners
       ✓ empty observable
@@ -100,7 +117,7 @@ PASS test/utils.spec.ts
             ✓ can trigger new events
         Returning functions
           ✓ can return 0-arity function to call defer()
-          ✓ can return 1-arity function to call defer()
+          ✓ can return 1-arity function to create Observable via new Observable()
         Can return any ObservableInput
           ✓ Unpacks strings since theyre Iterable
           ✓ Works with generators
@@ -117,6 +134,23 @@ PASS test/utils.spec.ts
     #spy
       ✓ calls the function passed to it on any event, before any listener
       ✓ returns a subscription for cancelation
+      #spy #spy
+        ✓ runs spies in the order appended
+    #guard
+      ✎ todo returns a subscription for cancelation
+      callback
+        ✎ todo is called on matching events
+        when it throws
+          ✓ allows rejection of bus items by throwing
+          ✓ doesnt terminate the guard when throwing
+        return value
+          ✓ can mutate the payload
+          ✎ todo when void, passes the event
+          ✎ todo when non-void, replaces the event
+      #guard #guard
+        ✓ runs guards in the order created
+      #spy #guard
+        ✓ runs guards before any spies
   Robust Error Handling
     Errors dont stop triggering, kill the listener, allow other listeners
       ✓ empty observable
@@ -148,8 +182,6 @@ PASS test/utils.spec.ts
     delay arg
       when 0
         ✓ is synchronous
-      when a Promise
-        ✎ todo TODO resolves with new value
     value arg
       when value
         ✎ todo is produced after the delay
@@ -160,7 +192,7 @@ PASS test/utils.spec.ts
         ✓ yields the value
 
 Test Suites: 3 passed, 3 total
-Tests:       7 todo, 88 passed, 95 total
-Snapshots:   19 passed, 19 total
-Time:        4.7 s
+Tests:       14 todo, 100 passed, 114 total
+Snapshots:   21 passed, 21 total
+Time:        5.013 s
 Ran all test suites.
