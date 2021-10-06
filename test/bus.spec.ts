@@ -94,28 +94,25 @@ describe('Bus', () => {
       foo: string;
       value?: string;
     }
-    interface Bar {
+    interface Bar extends Foo {
       bar: string;
       value?: string;
     }
 
     it.only('types - can make more actions', async () => {
-      const b = new Omnibus<Foo>();
+      const b = new Omnibus<Foo|Bar>();
       const seen: Array<Foo | Bar> = [];
 
       b.spy((foo) => seen.push(foo));
-      b.listen(
+      // b.listen<Foo,Bar>(
+      b.listen<Bar>(
         (e) => !!e.foo,
         (e) => {
           // return any ObservableInput
           // return of({ bar: e.foo } as Bar);
-          return Promise.resolve({ bar: e.foo });
+          return Promise.resolve({ bar: `i was: ${e.foo}` } as Bar);
         },
-        {
-          next(bar) {
-            seen.push(bar);
-          },
-        }
+        b.publishOntoBus()
       );
       b.trigger({ foo: 'im foo' });
       await Promise.resolve();
@@ -125,7 +122,7 @@ Array [
     "foo": "im foo",
   },
   Object {
-    "bar": "im foo",
+    "bar": "i was: im foo",
   },
 ]
 `);

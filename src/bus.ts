@@ -17,7 +17,7 @@ import { filter, takeUntil, tap } from 'rxjs/operators';
 export type Predicate<T> = (item: T) => boolean;
 export type ResultCreator<T, TConsequence> = (
   item: T
-) => ObservableInput<TConsequence> | void
+) => ObservableInput<TConsequence> | void;
 
 export type TapObserver<T> =
   | PartialObserver<T>
@@ -34,7 +34,6 @@ export interface TriggeredItemMap<TConsequence, TBusItem> {
   subscribe?: (i: any) => TBusItem;
   unsubscribe?: (i: any) => TBusItem;
 }
-
 
 const thunkTrue = () => true;
 
@@ -112,9 +111,9 @@ export class Omnibus<TBusItem> {
    * @param handler Creates an Observable of work. Called for each matching event. ConcurrencyMode is applied to it.
    * @returns a subscription that can be used to unsubscribe the listener, thereby canceling work in progress.
    */
-  public listen<SubType extends TBusItem, TConsequence>(
-    matcher: Predicate<SubType>,
-    handler: ResultCreator<SubType, TConsequence>,
+  public listen<TConsequence>(
+    matcher: Predicate<TBusItem>,
+    handler: ResultCreator<TBusItem, TConsequence>,
     observer?: TapObserver<TConsequence>,
     observerTypes?: TriggeredItemMap<TConsequence, TBusItem>,
     operator = mergeMap
@@ -233,6 +232,16 @@ export class Omnibus<TBusItem> {
   public reset(): void {
     this.resets.next();
   }
+
+  /** Creates an observer that publishes each 'next' item to the bus.
+   * If a listener returns an Observable whose 'next' values are suitable for triggering:
+   * bus.listen(condition, handler 
+   */
+  public publishOntoBus<TConsequence extends TBusItem>(): TapObserver<TConsequence> {
+    return {
+      next: (c: TConsequence) => {
+        this.trigger(c);
+      },
+    };
+  }
 }
-
-
