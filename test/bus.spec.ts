@@ -114,7 +114,7 @@ describe('Bus', () => {
           // return of({ bar: e.foo } as Bar);
           return Promise.resolve({ bar: `i was: ${e.foo}` } as Bar);
         },
-        b.publishOntoBus()
+        b.observeAll()
       );
       b.trigger({ foo: 'im foo' });
       await Promise.resolve();
@@ -291,7 +291,7 @@ Array [
               FSABus.listen(
                 (a) => a.type === searchRequestCreator.type,
                 () => of({ result: 'foo' }),
-                FSABus.observeOntoBus({
+                FSABus.observeWith({
                   subscribe: loadingCreator,
                   next: resultCreator,
                 })
@@ -327,7 +327,7 @@ Array [
               const listener = FSABus.listen(
                 (a) => a.type === searchRequestCreator.type,
                 () => after(1, { result: 'foo' }),
-                FSABus.observeOntoBus({
+                FSABus.observeWith({
                   subscribe: loadingCreator,
                   unsubscribe: cancelCreator,
                 })
@@ -393,7 +393,7 @@ Array [
             StringBus.listen(
               (s) => s === 'FOO',
               () => () => Promise.resolve('BAR'),
-              StringBus.publishOntoBus()
+              StringBus.observeAll()
             );
             StringBus.trigger('FOO');
             StringBus.trigger('NOTFOO');
@@ -410,14 +410,14 @@ Array [
               o.next('BARRR');
               // succeeds
               o.next('BAR2');
-              // doesnt
+              // doesnt come through - WHY?
               Promise.resolve().then(() => {
-                o.next('BAR2');
+                o.next('BAR3');
               });
               o.complete();
             },
             // feed responded events back in (optionally mapping)
-            StringBus.observeOntoBus({
+            StringBus.observeWith({
               next: (x) => x,
             })
           );

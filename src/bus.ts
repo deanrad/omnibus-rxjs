@@ -167,34 +167,6 @@ export class Omnibus<TBusItem> {
     return this.listen(matcher, handler, observer, exhaustMap);
   }
 
-  private getHandlingResult<SubType extends TBusItem, TConsequence>(
-    handler: ResultCreator<SubType, TConsequence>,
-    event: TBusItem
-  ) {
-    // @ts-ignore dynamic
-    const oneResult = handler(event);
-    const obsResult: Observable<TConsequence> =
-      typeof oneResult === 'function'
-        ? // @ts-ignore
-          oneResult.length === 0
-          ? // @ts-ignore
-            defer(oneResult)
-          : // @ts-ignore
-            new Observable(oneResult)
-        : // @ts-ignore
-          from(oneResult ?? EMPTY);
-    return obsResult;
-  }
-
-  private createRemovalSub(matcher: Function, fn: Function) {
-    return new Subscription(() => {
-      const whereamI = this.preprocessors.findIndex(
-        (pp) => pp[0] === matcher && pp[1] === fn
-      );
-      this.preprocessors.splice(whereamI, 1);
-    });
-  }
-
   /** Run a function (synchronously) for all runtime events, prior to all listeners. Throwing an exception will terminate the spy.*/
   public spy(fn: (item: TBusItem) => void) {
     this.preprocessors.push([thunkTrue, fn]);
@@ -233,11 +205,9 @@ export class Omnibus<TBusItem> {
     this.resets.next();
   }
 
-  /** Creates an observer that publishes each 'next' item to the bus.
-   * If a listener returns an Observable whose 'next' values are suitable for triggering:
-   * bus.listen(condition, handler
+  /** Creates an EffectObserver that triggers an event on the bus, for each of the effects' `next` notifications.
    */
-  public publishOntoBus<
+  public observeAll<
     TConsequence extends TBusItem
   >(): TapObserver<TConsequence> {
     return {
@@ -247,8 +217,11 @@ export class Omnibus<TBusItem> {
     };
   }
 
-  /** Creates a listener that maps Observable lifecycle events to triggered items */
-  public observeOntoBus<TConsequence>(mapper: Mapper<TConsequence, TBusItem>) {
+  /** Creates an EffectObserver that triggers events to the bus for each notification
+   * of the effect (next, error, complete), but also for (subscribe and unsubscribe).
+   * Accepts a map with of mapping functions, like FSA action creators. The corresponding
+   * notifications will be triggered to the bus as returned by these mapping functions. **/
+  public observeWith<TConsequence>(mapper: Mapper<TConsequence, TBusItem>) {
     // invariant - at least one key
     // @ts-ignore
     const observer: PartialObserver<TConsequence> & SubscribeObserver = {};
@@ -269,5 +242,33 @@ export class Omnibus<TBusItem> {
       }
     });
     return observer;
+  }
+
+  private getHandlingResult<SubType extends TBusItem, TConsequence>(
+    handler: ResultCreator<SubType, TConsequence>,
+    event: TBusItem
+  ) {
+    // @ts-ignore dynamic
+    const oneResult = handler(event);
+    const obsResult: Observable<TConsequence> =
+      typeof oneResult === 'function'
+        ? // @ts-ignore
+          oneResult.length === 0
+          ? // @ts-ignore
+            defer(oneResult)
+          : // @ts-ignore
+            new Observable(oneResult)
+        : // @ts-ignore
+          from(oneResult ?? EMPTY);
+    return obsResult;
+  }
+
+  private createRemovalSub(matcher: Function, fn: Function) {
+    return new Subscription(() => {
+      const whereamI = this.preprocessors.findIndex(
+        (pp) => pp[0] === matcher && pp[1] === fn
+      );
+      this.preprocessors.splice(whereamI, 1);
+    });
   }
 }
