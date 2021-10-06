@@ -1,4 +1,3 @@
-// @ts-nocheck
 import {
   asapScheduler as promiseScheduler,
   asyncScheduler as timeoutScheduler,
@@ -90,6 +89,48 @@ describe('Bus', () => {
     StringBus.reset();
   });
 
+  describe('Typings', () => {
+    interface Foo {
+      foo: string;
+      value?: string;
+    }
+    interface Bar {
+      bar: string;
+      value?: string;
+    }
+
+    it.only('types - can make more actions', async () => {
+      const b = new Omnibus<Foo>();
+      const seen: Array<Foo | Bar> = [];
+
+      b.spy((foo) => seen.push(foo));
+      b.listen(
+        (e) => !!e.foo,
+        (e) => {
+          // return any ObservableInput
+          // return of({ bar: e.foo } as Bar);
+          return Promise.resolve({ bar: e.foo });
+        },
+        {
+          next(bar) {
+            seen.push(bar);
+          },
+        }
+      );
+      b.trigger({ foo: 'im foo' });
+      await Promise.resolve();
+      expect(seen).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "foo": "im foo",
+  },
+  Object {
+    "bar": "im foo",
+  },
+]
+`);
+    });
+  });
   it('can be instantiated with the BusItemType it will accept', () => {
     expect(FSABus).toBeTruthy();
   });
