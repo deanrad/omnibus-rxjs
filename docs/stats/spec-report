@@ -11,6 +11,8 @@ PASS test/3rd-party.spec.ts
 PASS test/bus.spec.ts
   Bus
     ✓ can be instantiated with the BusItemType it will accept
+    Typings
+      ✓ types - can make more actions
     #query
       With a Predicate
         ✓ Returns an Observable of matching events
@@ -33,7 +35,7 @@ PASS test/bus.spec.ts
             ✓ can trigger new events
           With a retriggering observer
             ✓ can trigger new events with elegant syntax :)
-            ✓ can trigger new events with elegant syntax :)
+            ✓ can trigger new events with FSA Actions syntax :)
         Returning Promises
           With a callback-based observer
             ✓ can trigger new events
@@ -67,8 +69,6 @@ PASS test/bus.spec.ts
           ✓ doesnt terminate the guard when throwing
         return value
           ✓ can mutate the payload
-          ✎ todo when void, passes the event
-          ✎ todo when non-void, replaces the event
       #guard #guard
         ✓ runs guards in the order created
       #spy #guard
@@ -89,6 +89,8 @@ PASS test/bus.spec.ts
 PASS test/utils.spec.ts
   Bus
     ✓ can be instantiated with the BusItemType it will accept
+    Typings
+      ✓ types - can make more actions
     #query
       With a Predicate
         ✓ Returns an Observable of matching events
@@ -111,7 +113,7 @@ PASS test/utils.spec.ts
             ✓ can trigger new events
           With a retriggering observer
             ✓ can trigger new events with elegant syntax :)
-            ✓ can trigger new events with elegant syntax :)
+            ✓ can trigger new events with FSA Actions syntax :)
         Returning Promises
           With a callback-based observer
             ✓ can trigger new events
@@ -145,8 +147,6 @@ PASS test/utils.spec.ts
           ✓ doesnt terminate the guard when throwing
         return value
           ✓ can mutate the payload
-          ✎ todo when void, passes the event
-          ✎ todo when non-void, replaces the event
       #guard #guard
         ✓ runs guards in the order created
       #spy #guard
@@ -192,7 +192,7 @@ PASS test/utils.spec.ts
         ✓ yields the value
 
 Test Suites: 3 passed, 3 total
-Tests:       14 todo, 100 passed, 114 total
-Snapshots:   21 passed, 21 total
-Time:        5.013 s
+Tests:       10 todo, 102 passed, 112 total
+Snapshots:   23 passed, 23 total
+Time:        3.179 s
 Ran all test suites.
