@@ -3,6 +3,7 @@
 import {
   Observable,
   ObservableInput,
+  Observer,
   PartialObserver,
   Subject,
   Subscription,
@@ -15,16 +16,23 @@ import { filter, takeUntil, tap } from 'rxjs/operators';
 
 //#region types
 export type Predicate<T> = (item: T) => boolean;
+export type ListenerReturnValue<T, TConsequence> =
+  | ((o: Observer<T>) => void)
+  | (() => ObservableInput<TConsequence>)
+  | ObservableInput<TConsequence>
+  | void;
 export type ResultCreator<T, TConsequence> = (
   item: T
-) => ObservableInput<TConsequence> | void;
+) => ListenerReturnValue<T, TConsequence>;
 
-export type TapObserver<T> =
-  | PartialObserver<T>
-  | {
-      subscribe: () => void;
-      unsubscribe: () => void;
-    };
+type SubscribeObserver = {
+  subscribe: () => void;
+  unsubscribe: () => void;
+};
+export type TapObserver<T> = PartialObserver<T> | SubscribeObserver;
+export type ObserverKey = keyof PartialObserver<any> | keyof SubscribeObserver;
+export type MapFn<T, U> = (t?: T) => U;
+export type Mapper<T, U> = Record<ObserverKey, MapFn<T, U>>;
 
 /** A map of action creators getObserverFromActionMap  */
 export interface TriggeredItemMap<TConsequence, TBusItem> {
@@ -115,20 +123,13 @@ export class Omnibus<TBusItem> {
     matcher: Predicate<TBusItem>,
     handler: ResultCreator<TBusItem, TConsequence>,
     observer?: TapObserver<TConsequence>,
-    observerTypes?: TriggeredItemMap<TConsequence, TBusItem>,
     operator = mergeMap
   ) {
-    const _observer = observer
-      ? observer
-      : observerTypes
-      ? this.getObserverFromActionMap(observerTypes)
-      : undefined;
-
     // @ts-ignore dynamic
     const consequences = this.query(matcher).pipe(
       operator((event) => {
         const obsResult = this.getHandlingResult(handler, event);
-        return obsResult.pipe(tap(_observer));
+        return obsResult.pipe(tap(observer));
       })
     );
     const errorNotifier: PartialObserver<unknown> = {
@@ -137,6 +138,33 @@ export class Omnibus<TBusItem> {
       },
     };
     return consequences.subscribe(errorNotifier);
+  }
+
+  /** Calls listen with concatMap (queueing) semantics */
+  public listenQueueing<TConsequence>(
+    matcher: Predicate<TBusItem>,
+    handler: ResultCreator<TBusItem, TConsequence>,
+    observer?: TapObserver<TConsequence>
+  ) {
+    return this.listen(matcher, handler, observer, concatMap);
+  }
+
+  /** Calls listen with switchMap (restarting) semantics */
+  public listenSwitching<TConsequence>(
+    matcher: Predicate<TBusItem>,
+    handler: ResultCreator<TBusItem, TConsequence>,
+    observer?: TapObserver<TConsequence>
+  ) {
+    return this.listen(matcher, handler, observer, switchMap);
+  }
+
+  /** Calls listen with blocking (exhausting) semantics */
+  public listenBlocking<TConsequence>(
+    matcher: Predicate<TBusItem>,
+    handler: ResultCreator<TBusItem, TConsequence>,
+    observer?: TapObserver<TConsequence>
+  ) {
+    return this.listen(matcher, handler, observer, exhaustMap);
   }
 
   private getHandlingResult<SubType extends TBusItem, TConsequence>(
@@ -149,41 +177,13 @@ export class Omnibus<TBusItem> {
       typeof oneResult === 'function'
         ? // @ts-ignore
           oneResult.length === 0
-          ? defer(oneResult)
-          : new Observable(oneResult)
+          ? // @ts-ignore
+            defer(oneResult)
+          : // @ts-ignore
+            new Observable(oneResult)
         : // @ts-ignore
           from(oneResult ?? EMPTY);
     return obsResult;
-  }
-
-  /** Calls listen with concatMap (queueing) semantics */
-  public listenQueueing<SubType extends TBusItem, TConsequence>(
-    matcher: Predicate<SubType>,
-    handler: ResultCreator<SubType, TConsequence>,
-    observer?: TapObserver<TConsequence>,
-    observerTypes?: TriggeredItemMap<TConsequence, TBusItem>
-  ) {
-    return this.listen(matcher, handler, observer, observerTypes, concatMap);
-  }
-
-  /** Calls listen with switchMap (restarting) semantics */
-  public listenSwitching<SubType extends TBusItem, TConsequence>(
-    matcher: Predicate<SubType>,
-    handler: ResultCreator<SubType, TConsequence>,
-    observer?: TapObserver<TConsequence>,
-    observerTypes?: TriggeredItemMap<TConsequence, TBusItem>
-  ) {
-    return this.listen(matcher, handler, observer, observerTypes, switchMap);
-  }
-
-  /** Calls listen with blocking (exhausting) semantics */
-  public listenBlocking<SubType extends TBusItem, TConsequence>(
-    matcher: Predicate<SubType>,
-    handler: ResultCreator<SubType, TConsequence>,
-    observer?: TapObserver<TConsequence>,
-    observerTypes?: TriggeredItemMap<TConsequence, TBusItem>
-  ) {
-    return this.listen(matcher, handler, observer, observerTypes, exhaustMap);
   }
 
   private createRemovalSub(matcher: Function, fn: Function) {
@@ -235,13 +235,39 @@ export class Omnibus<TBusItem> {
 
   /** Creates an observer that publishes each 'next' item to the bus.
    * If a listener returns an Observable whose 'next' values are suitable for triggering:
-   * bus.listen(condition, handler 
+   * bus.listen(condition, handler
    */
-  public publishOntoBus<TConsequence extends TBusItem>(): TapObserver<TConsequence> {
+  public publishOntoBus<
+    TConsequence extends TBusItem
+  >(): TapObserver<TConsequence> {
     return {
       next: (c: TConsequence) => {
         this.trigger(c);
       },
     };
+  }
+
+  /** Creates a listener that maps Observable lifecycle events to triggered items */
+  public observeOntoBus<TConsequence>(mapper: Mapper<TConsequence, TBusItem>) {
+    // invariant - at least one key
+    // @ts-ignore
+    const observer: PartialObserver<TConsequence> & SubscribeObserver = {};
+    ['next', 'error'].forEach((key) => {
+      // @ts-ignore
+      if (mapper[key]) {
+        // prettier-ignore
+        // @ts-ignore
+        observer[key] = (valueOrError) => this.trigger(mapper[key](valueOrError));
+      }
+    });
+
+    ['complete', 'subscribe', 'unsubscribe'].forEach((key) => {
+      // @ts-ignore
+      if (mapper[key]) {
+        // @ts-ignore
+        observer[key] = () => this.trigger(mapper[key]());
+      }
+    });
+    return observer;
   }
 }

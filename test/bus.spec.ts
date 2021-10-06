@@ -5,6 +5,7 @@ import {
   empty,
   EMPTY,
   of,
+  Observable,
   throwError,
   timer,
 } from 'rxjs';
@@ -99,8 +100,8 @@ describe('Bus', () => {
       value?: string;
     }
 
-    it.only('types - can make more actions', async () => {
-      const b = new Omnibus<Foo|Bar>();
+    it('types - can make more actions', async () => {
+      const b = new Omnibus<Foo | Bar>();
       const seen: Array<Foo | Bar> = [];
 
       b.spy((foo) => seen.push(foo));
@@ -321,7 +322,7 @@ Array [
             })
           );
           it(
-            'can trigger new events with elegant syntax :)',
+            'can trigger new events with FSA Actions syntax :)',
             capturing(FSABus, (events) => {
               const listener = FSABus.listen(
                 (a) => a.type === searchRequestCreator.type,
@@ -392,13 +393,8 @@ Array [
           capturing(StringBus, async (events) => {
             StringBus.listen(
               (s) => s === 'FOO',
-              // compatible with endpoints
               () => () => Promise.resolve('BAR'),
-              null,
-              // feed responded events back in
-              {
-                next: (v) => v,
-              }
+              StringBus.publishOntoBus()
             );
             StringBus.trigger('FOO');
             StringBus.trigger('NOTFOO');
@@ -406,21 +402,19 @@ Array [
             expect(events).toEqual(['FOO', 'NOTFOO', 'BAR']);
           })
         );
-        it(
+        it.only(
           'can return 1-arity function to create Observable via new Observable()',
           capturing(StringBus, async (events) => {
             StringBus.listen(
               (s) => s === 'FOO',
               // dont need to import Observable, just return a function
-              () => (o: Observer<String>) => {
+              () => (o) => {
                 o.next('BARR');
                 after(1, () => o.next('BART')).subscribe();
+                o.complete();
               },
-              null,
               // feed responded events back in
-              {
-                next: (v) => v,
-              }
+              StringBus.publishOntoBus()
             );
             StringBus.trigger('FOO');
             StringBus.trigger('NOTFOO');
