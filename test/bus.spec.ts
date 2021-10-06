@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   asapScheduler as promiseScheduler,
   asyncScheduler as timeoutScheduler,
@@ -290,11 +291,10 @@ Array [
               FSABus.listen(
                 (a) => a.type === searchRequestCreator.type,
                 () => of({ result: 'foo' }),
-                null,
-                {
+                FSABus.observeOntoBus({
                   subscribe: loadingCreator,
                   next: resultCreator,
-                }
+                })
               );
               FSABus.trigger(searchRequestCreator({ query: 'app', id: 3.14 }));
 
@@ -327,11 +327,10 @@ Array [
               const listener = FSABus.listen(
                 (a) => a.type === searchRequestCreator.type,
                 () => after(1, { result: 'foo' }),
-                null,
-                {
+                FSABus.observeOntoBus({
                   subscribe: loadingCreator,
                   unsubscribe: cancelCreator,
-                }
+                })
               );
               FSABus.trigger(searchRequestCreator({ query: 'app', id: 3.14 }));
 
@@ -402,26 +401,37 @@ Array [
             expect(events).toEqual(['FOO', 'NOTFOO', 'BAR']);
           })
         );
-        it.only(
-          'can return 1-arity function to create Observable via new Observable()',
-          capturing(StringBus, async (events) => {
-            StringBus.listen(
-              (s) => s === 'FOO',
-              // dont need to import Observable, just return a function
-              () => (o) => {
-                o.next('BARR');
-                after(1, () => o.next('BART')).subscribe();
-                o.complete();
-              },
-              // feed responded events back in
-              StringBus.publishOntoBus()
-            );
-            StringBus.trigger('FOO');
-            StringBus.trigger('NOTFOO');
-            await after(1);
-            expect(events).toEqual(['FOO', 'BARR', 'NOTFOO', 'BART']);
-          })
-        );
+        it('can return 1-arity function to create Observable via new Observable()', async () => {
+          StringBus.listen(
+            (s) => s === 'FOO',
+            // dont need to import Observable, just return a function
+            () => (o) => {
+              // my next/error/complete get observed in the next argument
+              o.next('BARRR');
+              // succeeds
+              o.next('BAR2');
+              // doesnt
+              Promise.resolve().then(() => {
+                o.next('BAR2');
+              });
+              o.complete();
+            },
+            // feed responded events back in (optionally mapping)
+            StringBus.observeOntoBus({
+              next: (x) => x,
+            })
+          );
+
+          const seen: Array<string> = [];
+          StringBus.spy((e) => {
+            seen.push(e);
+          });
+
+          StringBus.trigger('FOO');
+          StringBus.trigger('NOTFOO');
+          await Promise.resolve(); //after(200);
+          expect(seen).toEqual(['FOO', 'BARRR', 'BAR2', 'NOTFOO']);
+        });
       });
       describe('Can return any ObservableInput', () => {
         it(
@@ -665,7 +675,9 @@ Array [
 
           miniBus.listen(
             () => true,
-            (i) => seen.push(i)
+            (i) => {
+              seen.push(i);
+            }
           );
           miniBus.guard(
             (i) => i === 3.14,
