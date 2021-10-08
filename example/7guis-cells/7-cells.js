@@ -1,6 +1,6 @@
 'use strict';
 const React = require('react');
-const { Text, Box, useInput, useApp } = require('ink');
+const { Text, Box, useInput, useApp, useStdout } = require('ink');
 const InkText = require('ink-text-input');
 const { useEffect, useState } = require('react');
 const UncontrolledTextInput = InkText.UncontrolledTextInput;
@@ -56,14 +56,14 @@ bus.listen(
 	}
 );
 
-const runawayDetect = (exit) => () => {
+const runawayDetect = (fnExit) => () => {
 	bus
 		.query(({ type }) => type === 'cell/value/set')
 		.pipe(bufferTime(5))
 		.subscribe((buffer) => {
 			if (buffer.length > 10) {
 				console.log('Cyclical formula detected');
-				exit();
+				fnExit();
 				process.exit(1);
 			}
 		});
@@ -120,9 +120,18 @@ const Current = () => {
 const App = () => {
 	const [active, setActive] = React.useState('A1');
 	const { exit } = useApp();
+	const { stdout } = useStdout();
 
 	// runaway detection if we exceed 10 in 5 msec
-	useEffect(runawayDetect(exit), []);
+	useEffect(
+		runawayDetect(() => {
+			stdout.write(
+				'\n!!! Runaway calculation detected. (Do you have a dependency cycle?) !!!\n\n'
+			);
+			exit();
+		}),
+		[]
+	);
 
 	useInput((input, key) => {
 		if (key.rightArrow || key.return) {
@@ -163,9 +172,9 @@ const App = () => {
 				justifyContent="space-around"
 			>
 				<Text key="h1">\</Text>
-				<Text key="h2">A</Text>
-				<Text key="h3">B</Text>
-				<Text key="h4">C</Text>
+				<Text key="h2">A1</Text>
+				<Text key="h3">B1</Text>
+				<Text key="h4">C1</Text>
 			</Box>
 			<Box
 				height={5}
@@ -250,6 +259,6 @@ function runTests() {
 }
 
 // Uncomment to verify it's working
-// runTests();
+process.env.DEMO && runTests();
 
 module.exports = App;
