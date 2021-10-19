@@ -428,6 +428,9 @@ Array [
         );
       });
     });
+    describe('Observer', () => {
+      it.todo('contains callbacks attached to the handler lifecycle');
+    });
   });
   describe('#listenQueueing (same signature as #listen, but with concatMap)', () => {
     it('serializes execution', async () => {
@@ -491,6 +494,58 @@ Array [
         'start:1',
         'done:1',
       ]);
+    });
+  });
+
+  describe('#listen #trigger #trigger', () => {
+    describe('handlers which error', () => {
+      describe('Not rescued', () => {
+        it('does not continue listening', () => {
+          const seen = [];
+          const actor = StringBus.listen(
+            () => true,
+            (s) => {
+              seen.push(s);
+              return throwError();
+            },
+            {}
+          );
+
+          StringBus.trigger('foo');
+          expect(seen).toEqual(['foo']);
+          expect(actor).toHaveProperty('closed', true);
+          // no longer listening
+          StringBus.trigger('bar');
+          expect(seen).toEqual(['foo']);
+        });
+      });
+      describe('Rescued', () => {
+        it('continues listening', () => {
+          const seen = [];
+          const errs = [];
+          StringBus.errors.subscribe((e) => errs.push(e));
+          const actor = StringBus.listen(
+            () => true,
+            (s) => {
+              seen.push(s);
+              return throwError(() => new Error(':('));
+            },
+            {
+              error(e) {
+                seen.push('rescued ' + e.message);
+              },
+            }
+          );
+
+          StringBus.trigger('foo');
+          expect(seen).toEqual(['foo', 'rescued :(']);
+          expect(errs).toEqual([]);
+          expect(actor).toHaveProperty('closed', false);
+          // we're still listening
+          StringBus.trigger('bar');
+          expect(seen).toEqual(['foo', 'rescued :(', 'bar', 'rescued :(']);
+        });
+      });
     });
   });
 
@@ -678,30 +733,6 @@ Array [
 ]
 `);
         });
-
-        // it('LEFTOFF can return a new payload to sub out for listeners', () => {
-        //   const seenTypes: Array<string> = [];
-        //   FSABus.guard(
-        //     ({ type }) => type === 'file/request',
-        //     (e) => {
-        //       return { type: 'auth/check', payload: e.payload };
-        //     }
-        //   );
-        //   FSABus.listen(
-        //     () => true,
-        //     (e) => {
-        //       seenTypes.push(e.type);
-        //     }
-        //   );
-
-        //   FSABus.trigger({
-        //     type: 'file/request',
-        //     payload: { path: '/foo.txt' },
-        //   });
-
-        //   // the filter replaces the event
-        //   expect(seenTypes).toContain('auth/check');
-        // });
       });
     });
 

@@ -3,12 +3,19 @@ import {
   Observable,
   ObservableInput,
   Observer,
+  OperatorFunction,
   PartialObserver,
   Subject,
   Subscription,
 } from 'rxjs';
 import { defer, EMPTY, from } from 'rxjs';
-import { concatMap, exhaustMap, mergeMap, switchMap } from 'rxjs/operators';
+import {
+  catchError,
+  concatMap,
+  exhaustMap,
+  mergeMap,
+  switchMap,
+} from 'rxjs/operators';
 import { filter, takeUntil, tap } from 'rxjs/operators';
 //#endregion
 
@@ -121,7 +128,23 @@ export class Omnibus<TBusItem> {
     const consequences = this.query(matcher).pipe(
       operator((event) => {
         const obsResult = this.getHandlingResult(handler, event);
-        return obsResult.pipe(tap(observer));
+
+        // @ts-ignore
+        const errorCallback = observer?.error;
+        const errLessObserver = { ...observer, error: undefined };
+        const pipes: OperatorFunction<TConsequence, unknown>[] = [
+          tap(errLessObserver),
+        ];
+        if (errorCallback) {
+          pipes.push(
+            catchError((e) => {
+              errorCallback(e);
+              return EMPTY;
+            })
+          );
+        }
+        // @ts-ignore
+        return obsResult.pipe(...pipes);
       })
     );
     const errorNotifier: PartialObserver<unknown> = {
