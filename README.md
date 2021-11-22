@@ -90,19 +90,19 @@ With that specification, no test-framework specific mocks need to be written —
 
 # Example Applications
 
-There is [TodoMVC](). The Redux Toolkit [Async Counter]()
+There is [TodoMVC](https://codesandbox.io/s/todos-omnibus-rtkquery-mjjwn). The Redux Toolkit [Async Counter](https://codesandbox.io/s/poly-redux-counter-solved-m5cm0). An RxJS-style [typeahead search](https://codesandbox.io/s/createobservableservice-6zy19). And a rework of the XState Dog Fetcher known as [Cat Fetcher](https://codesandbox.io/s/cat-fetcher-with-omnibus-kr3yw)
 
 The [7 GUIs](https://eugenkiss.github.io/7guis/) are a series of UX challenges which range from a simple counter to a highly dynamic spreadsheet with formulae and cell references.
 
-- [1-Counter]()
-- [2-Temperature]()
-- [3-Flight Booker]()
-- [4-Timer]()
-- [5-CRUD]()
-- [6-Circles]()
-- [7-Cells]()
+- [1-Counter](https://codesandbox.io/s/7guis-1-counter-xstate-omnibus-rmuh6)
+- [2-Temperature](https://codesandbox.io/s/7guis-2-temperature-n36pf?file=/src/index.tsx)
+- 3-Flight Booker
+- 4-Timer
+- 5-CRUD
+- [6-Circles](https://codesandbox.io/s/7guis-6-circles-omnibus-bnfsm)
+- [7-Cells (command-line)](https://github.com/deanrad/omnibus-rxjs/tree/master/example/7guis-cells)
 
-Omnibus solutions to all the above maintain a uniform, testable architectural style. Other example apps have included IOT, Animation, WebAudio, WebSockets and many more.
+Omnibus solves each challenge, maintaining a uniform, testable architectural style across each one. Other example apps have included IOT, Animation, WebAudio, WebSockets and many more.
 
 # API
 
@@ -288,7 +288,7 @@ bus.listen(
 );
 ```
 
-See `createObservableService` for a utility that resembles `createAsyncThunk`, but without Redux or middleware, saving bundle size.
+See [`createObservableService`](https://codesandbox.io/s/createobservableservice-6zy19) for a utility that resembles `createAsyncThunk`, but without Redux or middleware, saving bundle size.
 
 ### **Unregistering a Listener**
 
