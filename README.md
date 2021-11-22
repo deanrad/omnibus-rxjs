@@ -8,31 +8,15 @@
 
 An Event Bus for simplifying front-end code, especially in VanillaJS and React codebases. Can serve as its own framework, or an add-on, run in Node, or Deno, and maintain decoupling from frameworks, or downstream services.
 
-## What Problems Does it Solve?
+## How to Get It?
 
-The main benefits of Omnibus are:
+`npm install omnibus-rxjs`
 
-- Allows you to architect your application logic around events of interest to your application, not around volatile framework-specific APIs.
-- Provides an execution container for typesafe, leak-proof async processes with reliable concurrency options to squash race conditions and resource leaks.
-
-To the first point - framework-specific issues like "prop-drilling" and "referential instability" disappear when an event bus transparently connect components anywhere in the tree through a single static import of a bus.
-
-To the second - just as XState is a predictable, safe, leak-proof state-container, Omnibus is that for async processes, because it uses the core options of RxJS - Observables and concurrency operators. However, compared to 'raw' RxJS, Omnibus is considerably easier to use, especially in a React context.
-
-With Omnibus over RxJS, you can:
-
-- Compose your app one listener/handler at a time, never building a giant, unreadable chain.
-- Do little-to-no management of `Subscription` objects
-- Preserve readability of operator code: `concatMap` => `listenQueueing`
-- Type `pipe()` and `import ... from 'rxjs/operators'` less
-
-You can start with Omnibus with no RxJS logic at all - just handlers returning Promises. Then as you require capabilities that Observables offer—like cancelation— you can change what those handlers return. _Leaving the rest of your app unchanged!_
-
-In short - the kinds of upgrades one must do in web development, such as migrating code from uncancelable to cancelable, from REST endpoint to Web Socket, is made easy with Omnibus, and it's event-driven nature.
+Deno: Coming Soon!
 
 ## How Big Is It?
 
-8Kb minified, gzipped
+Only 8Kb minified, gzipped
 
 ## What Front-End problems does it help with?
 
@@ -41,7 +25,7 @@ In short - the kinds of upgrades one must do in web development, such as migrati
 - Code UX to handle all edge-cases around API/service communication, by depending only on the messages. Even if those services aren't built yet!
 - Keep memory footprint small, and prevent bundle bloat by allowing functionality to load/unload at runtime.
 
-And many more.
+And many more - see How Can I Explain This To My Team.
 
 ## Usage with React
 
@@ -59,6 +43,17 @@ const CounterDisplay = () => {
 
 This example invokes a React state-setter each time an event matching `CounterIncrement` is trigger-ed onto the bus. `bus.listen` returns an RxJS `Subscription` object, and the wrapping of it in `useWhileMounted` allows the listener to be removed upon component unmounting.
 
+In an entirely un-coupled component, anywhere in the app, a component (or test framework) will trigger those actions:
+
+```ts
+import { bus, CounterIncrement } from './events'
+const CounterButton = () => {
+  return <button onClick={() => trigger(CounterIncrement())}>
+}
+```
+
+The source of `useWhileMounted`:
+
 ```ts
 function useWhileMounted(subsFactory: () => Subscription) {
   useEffect(() => {
@@ -68,9 +63,37 @@ function useWhileMounted(subsFactory: () => Subscription) {
 }
 ```
 
-As an added benefit, if the listeners return Observables, such as for AJAX, then that work will also be canceled at the moment of unmount, preventing memory or behavior leaks automatically. Of course this can be sidestepped by returning Promises which themselves are uncancelable. But binding the lifetimes of effects to the lifetimes of the components that initiate them is a sensible default for React
+Note that any handlings that are in progress when the component is unmounted will be automatically canceled (if they support it by returning Observables).
 
-## API
+Note also how the specs read for each component:
+
+```
+describe: CounterButton
+  it: triggers a CounterIncrement event when clicked
+
+describe: CounterDisplay
+  it: increments its number by 1 upon a CounterIncrement event
+```
+
+And with that specification, no test-framework specific mocks need to be written - a `query` can see what CounterButton does, and a test need only `trigger` and examine the output of CounterDisplay. No complicated, nested `jest.mock` calls. Bonus: you can animate your Storybook stories by performing a series of `trigger` calls in your stories.
+
+# Example Applications
+
+There is [TodoMVC](). The Redux Toolkit [Async Counter]()
+
+The [7 GUIs](https://eugenkiss.github.io/7guis/) are a series of UX challenges which range from a simple counter to a highly dynamic spreadsheet with formulae and cell references.
+
+- [1-Counter]()
+- [2-Temperature]()
+- [3-Flight Booker]()
+- [4-Timer]()
+- [5-CRUD]()
+- [6-Circles]()
+- [7-Cells]()
+
+Omnibus solutions to all the above maintain a uniform, testable architectural style. Other example apps have included IOT, Animation, WebAudio, WebSockets and many more.
+
+# API
 
 The Omnibus API is intentionally simple. Since it has been in use for >4 years (since 2017), its core APIs are stable.
 
@@ -137,7 +160,7 @@ In a Hot-Module-Reloading environment where a bus instance may get the same list
 bus.reset(); // Be HMR-friendly
 ```
 
-### Async Handlers
+## Async Handlers
 
 > **listen**: `bus.listen(matcher, handler, observer)`
 
@@ -149,7 +172,7 @@ bus.reset(); // Be HMR-friendly
 
 Each `bus.listen` method variant takes the same function arguments (explained shortly), and returns a Subscription. This subscription can be thought of as an Actor in the Actor model.
 
-#### **Arguments**
+### **Arguments**
 
 The first two required arguments are:
 
@@ -176,11 +199,11 @@ bus.listen(matcher, (e) => () => fetch(url).then((res) => res.json()));
 bus.listen(matcher, (e) => ajax.getJSON(url));
 ```
 
-#### **Concurrency**
+### **Concurrency**
 
 The purpose of using one `listen` variant over another - say `listenQueueing` instead of `listen`, is to specify what the listener does if it already is executing a handling, and a new event comes in. More detail below.
 
-#### **Handler Lifecycle Events**
+### **Handler Lifecycle Events**
 
 For any individual handling, there are events of interest - such as when it starts, errors, or produces a value successfully. So, the final, optional argument in constructing a listener is `observer`— an object with any of these callbacks:
 
@@ -192,7 +215,7 @@ For any individual handling, there are events of interest - such as when it star
 
 If you are using the `observer` simply to trigger
 
-#### **Unregister the Listener**
+### **Unregistering a Listener**
 
 To unregister the listener, simply call `unsubscribe()` on the return value. Any work being done by a listener will be canceled when the listener's subscription is unsubscribed, or if `bus.reset()` is called.
 
@@ -204,7 +227,7 @@ sub.unsubscribe(); // ends, including work
 
 ---
 
-### Pre-Processors/Sync Handlers: Guards, Filters, Spies
+## Pre-Processors/Sync Handlers: Guards, Filters, Spies
 
 The bus allows for various forms of pre-processors - functions which run on every `trigger`-ed action, before any listener sees the action. These are not intended to begin any async process, but more commonly to:
 
@@ -273,13 +296,13 @@ A spy handler runs synchronously for all runtime events, just before the listene
 
 ---
 
-### Error Handling
+## Error Handling
 
-**Guards/filters/spies**
+### **Guards/filters/spies**
 
 Exceptions thrown by these functions will raise to the code that called `bus.trigger`. The functions will continue to be run on future events that match, and so may throw multiple times.
 
-**`listen` handlers**
+### **`listen` handlers**
 
 Exceptions, Rejected Promises, or Observable errors that occur while running a `handler` will not be visible to the code that called `bus.trigger`. This is by design, to ensure that if 3 listeners are registered for an event, all 3 of them will run, no matter if one of them throws. The intent is that you handle the error either inline in the handler, or in the `error` property of the `observer` argument. **The listener, unless it provides an `error` callback in its `observer`, will be unsubscribed on an error!** This is for the stability of the rest of the application—if you grow an app incrementally, the last thing you want is the worst-behaved 1% of features breaking the remaining, well-behaved features.
 
@@ -287,19 +310,36 @@ Exceptions, Rejected Promises, or Observable errors that occur while running a `
 
 ---
 
-# Examples: 7 GUIs implemented in Omnibus
+# How Can I Explain Why We Should Use This to My Team?
 
-The [7 GUIs](https://eugenkiss.github.io/7guis/) are a series of UX challenges which range from a simple counter to a highly dynamic spreadsheet with formulae and cell references.
+The main benefits of Omnibus are:
 
-- [1-Counter]()
-- [2-Temperature]()
-- [3-Flight Booker]()
-- [4-Timer]()
-- [5-CRUD]()
-- [6-Circles]()
-- [7-Cells]()
+- Allows you to architect your application logic around events of interest to your application, not around volatile framework-specific APIs.
+- Provides an execution container for typesafe, leak-proof async processes with reliable concurrency options to squash race conditions and resource leaks.
 
-# Inspirations
+To the first point - framework-specific issues like "prop-drilling" and "referential instability" disappear when an event bus transparently connect components anywhere in the tree through a single static import of a bus.
+
+To the second - just as XState is a predictable, safe, leak-proof state-container, Omnibus is that for async processes, because it uses the core options of RxJS - Observables and concurrency operators. However, compared to 'raw' RxJS, Omnibus is considerably easier to use, especially in a React context.
+
+With Omnibus inside React, you can:
+
+- Keep components and services testable—since they're specified only in terms of messages they send or respond to - no mocking required!
+- Don't need to prop-drill, lift state, or introduce Contexts to do inter-component communication; sharing the bus is sufficient.
+- Code UX to handle all edge-cases around API/service communication, by depending only on the messages. Even if those services aren't built yet!
+- Keep memory footprint small, and prevent bundle bloat by allowing functionality to load/unload at runtime.
+
+With Omnibus over RxJS, you can:
+
+- Compose your app one listener/handler at a time, never building a giant, unreadable chain.
+- Do little-to-no management of `Subscription` objects
+- Preserve readability of operator code: `concatMap` => `listenQueueing`
+- Type `pipe()` and `import ... from 'rxjs/operators'` less
+
+You can start with Omnibus with no RxJS logic at all - just handlers returning Promises. Then as you require capabilities that Observables offer—like cancelation— you can change what those handlers return. _Leaving the rest of your app unchanged!_
+
+In short - the kinds of upgrades one must do in web development, such as migrating code from uncancelable to cancelable, from REST endpoint to Web Socket, are made easy with Omnibus. And the UX can be made tight and responsive against any downstream behavior because of its modular, decoupled nature.
+
+# Inspirations, References
 
 - RxJS
 - Redux-Observable
