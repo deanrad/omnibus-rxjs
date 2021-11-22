@@ -52,7 +52,18 @@ const CounterButton = () => {
 }
 ```
 
-The source of `useWhileMounted`:
+All that's needed to connect them, is mount each of them - in no particular relation to each other, and sharing no props or state:
+
+```jsx
+<App>
+  <CounterDisplay />
+  <CounterButton />
+</App>
+```
+
+### Lifecycle
+
+`useWhileMounted` can ensure your effects do not outlive the components that initiate them. This is a good default, and enabled by returning Observables from handlers always. However, if cancelability is not desired, (such as when a response is still desired) simply return a Promise instead, and Omnibus will be unable to cancel it.
 
 ```ts
 function useWhileMounted(subsFactory: () => Subscription) {
@@ -63,9 +74,8 @@ function useWhileMounted(subsFactory: () => Subscription) {
 }
 ```
 
-Note that any handlings that are in progress when the component is unmounted will be automatically canceled (if they support it by returning Observables).
-
-Note also how the specs read for each component:
+### Testing
+Note how the specs read for each component:
 
 ```
 describe: CounterButton
@@ -75,7 +85,7 @@ describe: CounterDisplay
   it: increments its number by 1 upon a CounterIncrement event
 ```
 
-And with that specification, no test-framework specific mocks need to be written - a `query` can see what CounterButton does, and a test need only `trigger` and examine the output of CounterDisplay. No complicated, nested `jest.mock` calls. Bonus: you can animate your Storybook stories by performing a series of `trigger` calls in your stories.
+With that specification, no test-framework specific mocks need to be written — `query` can be used to assert what `CounterButton` does, and a test need only `trigger` and examine the output of `CounterDisplay`. No complicated, nested `jest.mock` calls required. Bonus: you can animate your Storybook stories by performing a series of `trigger` calls in your stories.
 
 # Example Applications
 
