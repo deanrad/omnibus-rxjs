@@ -337,7 +337,7 @@ If you are intending to change the contents of an event on the bus, a handler pa
 
 ```ts
 bus.filter(CounterIncrement.match, (e) => {
-  e.createdAt = Date.now()  // thus each triggerer is not bu
+  e.createdAt = Date.now()
 }
 ```
 
