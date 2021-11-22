@@ -4,69 +4,303 @@
 
 # omnibus-rxjs
 
-An Event Bus for RxJS. Ala Redux Middleware (Sagas), with no Redux dependency.
-
 ## What Is It?
 
-A 'sugar' around an RxJS Subject, with declarative mapping of Observables.
+An Event Bus for simplifying front-end code, especially in VanillaJS and React codebases. Can serve as its own framework, or an add-on, run in Node, or Deno, and maintain decoupling from frameworks, or downstream services.
 
-## Build Impact?
+## What Problems Does it Solve?
 
-Size: <10 Kb minified, gzipped. Tree-shakable to less.
+The main benefits of Omnibus are:
 
-## Architectural Reason
+- Allows you to architect your application logic around events of interest to your application, not around volatile framework-specific APIs.
+- Provides an execution container for typesafe, leak-proof async processes with reliable concurrency options to squash race conditions and resource leaks.
 
-Enables micro-front ends because event bus listeners can be dynamically added and removed. See NextJS example (TODO create).
+To the first point - framework-specific issues like "prop-drilling" and "referential instability" disappear when an event bus transparently connect components anywhere in the tree through a single static import of a bus.
+
+To the second - just as XState is a predictable, safe, leak-proof state-container, Omnibus is that for async processes, because it uses the core options of RxJS - Observables and concurrency operators. However, compared to 'raw' RxJS, Omnibus is considerably easier to use, especially in a React context.
+
+With Omnibus over RxJS, you can:
+
+- Compose your app one listener/handler at a time, never building a giant, unreadable chain.
+- Do little-to-no management of `Subscription` objects
+- Preserve readability of operator code: `concatMap` => `listenQueueing`
+- Type `pipe()` and `import ... from 'rxjs/operators'` less
+
+You can start with Omnibus with no RxJS logic at all - just handlers returning Promises. Then as you require capabilities that Observables offer—like cancelation— you can change what those handlers return. _Leaving the rest of your app unchanged!_
+
+In short - the kinds of upgrades one must do in web development, such as migrating code from uncancelable to cancelable, from REST endpoint to Web Socket, is made easy with Omnibus, and it's event-driven nature.
+
+## How Big Is It?
+
+8Kb minified, gzipped
+
+## What Front-End problems does it help with?
+
+- Keep components and services testable—since they're specified only in terms of messages they send or respond to - no mocking required!
+- Don't need to prop-drill, lift state, or introduce Contexts to do inter-component communication; sharing the bus is sufficient.
+- Code UX to handle all edge-cases around API/service communication, by depending only on the messages. Even if those services aren't built yet!
+- Keep memory footprint small, and prevent bundle bloat by allowing functionality to load/unload at runtime.
+
+And many more.
 
 ## Usage with React
 
-Like XState, the Omnibus engine removes async handling from the purview of React. [Why is this a good idea?](http://TODO.org).
-
-This makes your code future-proof in React, including needing no changes for [Suspense](https://reactjs.org) mode.
-
-Event bus listeners can run _before_ the render cycle, vs `useEffect` which only runs **after**. This can cut off entire classes of edge cases
-
-## Usage with RxJS
-
-RxJS operators are brilliant and useful, but they tend to couple concepts that are separate. For example, an autocomplete, in RxJS terms is:
-
-```js
-const changeEvents = fromEvent(input, 'change'); //
-const results = changeEvents().pipe(
-  switchMap(({ value: query }) => getResult$(query))
-);
-results.subscribe(updateUI);
+```ts
+import { bus, CounterIncrement, useWhileMounted } from "./events/"
+const CounterDisplay = () => {
+  const [count, setCount] = useState(0);
+  useWhileMounted(() => {
+    return bus.listen(CounterIncrement.match, () => {
+      setCount(c => c+1))
+    })
+  })
+}
 ```
 
-Conceptually there are two sources of events - the Observable of `changeEvents` coming from the user typing in the query input box. For each of those events, an Observable is triggered (which cancels any previous one, per the `switchMap` concurrency operator).
+This example invokes a React state-setter each time an event matching `CounterIncrement` is trigger-ed onto the bus. `bus.listen` returns an RxJS `Subscription` object, and the wrapping of it in `useWhileMounted` allows the listener to be removed upon component unmounting.
 
-A better expression of this architecture can be made in terms of services and an event bus connecting them.
+```ts
+function useWhileMounted(subsFactory: () => Subscription) {
+  useEffect(() => {
+    const sub = subsFactory();
+    return () => sub?.unsubscribe();
+  }, []);
+}
+```
+
+As an added benefit, if the listeners return Observables, such as for AJAX, then that work will also be canceled at the moment of unmount, preventing memory or behavior leaks automatically. Of course this can be sidestepped by returning Promises which themselves are uncancelable. But binding the lifetimes of effects to the lifetimes of the components that initiate them is a sensible default for React
+
+## API
+
+The Omnibus API is intentionally simple. Since it has been in use for >4 years (since 2017), its core APIs are stable.
+
+---
+
+> **Constructor**: `new Omnibus<EType>()`
+
+Declares the event bus, and the (super)-type of events it can carry. When used with a library like [Redux Toolkit](), or [`typescript-fsa`](), this will be:
+
+`export const bus = new Omnibus<Action>()`
+
+---
+
+> **trigger**: `bus.trigger<SubType extends EType>(event)`
+
+Triggers an action to the event bus, so that listeners may handle it after passing all pre-processors (guards, filters, and spies). _Triggering has no performance cost if there are no listeners_.
+
+As an example: if you have logging that should only occur in lower environments, the calls to `bus.trigger` can be left in place throughout your app and logging listeners only attached in lower environments. Compare this to actual `console.log` statements which must be removed.
+
+No type-annotation is needed at call-time to ensure typesafety of triggered actions.
 
 ```js
-// bus.js
-// Every item on this bus will be an FSA. Useful to duck-type Redux.
-export bus = new Bus<Action>();
+// CounterIncrement returns a subtype of Action onto bus<Action>
+handleClick={((e) => bus.trigger(CounterIncrement()))}
+```
 
-//userService.js
-import { bus } from './bus'
-import { queryCreator } from './search-service'
+---
 
-class QueryService implements Service {
-  private currentRun:Subscription
-  start() {
-    this.currentRun?.unsubscribe() // restarts it
-    this.currentRun = fromEvent(input, 'click').subscribe(e => {
-     const event = queryCreator(e.target.value)
-      bus.trigger(event)
-    })
+> **query**: `bus.query(predicate: (EType => boolean))`
 
+From a testing perspective, `query` is a way to assert that a `trigger` was called.
+
+More generally, `query` allows you to get a subset of actions of the bus as an RxJS Observable. This allows you create a 'derived stream' to detect certain conditions in time.
+
+```ts
+// Do something when 5 or more bus events occur in one second
+const rateLimitViolations = bus
+  .query(() => true)
+  .pipe(
+    bufferTime(1000),
+    filter((buffer) => buffer.length >= 5)
+  );
+rateLimitViolations.subscribe(() => console.log('Slow down!'));
+```
+
+Race condition issues could be detected and fixed by using combinations of `query` to run a corrective action.
+
+You can get a Promise for the result of a `query`, using RxJS' `firstValueFrom`:
+
+```ts
+import { firstValueFrom } from 'rxjs';
+firstValueFrom(rateLimitViolations).then(() => console.log('Game over!'));
+```
+
+---
+
+> **reset**: `bus.reset()`
+
+Returns the bus to a state where there are no listeners. Any active `query` Observables will complete upon a `reset`. Any active listeners, if they were defined to return cancelable Observables (vs uncancelable Promises) will be unsubscribed, canceling their work and freeing up resources immediately.
+
+In a Hot-Module-Reloading environment where a bus instance may get the same listeners attached multiple times, adding a call to `reset` can prevent double-listenings.
+
+```ts
+bus.reset(); // Be HMR-friendly
+```
+
+### Async Handlers
+
+> **listen**: `bus.listen(matcher, handler, observer)`
+
+> **listenQueueing**: `bus.listenQueueing`
+
+> **listenSwitching**: `bus.listenSwitching`
+
+> **listenBlocking**: `bus.listenBlocking`
+
+Each `bus.listen` method variant takes the same function arguments (explained shortly), and returns a Subscription. This subscription can be thought of as an Actor in the Actor model.
+
+#### **Arguments**
+
+The first two required arguments are:
+
+- `matcher` - A predicate function. Each event of the bus is run through each listener's predicate function. If the matcher returns `true` then the bus invokes that listener's handler.
+- `handler` - A function to do some work when a matching event appears on the bus. The handler recieves the event as its argument. It can perform the work:
+  - Synchronously
+  - Immediately, by returning a Promise
+  - Deferred, by returning a Promise-returning function
+  - Deferred, and cancelable by returning an Observable
+
+The most powerful and performant of these is the Observable, whose cancelability prevents resource leaks and helps tame race conditions. **Note:** You do not need to call `subscribe()` when returning an Observable- Omnibus does that automatically on any Observable you return. When returning a Promise, there's no need to `await` it or declare the handler `async`.
+
+```ts
+// Sync
+bus.listen(matcher, (e) => console.log('event: ', e));
+
+// Immediate Promise
+bus.listen(matcher, (e) => fetch(url).then((res) => res.json()));
+
+// Deferred Promise (needed if you want to queue handlings)
+bus.listen(matcher, (e) => () => fetch(url).then((res) => res.json()));
+
+// Observable (cancelable w/o AbortController!)
+bus.listen(matcher, (e) => ajax.getJSON(url));
+```
+
+#### **Concurrency**
+
+The purpose of using one `listen` variant over another - say `listenQueueing` instead of `listen`, is to specify what the listener does if it already is executing a handling, and a new event comes in. More detail below.
+
+#### **Handler Lifecycle Events**
+
+For any individual handling, there are events of interest - such as when it starts, errors, or produces a value successfully. So, the final, optional argument in constructing a listener is `observer`— an object with any of these callbacks:
+
+- `error(e)` - A Promise `reject` or Observable `error` occurred.
+- `complete()` - A Promise `resolve` or Observable `complete` occurred.
+- `next(value)` - Conveys the resolved Promise value, or an Observable `next` value.
+- `subscribe()` - The deferred Promise was begun, or the Observable was subscribed to.
+- `unsubscribe()` - The Observable was unsubscribed before it completed. Aborted Promises are handled as `error` instead.
+
+If you are using the `observer` simply to trigger
+
+#### **Unregister the Listener**
+
+To unregister the listener, simply call `unsubscribe()` on the return value. Any work being done by a listener will be canceled when the listener's subscription is unsubscribed, or if `bus.reset()` is called.
+
+```ts
+const sub = bus.listen(when, () => work); // sets up
+bus.trigger(startsWork); // begins work
+sub.unsubscribe(); // ends, including work
+```
+
+---
+
+### Pre-Processors/Sync Handlers: Guards, Filters, Spies
+
+The bus allows for various forms of pre-processors - functions which run on every `trigger`-ed action, before any listener sees the action. These are not intended to begin any async process, but more commonly to:
+
+- Throw an exception to the caller of `bus.trigger()` (Listeners, by design do not do this - see Error Handling)
+- Validate, sign, timestamp or otherwise modify the event before any listener can see it.
+- Call a state setter (as in React useState), or dispatch an action (as in useReducer)
+- `console.log` or write to another log synchronously.
+
+> **guard**: `bus.guard(matcher, handler)`
+
+Guard functions are run in the callstack of the triggerer. Their return value is unimportant, but may throw an exception to prevent further processing.
+
+```js
+// Prevent negative increments
+bus.guard(CounterIncrement.match, ({ payload: { increment = 0 } }) => {
+  if (increment < 0) throw new Error('Cant go backward');
+});
+bus.trigger(CounterIncrement(-1)); // throws
+```
+
+A fun debugging technique is to open a debugger upon an action of your choosing, to find out where in the code it was triggered (since `grep` doesnt always find dynamic event creation):
+
+```js
+bus.guard(CounterIncrement.match, () => {
+  debugger; /* i see you! */
+});
+```
+
+> **filter**: `bus.filter(matcher, handler)`
+
+If you are intending to change the contents of an event on the bus, a handler passed to `filter` is the place to do it. Either mutate the event directly in the handler, or if you prefer immutability, return a new event. This is useful to centralize functionality like timestamps, making it not the responsibility of the trigger-er.
+
+```ts
+bus.filter(CounterIncrement.match, (e) => {
+  e.createdAt = Date.now()  // thus each triggerer is not bu
+}
+```
+
+If an event requires further authorization, a `filter` may substitute an authenitcation event in its place:
+
+```ts
+bus.filter(CounterIncrement.match, (event) => {
+  return RequestAuth({ attempted: event })
+}
+bus.listen(RequestAuth.match, ({payload: { attempted }}) => {
+  if (window.sessionId) {
+    perform(attempted)
   }
-  // Stop is barely needed because start() returns the means to stop(), as RxJS Subscriptions do.
-  stop() {
-    this.currentRun?.unsubscribe()
+})
+```
+
+If a set of timing conditions requires that an event be disregarded by all downstream handlers, a filter can change its event to not be seen by those handlers:
+
+```ts
+// Increments will be missed by handlers matching on type
+bus.filter(CounterIncrement.match, (e) => {
+  if (count > 99) {
+    e.type = "__ignored__" + e.type
   }
 }
-
 ```
 
-See [`omnibus-react`](https://github.com/deanrad/omnibus-react) for React-specific bindings.
+> **spy**: `bus.spy(handler)`
+
+A spy handler runs synchronously for all runtime events, just before the listeners. The results of any `filter` is visible to any `spy`.
+
+---
+
+### Error Handling
+
+**Guards/filters/spies**
+
+Exceptions thrown by these functions will raise to the code that called `bus.trigger`. The functions will continue to be run on future events that match, and so may throw multiple times.
+
+**`listen` handlers**
+
+Exceptions, Rejected Promises, or Observable errors that occur while running a `handler` will not be visible to the code that called `bus.trigger`. This is by design, to ensure that if 3 listeners are registered for an event, all 3 of them will run, no matter if one of them throws. The intent is that you handle the error either inline in the handler, or in the `error` property of the `observer` argument. **The listener, unless it provides an `error` callback in its `observer`, will be unsubscribed on an error!** This is for the stability of the rest of the application—if you grow an app incrementally, the last thing you want is the worst-behaved 1% of features breaking the remaining, well-behaved features.
+
+> **errors**: `bus.errors.subscribe(handler)`
+
+---
+
+# Examples: 7 GUIs implemented in Omnibus
+
+The [7 GUIs](https://eugenkiss.github.io/7guis/) are a series of UX challenges which range from a simple counter to a highly dynamic spreadsheet with formulae and cell references.
+
+- [1-Counter]()
+- [2-Temperature]()
+- [3-Flight Booker]()
+- [4-Timer]()
+- [5-CRUD]()
+- [6-Circles]()
+- [7-Cells]()
+
+# Inspirations
+
+- RxJS
+- Redux-Observable
+- XState
