@@ -4,12 +4,10 @@ import {
   from,
   materialize,
   merge,
-  Observable,
   of,
   toArray,
 } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { after, AWAITABLE, DURATION, THRESHOLD } from '../src/utils';
+import { AWAITABLE, DURATION, THRESHOLD } from '../src/utils';
 import { TestObservable } from './bus.spec';
 
 describe('TestDurations', () => {
@@ -200,64 +198,6 @@ Array [
       );
       const result = await Promise.race([frame, blink]);
       expect(result).toEqual('frame');
-    });
-  });
-});
-
-describe('after', () => {
-  it('is an Observable', () => {
-    expect(after(1, 1)).toBeInstanceOf(Observable);
-  });
-  it('is awaitable', async () => {
-    const result = await after(1, '1.1');
-    expect(result).toEqual('1.1');
-  });
-  it('is thenable', async () => {
-    return after(1, () => 52).then((result) => {
-      expect(result).toEqual(52);
-    });
-  });
-
-  describe('delay arg', () => {
-    describe('when 0', () => {
-      it('is synchronous', () => {
-        let result;
-        after(0, () => {
-          result = 3;
-        }).subscribe();
-        expect(result).toEqual(3);
-      });
-    });
-  });
-
-  describe('value arg', () => {
-    describe('when value', () => {
-      it.todo('is produced after the delay');
-    });
-    describe('when function', () => {
-      it.todo('is produced');
-    });
-    describe('when Observable', () => {
-      it('defers subscription', async () => {
-        const events: Array<string> = [];
-        const toDefer = of(2).pipe(
-          tap({
-            subscribe() {
-              events.push('subscribe');
-            },
-          })
-        );
-        const subject = after(1, toDefer);
-        subject.subscribe();
-        expect(events).toEqual([]);
-        await after(2);
-        expect(events).toEqual(['subscribe']);
-      });
-      it('yields the value', async () => {
-        return after(1, of(2)).then((v) => {
-          expect(v).toEqual(2);
-        });
-      });
     });
   });
 });

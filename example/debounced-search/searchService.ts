@@ -2,7 +2,7 @@
 import { actionCreatorFactory } from 'typescript-fsa';
 import { concat, Subscription } from 'rxjs';
 import { Omnibus } from '../../src/bus';
-import { after } from '../../src/utils';
+import { after } from '../../src/after';
 
 const searchAction = actionCreatorFactory('search');
 export interface SearchRequest {

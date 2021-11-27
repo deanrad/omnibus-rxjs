@@ -1,1 +1,2 @@
-export { Omnibus } from './bus';
+export * from './bus';
+export * from './after';

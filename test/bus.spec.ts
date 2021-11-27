@@ -20,7 +20,8 @@ import {
   searchRequestCreator,
 } from '../example/debounced-search/searchService';
 import { Omnibus } from '../src/bus';
-import { after, DURATION } from '../src/utils';
+import { DURATION } from '../src/utils';
+import { after } from '../src/after';
 import { anyEvent } from './mockPredicates';
 
 function capturing<T>(
