@@ -1,6 +1,6 @@
 // @ts-nocheck
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { Observable, of, from } from 'rxjs';
+import { delay, mergeAll } from 'rxjs/operators';
 
 // See https://dev.to/deanius/the-thresholds-of-perception-in-ux-435g
 export const THRESHOLD = {
@@ -24,6 +24,16 @@ export const THRESHOLD = {
   DeepBreath: 4000,
   Sentence: 6000,
 };
+
+/**
+ * Flattens a Promise for an array to an Observable of its
+ * individual items. `next` notifications arrive all at the end.
+ * Canceling the Observable will prevent any next/complete
+ * notifications, but will not abort the underlying Promise.
+ */
+export function observableFromPromisedArray<T>(pa: Promise<Array<T>>) {
+  return from(pa).pipe(mergeAll());
+}
 
 /** Observables consuming durations of time including sync,tick,promise,timeout */
 export const DURATION = {

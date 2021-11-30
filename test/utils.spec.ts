@@ -7,7 +7,12 @@ import {
   of,
   toArray,
 } from 'rxjs';
-import { AWAITABLE, DURATION, THRESHOLD } from '../src/utils';
+import {
+  AWAITABLE,
+  DURATION,
+  THRESHOLD,
+  observableFromPromisedArray,
+} from '../src/utils';
 import { TestObservable } from './bus.spec';
 
 describe('TestDurations', () => {
@@ -199,5 +204,20 @@ Array [
       const result = await Promise.race([frame, blink]);
       expect(result).toEqual('frame');
     });
+  });
+});
+
+describe('observableFromPromisedArray', () => {
+  it('flattens a Promise for an array to an Observable of its items', async () => {
+    const _items = ['1', '2', '3'];
+    const items = observableFromPromisedArray(Promise.resolve(_items));
+    const seen: typeof _items = [];
+    const sub = items.subscribe((i) => seen.push(i));
+    expect(seen).toEqual([]);
+
+    await Promise.resolve();
+    
+    expect(seen).toEqual(_items);
+    expect(sub).toHaveProperty('closed', true);
   });
 });
