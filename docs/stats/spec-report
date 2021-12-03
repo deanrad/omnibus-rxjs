@@ -8,6 +8,58 @@ PASS test/3rd-party.spec.ts
       ✓ can deliver events with Promise
       ✓ can deliver events with setTimeout(0)
 
+PASS test/after.spec.ts
+  after
+    ✓ is an Observable
+    ✓ is awaitable
+    ✓ is thenable
+    delay arg
+      when 0
+        ✓ is synchronous
+    value arg
+      when a value
+        ✓ is returned
+      when a function
+        ✓ schedules its execution later
+        ✓ returns its return value
+      when an Observable
+        ✓ defers subscription
+        ✓ yields the value
+
+PASS test/createService.spec.ts
+  createService
+    ✓ triggers events from observable handlers when no error
+    ✓ triggers events from Promise handlers when no error
+    ✓ triggers events from Promise-factory handlers when no error
+    ✓ triggers events from observable handlers, even when they error
+    ✓ triggers events from generator handlers when no error
+    arguments
+      bus
+        ✎ todo recieves requests
+        ✎ todo recieves consequences
+      actionNamespace
+        ✎ todo prefixes action types
+      handler
+        ✎ todo is called when the bus has service/request events
+    return value
+      ✓ triggers a request to the bus when called
+      has a property for each actioncreator
+        ✓ has property requested
+        ✓ has property cancel
+        ✓ has property started
+        ✓ has property next
+        ✓ has property error
+        ✓ has property complete
+        ✓ has property canceled
+        ✓ has property stop()
+        ✎ todo removes listeners and cancels handlings when stop()-ed.
+    createQueueingService
+      ✓ calls createService with "listenQueueing"
+    createSwitchingService
+      ✓ calls createService with "listenSwitching"
+    createBlockingService
+      ✓ calls createService with "listenBlocking"
+
 PASS test/bus.spec.ts
   Bus
     ✓ can be instantiated with the BusItemType it will accept
@@ -43,12 +95,20 @@ PASS test/bus.spec.ts
           ✓ Unpacks strings since theyre Iterable
           ✓ Works with generators
           ✓ allows for no/void return value
+      Observer
+        ✎ todo contains callbacks attached to the handler lifecycle
     #listenQueueing
       ✓ serializes execution
     #listenSwitching
       ✓ cancels existing, and starts a new Subscription
     #listenBlocking
       ✓ cancels existing, and starts a new Subscription
+    #listen #trigger #trigger
+      handlers which error
+        Not rescued
+          ✓ does not continue listening
+        Rescued
+          ✓ continues listening
     #reset
       ✓ ends all listeners
       ✓ ends all handlers
@@ -122,12 +182,20 @@ PASS test/utils.spec.ts
           ✓ Unpacks strings since theyre Iterable
           ✓ Works with generators
           ✓ allows for no/void return value
+      Observer
+        ✎ todo contains callbacks attached to the handler lifecycle
     #listenQueueing
       ✓ serializes execution
     #listenSwitching
       ✓ cancels existing, and starts a new Subscription
     #listenBlocking
       ✓ cancels existing, and starts a new Subscription
+    #listen #trigger #trigger
+      handlers which error
+        Not rescued
+          ✓ does not continue listening
+        Rescued
+          ✓ continues listening
     #reset
       ✓ ends all listeners
       ✓ ends all handlers
@@ -177,24 +245,11 @@ PASS test/utils.spec.ts
     ✓ VVC - a mutivalued sync iterable
     Awaitable intervals of time
       ✓ tests ok
-  after
-    ✓ is an Observable
-    ✓ is awaitable
-    ✓ is thenable
-    delay arg
-      when 0
-        ✓ is synchronous
-    value arg
-      when value
-        ✎ todo is produced after the delay
-      when function
-        ✎ todo is produced
-      when Observable
-        ✓ defers subscription
-        ✓ yields the value
+  observableFromPromisedArray
+    ✓ flattens a Promise for an array to an Observable of its items
 
-Test Suites: 3 passed, 3 total
-Tests:       12 todo, 100 passed, 112 total
+Test Suites: 5 passed, 5 total
+Tests:       17 todo, 125 passed, 142 total
 Snapshots:   19 passed, 19 total
-Time:        3.243 s
+Time:        4.749 s
 Ran all test suites.
