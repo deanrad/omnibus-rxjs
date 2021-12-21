@@ -1,4 +1,4 @@
-// @ts-nocheck
+//@ts-nocheck
 import {
   asapScheduler as promiseScheduler,
   asyncScheduler as timeoutScheduler,
@@ -156,20 +156,30 @@ Array [
         miniBus.trigger(2.71828);
         expect(events).toEqual([2.71828]);
       });
+
       it('is canceled by a reset', () => {
         const sub = miniBus.query(() => true).subscribe();
         expect(sub).toHaveProperty('closed', false);
         miniBus.reset();
         expect(sub).toHaveProperty('closed', true);
       });
-    });
-    describe('With a raw value', () => {
-      it.todo('matches on equality of a value type');
-      it.todo('matches on subset of an object type');
-    });
-    describe('With an FSA matcher', () => {
-      it('works just like a predicate', () => {
-        expect.assertions(0);
+
+      describe('Type safety', () => {
+        it('Returns a typed Observable of filtered events', () => {
+          const events = [];
+          type FooEvent = Action<'foo'>;
+          function isFoo(a: Action<any>): a is FooEvent {
+            return a.type === 'foo';
+          }
+          // because of its declaration as is FooEvent,
+          FSABus.query(isFoo)
+            .pipe(tap((e) => events.push(e)))
+            .subscribe();
+
+          FSABus.trigger({ type: 'foo' });
+          FSABus.trigger({ type: 'bar' });
+          expect(events).toEqual([{ type: 'foo' }]);
+        });
       });
     });
   });
@@ -219,6 +229,14 @@ Array [
 `);
       })
     );
+    describe('Type Safety', () => {
+      it('typechecks argument against bus type', () => {
+        // Wont be allowed - not a subtype of bus
+        // FSABus.trigger(2);
+        // allowed - no generic needed on .trigger
+        FSABus.trigger({ type: 'foo', payload: null });
+      });
+    });
   });
 
   describe('#listen', () => {
@@ -727,7 +745,7 @@ Array [
   Object {
     "payload": Object {
       "fooId": "bazž",
-      "timestamp": "163",
+      "timestamp": "164",
     },
     "type": "foo",
   },

@@ -78,7 +78,9 @@ export class Omnibus<TBusItem> {
    * @param matcher A predicate to filter only events for which it returns true
    * @returns
    */
-  public query(matcher: Predicate<TBusItem>) {
+  public query<TMatchType extends TBusItem = TBusItem>(
+    matcher: (i: TBusItem) => i is TMatchType
+  ) {
     return this.channel
       .asObservable()
       .pipe(filter(matcher), takeUntil(this.resets));
@@ -118,9 +120,9 @@ export class Omnibus<TBusItem> {
    * @param observer Does something with the .
    * @returns a subscription that can be used to unsubscribe the listener, thereby canceling work in progress.
    */
-  public listen<TConsequence>(
-    matcher: Predicate<TBusItem>,
-    handler: ResultCreator<TBusItem, TConsequence>,
+  public listen<TConsequence, TMatchType extends TBusItem = TBusItem>(
+    matcher: (i: TBusItem) => i is TMatchType,
+    handler: ResultCreator<TMatchType, TConsequence>,
     observer?: TapObserver<TConsequence>,
     operator = mergeMap
   ) {
@@ -156,27 +158,27 @@ export class Omnibus<TBusItem> {
   }
 
   /** Calls listen with concatMap (queueing) semantics */
-  public listenQueueing<TConsequence>(
-    matcher: Predicate<TBusItem>,
-    handler: ResultCreator<TBusItem, TConsequence>,
+  public listenQueueing<TConsequence, TMatchType extends TBusItem = TBusItem>(
+    matcher: (i: TBusItem) => i is TMatchType,
+    handler: ResultCreator<TMatchType, TConsequence>,
     observer?: TapObserver<TConsequence>
   ) {
     return this.listen(matcher, handler, observer, concatMap);
   }
 
   /** Calls listen with switchMap (restarting) semantics */
-  public listenSwitching<TConsequence>(
-    matcher: Predicate<TBusItem>,
-    handler: ResultCreator<TBusItem, TConsequence>,
+  public listenSwitching<TConsequence, TMatchType extends TBusItem = TBusItem>(
+    matcher: (i: TBusItem) => i is TMatchType,
+    handler: ResultCreator<TMatchType, TConsequence>,
     observer?: TapObserver<TConsequence>
   ) {
     return this.listen(matcher, handler, observer, switchMap);
   }
 
   /** Calls listen with blocking (exhausting) semantics */
-  public listenBlocking<TConsequence>(
-    matcher: Predicate<TBusItem>,
-    handler: ResultCreator<TBusItem, TConsequence>,
+  public listenBlocking<TConsequence, TMatchType extends TBusItem = TBusItem>(
+    matcher: (i: TBusItem) => i is TMatchType,
+    handler: ResultCreator<TMatchType, TConsequence>,
     observer?: TapObserver<TConsequence>
   ) {
     return this.listen(matcher, handler, observer, exhaustMap);
@@ -191,8 +193,8 @@ export class Omnibus<TBusItem> {
 
   /** Run a function (synchronously) for all runtime events, prior to all spies and listeners.
    * Throwing an exception will raise to the triggerer, but not terminate the guard.*/
-  public filter(
-    matcher: Predicate<TBusItem>,
+  public filter<TMatchType extends TBusItem = TBusItem>(
+    matcher: (i: TBusItem) => i is TMatchType,
     fn: (item: TBusItem) => TBusItem
   ) {
     this.filters.push([matcher, fn]);
