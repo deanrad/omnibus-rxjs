@@ -12,11 +12,10 @@ const cli = meow(`
 	  $ wordle
 
 	Options
-		--name  Your name
+		--random  Choose a random word (if not, the word is ALEPH)
 
 	Examples
-	  $ 7guis-cells --name=Jane
-	  Hello, Jane
+	  $ node examples/wordle/cli.js --name=Jane
 `);
 
 const clear = require('clear');

@@ -3,6 +3,7 @@ const React = require('react');
 const { Text, Box, useInput, useApp, useStdout } = require('ink');
 const InkText = require('ink-text-input');
 const { bus } = require('./bus');
+const { randomWord } = require('./word-list');
 
 const useWhileMounted = (subsFactory) => {
 	React.useEffect(() => {
@@ -10,8 +11,6 @@ const useWhileMounted = (subsFactory) => {
 		return () => subs.unsubscribe();
 	}, []);
 };
-
-const GUESS_WORD = 'ALEPH';
 
 const InputCell = ({ label, value, isActive }) => {
 	return (
@@ -87,12 +86,16 @@ const Old = ({ rows = [] }) => {
 	});
 };
 
-const App = () => {
+let GUESS_WORD;
+const App = ({ random }) => {
 	const [active, setActive] = React.useState('0');
 	const [oldRows, setOldRows] = React.useState([]);
 	const [filledIn, setFilledIn] = React.useState({});
 	const [logs, setLogs] = React.useState([]);
 	const [won, setWon] = React.useState(false);
+	React.useEffect(() => {
+		GUESS_WORD = random ? randomWord().toUpperCase() : 'ALEPH';
+	}, []);
 
 	// hook up to console
 	useApp();
@@ -139,11 +142,13 @@ const App = () => {
 		if (input === '1') {
 			process.exit(0);
 		}
-		// not working
+		// not working - cant go backwards
 		// if (key.backspace || key.leftArrow) {
 		// 	setActive((c) => Number(c) - 1 + '');
 		// }
 		// if (key.rightArrow) {
+		// 	setActive((c) => Number(c) + 1 + '');
+		// } else {
 		// 	setActive((c) => Number(c) + 1 + '');
 		// }
 		setActive((c) => Number(c) + 1 + '');
