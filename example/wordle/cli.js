@@ -13,6 +13,7 @@ const cli = meow(`
 
 	Options
 		--random  Choose a random word (if not, the word is ALEPH)
+		--word Force the word (will not be visible during game)
 
 	Examples
 	  $ node examples/wordle/cli.js --name=Jane

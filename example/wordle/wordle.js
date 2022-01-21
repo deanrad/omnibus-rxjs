@@ -2,6 +2,7 @@
 const React = require('react');
 const { Text, Box, useInput, useApp, useStdout } = require('ink');
 const InkText = require('ink-text-input');
+
 const { bus } = require('./bus');
 const { randomWord } = require('./word-list');
 
@@ -87,14 +88,18 @@ const Old = ({ rows = [] }) => {
 };
 
 let GUESS_WORD;
-const App = ({ random }) => {
+const App = ({ random, word }) => {
 	const [active, setActive] = React.useState('0');
 	const [oldRows, setOldRows] = React.useState([]);
 	const [filledIn, setFilledIn] = React.useState({});
 	const [logs, setLogs] = React.useState([]);
 	const [won, setWon] = React.useState(false);
+	const [thinking, setThinking] = React.useState(false);
+
 	React.useEffect(() => {
-		GUESS_WORD = random ? randomWord().toUpperCase() : 'ALEPH';
+		GUESS_WORD = random
+			? randomWord().toUpperCase()
+			: word.toUpperCase() ?? 'ALEPH';
 	}, []);
 
 	// hook up to console
@@ -178,6 +183,7 @@ const App = ({ random }) => {
 			{!won ? (
 				<>
 					<InputRow filledIn={Object.values(filledIn)} activeLetter={active} />
+
 					<Box flexDirection="row">
 						<Text>{'                     '}</Text>
 						{'ABCDEFGHIJKLM'.split('').map((l) => {
