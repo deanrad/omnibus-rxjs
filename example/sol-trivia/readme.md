@@ -4,7 +4,7 @@ A trivia game, built in an evented way with `omnibus-rxjs`, with a React Ink CLI
 
 # Solana Wallet
 
-This project uses a devnet wallet based on this keyphrase: `absorb harvest off stone version toilet license town legend mixture frequent unfair home party chief cereal frost clarify remain maximum invest pull strategy crunch`.
+This project uses an emcee wallet based on this keyphrase: `absorb harvest off stone version toilet license town legend mixture frequent unfair home party chief cereal frost clarify remain maximum invest pull strategy crunch`.
 
 Make sure you [install the Solana CLI tools](https://docs.solana.com/cli/install-solana-cli-tools), and that you get the following output.
 
@@ -31,6 +31,10 @@ The player will submit answers by sending a transaction to the emcee, with a JSO
 
 ```
 solana transfer 4PNBPR9NtGSsmscgZ616qbzuxioPSDsVAXAVmyEXzaXF 0.0001 --from wallets/player_wallet.json --with-memo '{"question": 1, "answer": "5 days"}'
+```
+
+```
+solana transaction-history 4PNBPR9NtGSsmscgZ616qbzuxioPSDsVAXAVmyEXzaXF --show-transactions
 ```
 
 The [blockchain explorer for the emcee account](https://explorer.solana.com/address/4PNBPR9NtGSsmscgZ616qbzuxioPSDsVAXAVmyEXzaXF?cluster=devnet) will show the transaction.

@@ -1,4 +1,6 @@
 const { clusterApiUrl, Connection, Keypair } = require('@solana/web3.js');
+const { BehaviorSubject, Observable } = require('rxjs');
+const { bus } = require('../bus');
 
 let connection = new Connection(clusterApiUrl('devnet'));
 
@@ -12,6 +14,22 @@ let secretKey = Uint8Array.from([
 ]);
 let emceeKeypair = Keypair.fromSecretKey(secretKey);
 
-connection.onAccountChange(emceeKeypair.publicKey, (...args) => {
-	console.log('emcee got an answer');
-});
+bus.listen(
+	(e) => e.type === 'address/monitor',
+	({ address }) =>
+		new Observable((notify) => {
+			connection.onAccountChange(address, (...args) => {
+				notify.next(args);
+			});
+			return () => {
+				console.log('TODO unsubscribe connection from account change events');
+			};
+		}),
+	{
+		next(e) {
+			console.log('Emcee event: ', e);
+		},
+	}
+);
+
+bus.trigger({ type: 'address/monitor', address: emceeKeypair.publicKey });
