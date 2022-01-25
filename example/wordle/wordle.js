@@ -55,7 +55,28 @@ const InputRow = ({ filledIn, activeLetter = 1 } /* words, guesses */) => {
 };
 
 const Old = ({ rows = [] }) => {
-	return rows.map((letters, rowIdx) => {
+	return rows.map((guess, rowIdx) => {
+		let guessLetters = guess.split('');
+		let stillLive = GUESS_WORD.split('');
+		let colors = [];
+
+		// color & remove exact matches
+		guessLetters.forEach((l, idx) => {
+			if (GUESS_WORD[idx] === l) {
+				colors[idx] = 'greenBright';
+				delete stillLive[stillLive.indexOf(l)];
+			}
+		});
+
+		// now color near misses
+		stillLive.forEach((l) => {
+			if (guessLetters.includes(l)) {
+				const idx = guessLetters.indexOf(l);
+				colors[idx] = 'yellow';
+				delete stillLive[stillLive.indexOf(l)];
+			}
+		});
+
 		return (
 			<Box
 				height={5}
@@ -67,21 +88,13 @@ const Old = ({ rows = [] }) => {
 				flexGrow="1"
 				justifyContent="space-around"
 			>
-				{letters.split('').map((l, idx) => (
-					<Text
-						key={`l${idx}`}
-						bold={GUESS_WORD[idx] === l || GUESS_WORD.includes(l)}
-						color={
-							GUESS_WORD[idx] === l
-								? 'greenBright'
-								: GUESS_WORD.includes(l)
-								? 'yellow'
-								: 'grey'
-						}
-					>
-						{l}
-					</Text>
-				))}
+				{guessLetters.map((l, idx) => {
+					return (
+						<Text key={`l${idx}`} bold={true} color={colors[idx] || 'gray'}>
+							{l}
+						</Text>
+					);
+				})}
 			</Box>
 		);
 	});
