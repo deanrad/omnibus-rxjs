@@ -184,6 +184,33 @@ Array [
     });
   });
 
+  describe('#nextEvent', () => {
+    describe('With a Predicate', () => {
+      it('resolves to the next matching event', async () => {
+        const nextEvent = StringBus.nextEvent(() => true)
+        StringBus.trigger('iamhere')
+        expect(nextEvent).resolves.toBe('iamhere')
+      })
+
+      it('rejects on a reset if it hasnt triggered yet', () => {
+        const nextEvent = StringBus.nextEvent(() => true)
+
+        StringBus.reset();
+
+        return expect(nextEvent).rejects.toBe('Bus was reset.')
+      })
+
+      it('ignores a reset if it has triggered already', () => {
+        const nextEvent = StringBus.nextEvent(() => true)
+
+        StringBus.trigger('iamhere');
+        StringBus.reset();
+
+        return expect(nextEvent).resolves.toBe('iamhere')
+      })
+    })
+  })
+
   describe('#trigger', () => {
     it(
       'puts an action on the bus',

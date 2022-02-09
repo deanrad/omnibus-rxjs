@@ -6,13 +6,14 @@ import {
   OperatorFunction,
   PartialObserver,
   Subject,
-  Subscription,
+  Subscription
 } from 'rxjs';
 import { defer, EMPTY, from } from 'rxjs';
 import {
   catchError,
   concatMap,
   exhaustMap,
+  first,
   mergeMap,
   switchMap,
 } from 'rxjs/operators';
@@ -74,7 +75,7 @@ export class Omnibus<TBusItem> {
   }
 
   /**
-   *
+   * Returns an Observable of events matching the given predicate
    * @param matcher A predicate to filter only events for which it returns true
    * @returns
    */
@@ -84,6 +85,23 @@ export class Omnibus<TBusItem> {
     return this.channel
       .asObservable()
       .pipe(filter(matcher), takeUntil(this.resets));
+  }
+
+  /**
+   * Returns a Promise for the first event for which the predicate returns true
+   * @param matcher A predicate which selects the resolved event
+   */
+  public nextEvent<TMatchType extends TBusItem = TBusItem>(
+    matcher: (i: TBusItem) => i is TMatchType
+  ) {
+    return new Promise<TMatchType>((resolve, reject) => {
+      // first() errors if stream completes (which resets cause)
+      const errsIfNotFirst = this.query(matcher).pipe(first());
+      errsIfNotFirst.subscribe({
+        error() { reject('Bus was reset.') },
+        next(v: TMatchType) { resolve(v) }
+      })
+    })
   }
 
   /**
@@ -259,13 +277,13 @@ export class Omnibus<TBusItem> {
     const obsResult: Observable<TConsequence> =
       typeof oneResult === 'function'
         ? // @ts-ignore
-          oneResult.length === 0
+        oneResult.length === 0
           ? // @ts-ignore
-            defer(oneResult)
+          defer(oneResult)
           : // @ts-ignore
-            new Observable(oneResult)
+          new Observable(oneResult)
         : // @ts-ignore
-          from(oneResult ?? EMPTY);
+        from(oneResult ?? EMPTY);
     return obsResult;
   }
 
