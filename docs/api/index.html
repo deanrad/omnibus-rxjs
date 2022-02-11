@@ -58,66 +58,381 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
+				<p><a href="https://travis-ci.com/deanrad/omnibus-rxjs"><img src="https://api.travis-ci.com/deanrad/omnibus-rxjs.svg?token=jDxJBxYkkXVxwqfuGjmx&branch=master&status=passed" alt="Travis CI"></a>
+					<img src="https://shields.io/badge/coverage-100%25-brightgreen" alt="Code Coverage">
+				<a href="https://codeclimate.com/github/deanrad/omnibus-rxjs/maintainability"><img src="https://api.codeclimate.com/v1/badges/f7c14c5a3bbbf0d803cc/maintainability" alt="Maintainability"></a></p>
 				<a href="#omnibus-rxjs" id="omnibus-rxjs" style="color: inherit; text-decoration: none;">
 					<h1>omnibus-rxjs</h1>
 				</a>
-				<p>An Event Bus for RxJS. Ala Redux Middleware (Sagas), with no Redux dependency. </p>
 				<a href="#what-is-it" id="what-is-it" style="color: inherit; text-decoration: none;">
 					<h2>What Is It?</h2>
 				</a>
-				<p>A &#39;sugar&#39; around an RxJS Subject, with declarative mapping of Observables.</p>
-				<a href="#build-impact" id="build-impact" style="color: inherit; text-decoration: none;">
-					<h2>Build Impact?</h2>
+				<p>An Event Bus for simplifying front-end code, especially in VanillaJS and React codebases. Can serve as its own framework, or an add-on, run in Node, or Deno, and maintain decoupling from frameworks, or downstream services.</p>
+				<a href="#how-to-get-it" id="how-to-get-it" style="color: inherit; text-decoration: none;">
+					<h2>How to Get It?</h2>
 				</a>
-				<p>Size: &lt;10 Kb minified, gzipped. Tree-shakable to less.</p>
-				<a href="#architectural-reason" id="architectural-reason" style="color: inherit; text-decoration: none;">
-					<h2>Architectural Reason</h2>
+				<p><code>npm install omnibus-rxjs</code></p>
+				<p>Deno: Coming Soon!</p>
+				<a href="#how-big-is-it" id="how-big-is-it" style="color: inherit; text-decoration: none;">
+					<h2>How Big Is It?</h2>
 				</a>
-				<p>Enables micro-front ends because event bus listeners can be dynamically added and removed. See NextJS example (TODO create).</p>
+				<p>Only 8Kb minified, gzipped</p>
+				<a href="#what-front-end-problems-does-it-help-with" id="what-front-end-problems-does-it-help-with" style="color: inherit; text-decoration: none;">
+					<h2>What Front-End problems does it help with?</h2>
+				</a>
+				<ul>
+					<li>Keep components and services testable—since they&#39;re specified only in terms of messages they send or respond to - no mocking required!</li>
+					<li>Don&#39;t need to prop-drill, lift state, or introduce Contexts to do inter-component communication; sharing the bus is sufficient.</li>
+					<li>Code UX to handle all edge-cases around API/service communication, by depending only on the messages. Even if those services aren&#39;t built yet!</li>
+					<li>Keep memory footprint small, and prevent bundle bloat by allowing functionality to load/unload at runtime.</li>
+				</ul>
+				<p>And many more - see How Can I Explain This To My Team.</p>
 				<a href="#usage-with-react" id="usage-with-react" style="color: inherit; text-decoration: none;">
 					<h2>Usage with React</h2>
 				</a>
-				<p>Like XState, the Omnibus engine removes async handling from the purview of React. <a href="http://TODO.org">Why is this a good idea?</a>. </p>
-				<p>This makes your code future-proof in React, including needing no changes for <a href="https://reactjs.org">Suspense</a> mode. </p>
-				<p>Event bus listeners can run <em>before</em> the render cycle, vs <code>useEffect</code> which only runs <strong>after</strong>. This can cut off entire classes of edge cases</p>
-				<a href="#usage-with-rxjs" id="usage-with-rxjs" style="color: inherit; text-decoration: none;">
-					<h2>Usage with RxJS</h2>
-				</a>
-				<p>RxJS operators are brilliant and useful, but they tend to couple concepts that are separate. For example, an autocomplete, in RxJS terms is:</p>
-				<pre><code class="language-js"><span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">changeEvents</span><span style="color: #000000"> = </span><span style="color: #795E26">fromEvent</span><span style="color: #000000">(</span><span style="color: #001080">input</span><span style="color: #000000">, </span><span style="color: #A31515">&#039;change&#039;</span><span style="color: #000000">) </span><span style="color: #008000">// </span>
-<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">results</span><span style="color: #000000"> = </span><span style="color: #795E26">changeEvents</span><span style="color: #000000">().</span><span style="color: #795E26">pipe</span><span style="color: #000000">(</span>
-<span style="color: #000000">     </span><span style="color: #795E26">switchMap</span><span style="color: #000000">(({ </span><span style="color: #001080">value</span><span style="color: #000000">: </span><span style="color: #001080">query</span><span style="color: #000000"> }) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #795E26">getResult$</span><span style="color: #000000">(</span><span style="color: #001080">query</span><span style="color: #000000">))</span>
-<span style="color: #000000">   )</span>
-<span style="color: #000000">   </span><span style="color: #001080">results</span><span style="color: #000000">.</span><span style="color: #795E26">subscribe</span><span style="color: #000000">(</span><span style="color: #001080">updateUI</span><span style="color: #000000">)</span>
-</code></pre>
-				<p>Conceptually there are two sources of events - the Observable of <code>changeEvents</code> coming from the user typing in the query input box. For each of those events, an Observable is triggered (which cancels any previous one, per the <code>switchMap</code> concurrency operator).</p>
-				<p>A better expression of this architecture can be made in terms of services and an event bus connecting them.</p>
-				<pre><code class="language-js"><span style="color: #008000">// bus.js</span>
-<span style="color: #008000">// Every item on this bus will be an FSA. Useful to duck-type Redux.</span>
-<span style="color: #AF00DB">export</span><span style="color: #000000"> </span><span style="color: #001080">bus</span><span style="color: #000000"> = </span><span style="color: #001080">new</span><span style="color: #000000"> </span><span style="color: #001080">Bus</span><span style="color: #000000">&lt;</span><span style="color: #001080">Action</span><span style="color: #000000">&gt;();</span>
-
-<span style="color: #008000">//userService.js</span>
-<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">bus</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;./bus&#039;</span>
-<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">queryCreator</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;./search-service&#039;</span>
-
-<span style="color: #0000FF">class</span><span style="color: #000000"> </span><span style="color: #267F99">QueryService</span><span style="color: #000000"> </span><span style="color: #0000FF">implements</span><span style="color: #000000"> </span><span style="color: #267F99">Service</span><span style="color: #000000"> {</span>
-<span style="color: #000000">  </span><span style="color: #0000FF">private</span><span style="color: #000000"> </span><span style="color: #001080">currentRun</span><span style="color: #000000">:</span><span style="color: #267F99">Subscription</span>
-<span style="color: #000000">  </span><span style="color: #795E26">start</span><span style="color: #000000">() {</span>
-<span style="color: #000000">    </span><span style="color: #0000FF">this</span><span style="color: #000000">.</span><span style="color: #001080">currentRun</span><span style="color: #000000">?.</span><span style="color: #795E26">unsubscribe</span><span style="color: #000000">() </span><span style="color: #008000">// restarts it</span>
-<span style="color: #000000">    </span><span style="color: #0000FF">this</span><span style="color: #000000">.</span><span style="color: #001080">currentRun</span><span style="color: #000000"> = </span><span style="color: #795E26">fromEvent</span><span style="color: #000000">(</span><span style="color: #001080">input</span><span style="color: #000000">, </span><span style="color: #A31515">&#039;click&#039;</span><span style="color: #000000">).</span><span style="color: #795E26">subscribe</span><span style="color: #000000">(</span><span style="color: #001080">e</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
-<span style="color: #000000">     </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">event</span><span style="color: #000000"> = </span><span style="color: #795E26">queryCreator</span><span style="color: #000000">(</span><span style="color: #001080">e</span><span style="color: #000000">.</span><span style="color: #001080">target</span><span style="color: #000000">.</span><span style="color: #001080">value</span><span style="color: #000000">)</span>
-<span style="color: #000000">      </span><span style="color: #001080">bus</span><span style="color: #000000">.</span><span style="color: #795E26">trigger</span><span style="color: #000000">(</span><span style="color: #001080">event</span><span style="color: #000000">)</span>
+				<pre><code class="language-ts"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">bus</span><span style="color: #000000">, </span><span style="color: #001080">CounterIncrement</span><span style="color: #000000">, </span><span style="color: #001080">useWhileMounted</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&quot;./events/&quot;</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">CounterDisplay</span><span style="color: #000000"> = () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">  </span><span style="color: #0000FF">const</span><span style="color: #000000"> [</span><span style="color: #0070C1">count</span><span style="color: #000000">, </span><span style="color: #0070C1">setCount</span><span style="color: #000000">] = </span><span style="color: #795E26">useState</span><span style="color: #000000">(</span><span style="color: #098658">0</span><span style="color: #000000">);</span>
+<span style="color: #000000">  </span><span style="color: #795E26">useWhileMounted</span><span style="color: #000000">(() </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #001080">bus</span><span style="color: #000000">.</span><span style="color: #795E26">listen</span><span style="color: #000000">(</span><span style="color: #001080">CounterIncrement</span><span style="color: #000000">.</span><span style="color: #001080">match</span><span style="color: #000000">, () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">      </span><span style="color: #795E26">setCount</span><span style="color: #000000">(</span><span style="color: #001080">c</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">c</span><span style="color: #000000">+</span><span style="color: #098658">1</span><span style="color: #000000">))</span>
 <span style="color: #000000">    })</span>
+<span style="color: #000000">  })</span>
+<span style="color: #000000">}</span>
+</code></pre>
+				<p>This example invokes a React state-setter each time an event matching <code>CounterIncrement</code> is trigger-ed onto the bus. <code>bus.listen</code> returns an RxJS <code>Subscription</code> object, and the wrapping of it in <code>useWhileMounted</code> allows the listener to be removed upon component unmounting.</p>
+				<p>In an entirely un-coupled component, anywhere in the app, a component (or test framework) will trigger those actions:</p>
+				<pre><code class="language-ts"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">bus</span><span style="color: #000000">, </span><span style="color: #001080">CounterIncrement</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;./events&#039;</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #795E26">CounterButton</span><span style="color: #000000"> = () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">  </span><span style="color: #AF00DB">return</span><span style="color: #000000"> &lt;</span><span style="color: #267F99">button</span><span style="color: #000000"> </span><span style="color: #267F99">onClick</span><span style="color: #000000">={() </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #267F99">trigger</span><span style="color: #000000">(</span><span style="color: #267F99">CounterIncrement</span><span style="color: #000000">())}&gt;</span>
+<span style="color: #000000">}</span>
+</code></pre>
+				<p>All that&#39;s needed to connect them, is mount each of them - in no particular relation to each other, and sharing no props or state:</p>
+				<pre><code class="language-jsx"><span style="color: #800000">&lt;</span><span style="color: #267F99">App</span><span style="color: #800000">&gt;</span>
+<span style="color: #000000">  </span><span style="color: #800000">&lt;</span><span style="color: #267F99">CounterDisplay</span><span style="color: #000000"> </span><span style="color: #800000">/&gt;</span>
+<span style="color: #000000">  </span><span style="color: #800000">&lt;</span><span style="color: #267F99">CounterButton</span><span style="color: #000000"> </span><span style="color: #800000">/&gt;</span>
+<span style="color: #800000">&lt;/</span><span style="color: #267F99">App</span><span style="color: #800000">&gt;</span>
+</code></pre>
+				<a href="#lifecycle" id="lifecycle" style="color: inherit; text-decoration: none;">
+					<h3>Lifecycle</h3>
+				</a>
+				<p><code>useWhileMounted</code> can ensure your effects do not outlive the components that initiate them. This is a good default, and enabled by returning Observables from handlers always. However, if cancelability is not desired, (such as when a response is still desired) simply return a Promise instead, and Omnibus will be unable to cancel it.</p>
+				<pre><code class="language-ts"><span style="color: #0000FF">function</span><span style="color: #000000"> </span><span style="color: #795E26">useWhileMounted</span><span style="color: #000000">(</span><span style="color: #795E26">subsFactory</span><span style="color: #000000">: () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #267F99">Subscription</span><span style="color: #000000">) {</span>
+<span style="color: #000000">  </span><span style="color: #795E26">useEffect</span><span style="color: #000000">(() </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">sub</span><span style="color: #000000"> = </span><span style="color: #795E26">subsFactory</span><span style="color: #000000">();</span>
+<span style="color: #000000">    </span><span style="color: #AF00DB">return</span><span style="color: #000000"> () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">sub</span><span style="color: #000000">?.</span><span style="color: #795E26">unsubscribe</span><span style="color: #000000">();</span>
+<span style="color: #000000">  }, []);</span>
+<span style="color: #000000">}</span>
+</code></pre>
+				<a href="#testing" id="testing" style="color: inherit; text-decoration: none;">
+					<h3>Testing</h3>
+				</a>
+				<p>Note how the specs read for each component:</p>
+				<pre><code><span style="color: #000000">describe: </span><span style="color: #001080">CounterButton</span>
+<span style="color: #000000">  it: </span><span style="color: #001080">triggers</span><span style="color: #000000"> </span><span style="color: #001080">a</span><span style="color: #000000"> </span><span style="color: #001080">CounterIncrement</span><span style="color: #000000"> </span><span style="color: #001080">event</span><span style="color: #000000"> </span><span style="color: #001080">when</span><span style="color: #000000"> </span><span style="color: #001080">clicked</span>
 
+<span style="color: #000000">describe: </span><span style="color: #001080">CounterDisplay</span>
+<span style="color: #000000">  it: </span><span style="color: #001080">increments</span><span style="color: #000000"> </span><span style="color: #001080">its</span><span style="color: #000000"> </span><span style="color: #001080">number</span><span style="color: #000000"> </span><span style="color: #001080">by</span><span style="color: #000000"> </span><span style="color: #098658">1</span><span style="color: #000000"> </span><span style="color: #001080">upon</span><span style="color: #000000"> </span><span style="color: #001080">a</span><span style="color: #000000"> </span><span style="color: #001080">CounterIncrement</span><span style="color: #000000"> </span><span style="color: #001080">event</span>
+</code></pre>
+				<p>With that specification, no test-framework specific mocks need to be written — <code>query</code> can be used to assert what <code>CounterButton</code> does, and a test need only <code>trigger</code> and examine the output of <code>CounterDisplay</code>. No complicated, nested <code>jest.mock</code> calls required. Bonus: you can animate your Storybook stories by performing a series of <code>trigger</code> calls in your stories.</p>
+				<a href="#example-applications" id="example-applications" style="color: inherit; text-decoration: none;">
+					<h1>Example Applications</h1>
+				</a>
+				<p>There is <a href="https://codesandbox.io/s/todos-omnibus-rtkquery-mjjwn">TodoMVC</a>. The Redux Toolkit <a href="https://codesandbox.io/s/poly-redux-counter-solved-m5cm0">Async Counter</a>. An RxJS-style <a href="https://codesandbox.io/s/createobservableservice-6zy19">typeahead search</a>. And a rework of the XState Dog Fetcher known as <a href="https://codesandbox.io/s/cat-fetcher-with-omnibus-kr3yw">Cat Fetcher</a></p>
+				<p>The <a href="https://eugenkiss.github.io/7guis/">7 GUIs</a> are a series of UX challenges which range from a simple counter to a highly dynamic spreadsheet with formulae and cell references.</p>
+				<ul>
+					<li><a href="https://codesandbox.io/s/7guis-1-counter-xstate-omnibus-rmuh6">1-Counter</a></li>
+					<li><a href="https://codesandbox.io/s/7guis-2-temperature-n36pf?file=/src/index.tsx">2-Temperature</a></li>
+					<li>3-Flight Booker</li>
+					<li>4-Timer</li>
+					<li>5-CRUD</li>
+					<li><a href="https://codesandbox.io/s/7guis-6-circles-omnibus-bnfsm">6-Circles</a></li>
+					<li><a href="https://github.com/deanrad/omnibus-rxjs/tree/master/example/7guis-cells">7-Cells (command-line)</a></li>
+				</ul>
+				<p>Omnibus solves each challenge, maintaining a uniform, testable architectural style across each one. Other example apps have included IOT, Animation, WebAudio, WebSockets and many more.</p>
+				<a href="#api" id="api" style="color: inherit; text-decoration: none;">
+					<h1>API</h1>
+				</a>
+				<p>The Omnibus API is intentionally simple. Since it has been in use for &gt;4 years (since 2017), its core APIs are stable.</p>
+				<hr>
+				<blockquote>
+					<p><strong>Constructor</strong>: <code>new Omnibus&lt;EType&gt;()</code></p>
+				</blockquote>
+				<p>Declares the event bus, and the (super)-type of events it can carry. When used with a library like <a href="">Redux Toolkit</a>, or <a href=""><code>typescript-fsa</code></a>, this will be:</p>
+				<p><code>export const bus = new Omnibus&lt;Action&gt;()</code></p>
+				<hr>
+				<blockquote>
+					<p><strong>trigger</strong>: <code>bus.trigger&lt;SubType extends EType&gt;(event)</code></p>
+				</blockquote>
+				<p>Triggers an action to the event bus, so that listeners may handle it after passing all pre-processors (guards, filters, and spies). <em>Triggering has no performance cost if there are no listeners</em>.</p>
+				<p>As an example: if you have logging that should only occur in lower environments, the calls to <code>bus.trigger</code> can be left in place throughout your app and logging listeners only attached in lower environments. Compare this to actual <code>console.log</code> statements which must be removed.</p>
+				<p>No type-annotation is needed at call-time to ensure typesafety of triggered actions.</p>
+				<pre><code class="language-js"><span style="color: #008000">// CounterIncrement triggers a subtype of Action onto the bus</span>
+<span style="color: #001080">handleClick</span><span style="color: #000000">={((e) =&gt; bus.trigger(</span><span style="color: #795E26">CounterIncrement</span><span style="color: #000000">()))}</span>
+</code></pre>
+				<hr>
+				<blockquote>
+					<p><strong>query</strong>: <code>bus.query(predicate: (EType =&gt; boolean))</code></p>
+				</blockquote>
+				<p>From a testing perspective, <code>query</code> is a way to assert that a <code>trigger</code> was called.</p>
+				<p>More generally, <code>query</code> allows you to get a subset of actions of the bus as an RxJS Observable. This allows you create a &#39;derived stream&#39; to detect certain conditions. A simplistic form of rate limiting could be:</p>
+				<pre><code class="language-ts"><span style="color: #008000">// Do something when 5 or more bus events occur in one second</span>
+<span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">rateLimitViolations</span><span style="color: #000000"> = </span><span style="color: #001080">bus</span>
+<span style="color: #000000">  .</span><span style="color: #795E26">query</span><span style="color: #000000">(() </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span><span style="color: #000000">)</span>
+<span style="color: #000000">  .</span><span style="color: #795E26">pipe</span><span style="color: #000000">(</span>
+<span style="color: #000000">    </span><span style="color: #795E26">bufferTime</span><span style="color: #000000">(</span><span style="color: #098658">1000</span><span style="color: #000000">),</span>
+<span style="color: #000000">    </span><span style="color: #795E26">filter</span><span style="color: #000000">((</span><span style="color: #001080">buffer</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">buffer</span><span style="color: #000000">.</span><span style="color: #001080">length</span><span style="color: #000000"> &gt;= </span><span style="color: #098658">5</span><span style="color: #000000">)</span>
+<span style="color: #000000">  );</span>
+<span style="color: #001080">rateLimitViolations</span><span style="color: #000000">.</span><span style="color: #795E26">subscribe</span><span style="color: #000000">(() </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">  </span><span style="color: #008000">// let this be handled by listeners</span>
+<span style="color: #000000">  </span><span style="color: #001080">bus</span><span style="color: #000000">.</span><span style="color: #795E26">trigger</span><span style="color: #000000">(</span><span style="color: #795E26">RateLimitViolation</span><span style="color: #000000">());</span>
+<span style="color: #000000">  </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Slow down!&#039;</span><span style="color: #000000">);</span>
+<span style="color: #000000">});</span>
+</code></pre>
+				<p>Issues resulting from race conditions could be detected and fixed by using <code>query</code> to run a corrective action.</p>
+				<p>You can get a Promise for the first result of a <code>query</code>, using RxJS&#39; <code>firstValueFrom</code>:</p>
+				<pre><code class="language-ts"><span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">firstValueFrom</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;rxjs&#039;</span><span style="color: #000000">;</span>
+<span style="color: #795E26">firstValueFrom</span><span style="color: #000000">(</span><span style="color: #001080">rateLimitViolations</span><span style="color: #000000">).</span><span style="color: #795E26">then</span><span style="color: #000000">(() </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Game over!&#039;</span><span style="color: #000000">));</span>
+</code></pre>
+				<hr>
+				<blockquote>
+					<p><strong>reset</strong>: <code>bus.reset()</code></p>
+				</blockquote>
+				<p>Returns the bus to a state where there are no listeners. Any Observables returned by <code>query</code> will complete upon a <code>reset</code>. Any listeners will be unsubscribed. If the listeners were defined to support cancelation of their effects (if they return cancelable Observables vs uncancelable Promises), their effects are canceled and resources freed up immediately. See Cancelation for more.</p>
+				<p>In a Hot-Module-Reloading environment where a bus instance may get the same listeners attached multiple times, adding a call to <code>reset</code> can prevent double-listenings.</p>
+				<pre><code class="language-ts"><span style="color: #001080">bus</span><span style="color: #000000">.</span><span style="color: #795E26">reset</span><span style="color: #000000">(); </span><span style="color: #008000">// Be HMR-friendly</span>
+</code></pre>
+				<a href="#error-handling" id="error-handling" style="color: inherit; text-decoration: none;">
+					<h2>Error Handling</h2>
+				</a>
+				<hr>
+				<blockquote>
+					<p><strong>errors</strong>: <code>bus.errors.subscribe(handler)</code></p>
+				</blockquote>
+				<p>If a listener throws an uncaught error (its <code>observer</code> does not have an <code>error</code> callback):</p>
+				<ul>
+					<li>The <code>error</code> will appear on the <code>bus.errors</code> Observable.</li>
+					<li>The listener will be unsubscribed/terminated.</li>
+				</ul>
+				<p>For full transparency, the following code will show all events on the bus, and any errors that occur:</p>
+				<pre><code class="language-ts"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">bus</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">Omnibus</span><span style="color: #000000">&lt;</span><span style="color: #267F99">any</span><span style="color: #000000">&gt;();</span>
+<span style="color: #001080">bus</span><span style="color: #000000">.</span><span style="color: #795E26">spy</span><span style="color: #000000">((</span><span style="color: #001080">e</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">e</span><span style="color: #000000">));</span>
+<span style="color: #001080">bus</span><span style="color: #000000">.</span><span style="color: #001080">errors</span><span style="color: #000000">.</span><span style="color: #795E26">subscribe</span><span style="color: #000000">((</span><span style="color: #001080">e</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">error</span><span style="color: #000000">(</span><span style="color: #001080">e</span><span style="color: #000000">));</span>
+</code></pre>
+				<p>This error handling differs from RxJS in two ways:</p>
+				<ul>
+					<li><p>The code that called <code>bus.trigger()</code> and initiated the error will NOT see the exception. This keeps triggerering components from being sensitive to listener exceptions, allowing those components to reach a &#39;done&#39; state, even when new listeners are added.</p>
+					</li>
+					<li><p>The bus&#39; internal <code>Subject</code> will continue to handle events, and keep other listeners alive. No <code>hostReportError</code> will be called.</p>
+					</li>
+				</ul>
+				<p>In short, the bus prefers to &#39;blow a fuse&#39; on a single listener, than to fail entirely, or raise an error or Promise rejection to the top level of the app.</p>
+				<p>In contrast to listener errors, Guards, Filters and Spies that throw errors will propogate up to the code that called <code>trigger</code>. Use this to perform event validation or otherwise tell the triggerer that the event it sent will not be handled. See Sync Handlers for more.</p>
+				<hr>
+				<a href="#async-handlers" id="async-handlers" style="color: inherit; text-decoration: none;">
+					<h2>Async Handlers</h2>
+				</a>
+				<blockquote>
+					<p><strong>listen</strong>: <code>bus.listen(matcher, handler, observer)</code></p>
+				</blockquote>
+				<blockquote>
+					<p><strong>listenQueueing</strong>: <code>bus.listenQueueing</code></p>
+				</blockquote>
+				<blockquote>
+					<p><strong>listenSwitching</strong>: <code>bus.listenSwitching</code></p>
+				</blockquote>
+				<blockquote>
+					<p><strong>listenBlocking</strong>: <code>bus.listenBlocking</code></p>
+				</blockquote>
+				<p>Each <code>bus.listen</code> method variant takes the same function arguments (explained shortly), and returns a Subscription. This subscription can be thought of as an Actor in the Actor model.</p>
+				<p>The purpose of using one <code>listen</code> variant over another - say <code>listenQueueing</code> instead of <code>listen</code>, is to specify what the listener does if it already is executing a handling, and a new event comes in. Each method corresponds to an RxJS operator. More detail below in Concurrency.</p>
+				<a href="#arguments" id="arguments" style="color: inherit; text-decoration: none;">
+					<h3><strong>Arguments</strong></h3>
+				</a>
+				<p>The two required arguments to create a listener are:</p>
+				<ul>
+					<li><code>matcher</code> - A predicate function. Each event of the bus is run through each listener&#39;s predicate function. If the matcher returns <code>true</code> then the bus invokes that listener&#39;s handler.</li>
+					<li><code>handler</code> - A function to do some work when a matching event appears on the bus. The handler recieves the event as its argument. It can perform the work:<ul>
+							<li>Synchronously</li>
+							<li>Immediately, by returning a Promise</li>
+							<li>Deferred, by returning a Promise-returning function</li>
+							<li>Deferred, and cancelable by returning an Observable</li>
+						</ul>
+					</li>
+				</ul>
+				<p>The most powerful and performant of these is the Observable, whose cancelability prevents resource leaks and helps tame race conditions. <strong>Note:</strong> You do not need to call <code>subscribe()</code> when returning an Observable- Omnibus does that automatically on any Observable you return. When returning a Promise, there&#39;s no need to <code>await</code> it or declare the handler <code>async</code>.</p>
+				<pre><code class="language-ts"><span style="color: #008000">// Sync</span>
+<span style="color: #001080">bus</span><span style="color: #000000">.</span><span style="color: #795E26">listen</span><span style="color: #000000">(</span><span style="color: #001080">matcher</span><span style="color: #000000">, (</span><span style="color: #001080">e</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;event: &#039;</span><span style="color: #000000">, </span><span style="color: #001080">e</span><span style="color: #000000">));</span>
+
+<span style="color: #008000">// Immediate Promise</span>
+<span style="color: #001080">bus</span><span style="color: #000000">.</span><span style="color: #795E26">listen</span><span style="color: #000000">(</span><span style="color: #001080">matcher</span><span style="color: #000000">, (</span><span style="color: #001080">e</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #795E26">fetch</span><span style="color: #000000">(</span><span style="color: #001080">url</span><span style="color: #000000">).</span><span style="color: #795E26">then</span><span style="color: #000000">((</span><span style="color: #001080">res</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">res</span><span style="color: #000000">.</span><span style="color: #795E26">json</span><span style="color: #000000">()));</span>
+
+<span style="color: #008000">// Deferred Promise (needed if you want to queue handlings)</span>
+<span style="color: #001080">bus</span><span style="color: #000000">.</span><span style="color: #795E26">listen</span><span style="color: #000000">(</span><span style="color: #001080">matcher</span><span style="color: #000000">, (</span><span style="color: #001080">e</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #795E26">fetch</span><span style="color: #000000">(</span><span style="color: #001080">url</span><span style="color: #000000">).</span><span style="color: #795E26">then</span><span style="color: #000000">((</span><span style="color: #001080">res</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">res</span><span style="color: #000000">.</span><span style="color: #795E26">json</span><span style="color: #000000">()));</span>
+
+<span style="color: #008000">// Observable (cancelable w/o AbortController!)</span>
+<span style="color: #001080">bus</span><span style="color: #000000">.</span><span style="color: #795E26">listen</span><span style="color: #000000">(</span><span style="color: #001080">matcher</span><span style="color: #000000">, (</span><span style="color: #001080">e</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">ajax</span><span style="color: #000000">.</span><span style="color: #795E26">getJSON</span><span style="color: #000000">(</span><span style="color: #001080">url</span><span style="color: #000000">));</span>
+</code></pre>
+				<a href="#concurrency" id="concurrency" style="color: inherit; text-decoration: none;">
+					<h3><strong>Concurrency</strong></h3>
+				</a>
+				<p>By default, a listener will perform its handlings ASAP - corresponding to <code>mergeMap</code> mode in RxJS. However, race conditions or resource usage often demand switching strategies. Omnibus makes this trivial - just call a different <code>listen</code> variant with the same arguments. The async concurrency strategy (<strong>How</strong>) is entirely decoupled from the criteria for triggering (<strong>When</strong>), and the async behavior definition (<strong>What</strong>). This allows those changes to the UX that really make a difference to users, without requiring large code changes:</p>
+				<table>
+					<thead>
+						<tr>
+							<th>Variant</th>
+							<th>RxJS operator</th>
+							<th>Use Cases</th>
+						</tr>
+					</thead>
+					<tbody><tr>
+							<td><code>listen</code></td>
+							<td><code>mergeMap</code></td>
+							<td>Independent &quot;Like&quot; buttons</td>
+						</tr>
+						<tr>
+							<td><code>listenQueueing</code></td>
+							<td><code>concatMap</code></td>
+							<td>File upload / analytics</td>
+						</tr>
+						<tr>
+							<td><code>listenSwitching</code></td>
+							<td><code>switchMap</code></td>
+							<td>Autocomplete/session timeout</td>
+						</tr>
+						<tr>
+							<td><code>listenBlocking</code></td>
+							<td><code>exhaustMap</code></td>
+							<td>Form submission</td>
+						</tr>
+				</tbody></table>
+				<p>These variants suffice for 99.9% of the use cases you&#39;ll encounter in web development. For custom handling (example: a maximum of 2 in progress handlings), pass a custom operator of your own design as the last argument to <code>listen</code>. See <code>toggleMap</code> for an example.</p>
+				<a href="#handler-lifecycle-events" id="handler-lifecycle-events" style="color: inherit; text-decoration: none;">
+					<h3><strong>Handler Lifecycle Events</strong></h3>
+				</a>
+				<p>For any individual handling, there are events of interest - such as when it starts, errors, or produces a value successfully. The final, optional argument in constructing a listener is <code>observer</code>— an object with any of these callbacks:</p>
+				<ul>
+					<li><code>error(e)</code> - A Promise <code>reject</code> or Observable <code>error</code> occurred.</li>
+					<li><code>complete()</code> - A Promise <code>resolve</code> or Observable <code>complete</code> occurred.</li>
+					<li><code>next(value)</code> - Conveys the resolved Promise value, or an Observable <code>next</code> value.</li>
+					<li><code>subscribe()</code> - The deferred Promise was begun, or the Observable was subscribed to.</li>
+					<li><code>unsubscribe()</code> - The Observable was unsubscribed before it completed. Aborted Promises are handled as <code>error</code> instead.</li>
+				</ul>
+				<p>If you are using the <code>observer</code> simply to trigger further events (like Redux Toolkit&#39;s <code>createAsyncThunk</code> but with different names), you can create a triggering Observer out of action creators using <code>bus.observeWith</code>:</p>
+				<pre><code class="language-ts"><span style="color: #008000">// Import Action Creators for the lifecycle events</span>
+<span style="color: #AF00DB">import</span><span style="color: #000000"> { </span><span style="color: #001080">SearchRequest</span><span style="color: #000000">, </span><span style="color: #001080">SearchResult</span><span style="color: #000000">, </span><span style="color: #001080">SearchComplete</span><span style="color: #000000"> </span><span style="color: #001080">SearchError</span><span style="color: #000000"> } </span><span style="color: #AF00DB">from</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;./events&#039;</span><span style="color: #000000">;</span>
+
+<span style="color: #008000">// And trigger these events as the handler runs</span>
+<span style="color: #001080">bus</span><span style="color: #000000">.</span><span style="color: #795E26">listen</span><span style="color: #000000">(</span>
+<span style="color: #000000">  </span><span style="color: #001080">SearchRequest</span><span style="color: #000000">.</span><span style="color: #001080">match</span><span style="color: #000000">,</span>
+<span style="color: #000000">  (</span><span style="color: #001080">req</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #795E26">fetch</span><span style="color: #000000">(</span><span style="color: #A31515">`https://url?req=</span><span style="color: #0000FF">${</span><span style="color: #001080">req</span><span style="color: #0000FF">}</span><span style="color: #A31515">`</span><span style="color: #000000">),</span>
+<span style="color: #000000">  </span><span style="color: #001080">bus</span><span style="color: #000000">.</span><span style="color: #795E26">observeWith</span><span style="color: #000000">({</span>
+<span style="color: #000000">    </span><span style="color: #001080">next:</span><span style="color: #000000"> </span><span style="color: #001080">SearchResult</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">complete:</span><span style="color: #000000"> </span><span style="color: #001080">SearchComplete</span><span style="color: #000000">,</span>
+<span style="color: #000000">    </span><span style="color: #001080">error:</span><span style="color: #000000"> </span><span style="color: #001080">SearchError</span>
+<span style="color: #000000">  })</span>
+<span style="color: #000000">);</span>
+</code></pre>
+				<p>See <a href="https://codesandbox.io/s/createobservableservice-6zy19"><code>createObservableService</code></a> for a utility that resembles <code>createAsyncThunk</code>, but without Redux or middleware, saving bundle size.</p>
+				<a href="#unregistering-a-listener" id="unregistering-a-listener" style="color: inherit; text-decoration: none;">
+					<h3><strong>Unregistering a Listener</strong></h3>
+				</a>
+				<p>To unregister the listener, simply call <code>unsubscribe()</code> on the return value. Any work being done by a listener will be canceled when the listener&#39;s subscription is unsubscribed, or if <code>bus.reset()</code> is called.</p>
+				<pre><code class="language-ts"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">sub</span><span style="color: #000000"> = </span><span style="color: #001080">bus</span><span style="color: #000000">.</span><span style="color: #795E26">listen</span><span style="color: #000000">(</span><span style="color: #001080">when</span><span style="color: #000000">, () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">work</span><span style="color: #000000">); </span><span style="color: #008000">// sets up</span>
+<span style="color: #001080">bus</span><span style="color: #000000">.</span><span style="color: #795E26">trigger</span><span style="color: #000000">(</span><span style="color: #001080">startsWork</span><span style="color: #000000">); </span><span style="color: #008000">// begins work</span>
+<span style="color: #001080">sub</span><span style="color: #000000">.</span><span style="color: #795E26">unsubscribe</span><span style="color: #000000">(); </span><span style="color: #008000">// ends, including work</span>
+</code></pre>
+				<hr>
+				<a href="#pre-processorssync-handlers-guards-filters-spies" id="pre-processorssync-handlers-guards-filters-spies" style="color: inherit; text-decoration: none;">
+					<h2>Pre-Processors/Sync Handlers: Guards, Filters, Spies</h2>
+				</a>
+				<p>The bus allows for various forms of pre-processors - functions which run on every <code>trigger</code>-ed action, before any listener sees the action. These are not intended to begin any async process, but more commonly to:</p>
+				<ul>
+					<li>Throw an exception to the caller of <code>bus.trigger()</code> (Listeners, by design do not do this - see Error Handling)</li>
+					<li>Validate, sign, timestamp or otherwise modify the event before any listener can see it.</li>
+					<li>Call a state setter (as in React useState), or dispatch an action (as in useReducer)</li>
+					<li><code>console.log</code> or write to another log synchronously.</li>
+				</ul>
+				<blockquote>
+					<p><strong>guard</strong>: <code>bus.guard(matcher, handler)</code></p>
+				</blockquote>
+				<p>Guard functions are run in the callstack of the triggerer. Their return value is unimportant, but may throw an exception to prevent further processing.</p>
+				<pre><code class="language-js"><span style="color: #008000">// Prevent negative increments</span>
+<span style="color: #001080">bus</span><span style="color: #000000">.</span><span style="color: #795E26">guard</span><span style="color: #000000">(</span><span style="color: #001080">CounterIncrement</span><span style="color: #000000">.</span><span style="color: #001080">match</span><span style="color: #000000">, ({ </span><span style="color: #001080">payload</span><span style="color: #000000">: { </span><span style="color: #001080">increment</span><span style="color: #000000"> = </span><span style="color: #098658">0</span><span style="color: #000000"> } }) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">  </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">increment</span><span style="color: #000000"> &lt; </span><span style="color: #098658">0</span><span style="color: #000000">) </span><span style="color: #AF00DB">throw</span><span style="color: #000000"> </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #267F99">Error</span><span style="color: #000000">(</span><span style="color: #A31515">&#039;Cant go backward&#039;</span><span style="color: #000000">);</span>
+<span style="color: #000000">});</span>
+<span style="color: #001080">bus</span><span style="color: #000000">.</span><span style="color: #795E26">trigger</span><span style="color: #000000">(</span><span style="color: #795E26">CounterIncrement</span><span style="color: #000000">(-</span><span style="color: #098658">1</span><span style="color: #000000">)); </span><span style="color: #008000">// throws</span>
+</code></pre>
+				<p>A fun debugging technique is to open a debugger upon an action of your choosing, to find out where in the code it was triggered (since <code>grep</code> doesnt always find dynamic event creation):</p>
+				<pre><code class="language-js"><span style="color: #001080">bus</span><span style="color: #000000">.</span><span style="color: #795E26">guard</span><span style="color: #000000">(</span><span style="color: #001080">CounterIncrement</span><span style="color: #000000">.</span><span style="color: #001080">match</span><span style="color: #000000">, () </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">  </span><span style="color: #0000FF">debugger</span><span style="color: #000000">; </span><span style="color: #008000">/* i see you! */</span>
+<span style="color: #000000">});</span>
+</code></pre>
+				<blockquote>
+					<p><strong>filter</strong>: <code>bus.filter(matcher, handler)</code></p>
+				</blockquote>
+				<p>If you are intending to change the contents of an event on the bus, a handler passed to <code>filter</code> is the place to do it. Either mutate the event directly in the handler, or if you prefer immutability, return a new event. This is useful to centralize functionality like timestamps, making it not the responsibility of the trigger-er.</p>
+				<pre><code class="language-ts"><span style="color: #001080">bus</span><span style="color: #000000">.</span><span style="color: #795E26">filter</span><span style="color: #000000">(</span><span style="color: #001080">CounterIncrement</span><span style="color: #000000">.</span><span style="color: #001080">match</span><span style="color: #000000">, (</span><span style="color: #001080">e</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">  </span><span style="color: #001080">e</span><span style="color: #000000">.</span><span style="color: #001080">createdAt</span><span style="color: #000000"> = </span><span style="color: #267F99">Date</span><span style="color: #000000">.</span><span style="color: #795E26">now</span><span style="color: #000000">()</span>
+<span style="color: #000000">}</span>
+</code></pre>
+				<p>If an event requires further authorization, a <code>filter</code> may substitute an authenitcation event in its place:</p>
+				<pre><code class="language-ts"><span style="color: #001080">bus</span><span style="color: #000000">.</span><span style="color: #795E26">filter</span><span style="color: #000000">(</span><span style="color: #001080">CounterIncrement</span><span style="color: #000000">.</span><span style="color: #001080">match</span><span style="color: #000000">, (</span><span style="color: #001080">event</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">  </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #795E26">RequestAuth</span><span style="color: #000000">({ </span><span style="color: #001080">attempted:</span><span style="color: #000000"> </span><span style="color: #001080">event</span><span style="color: #000000"> })</span>
+<span style="color: #000000">}</span>
+<span style="color: #001080">bus</span><span style="color: #000000">.</span><span style="color: #795E26">listen</span><span style="color: #000000">(</span><span style="color: #001080">RequestAuth</span><span style="color: #000000">.</span><span style="color: #001080">match</span><span style="color: #000000">, ({</span><span style="color: #001080">payload</span><span style="color: #000000">: { </span><span style="color: #001080">attempted</span><span style="color: #000000"> }}) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">  </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">window</span><span style="color: #000000">.</span><span style="color: #001080">sessionId</span><span style="color: #000000">) {</span>
+<span style="color: #000000">    </span><span style="color: #795E26">perform</span><span style="color: #000000">(</span><span style="color: #001080">attempted</span><span style="color: #000000">)</span>
 <span style="color: #000000">  }</span>
-<span style="color: #000000">  </span><span style="color: #008000">// Stop is barely needed because start() returns the means to stop(), as RxJS Subscriptions do.</span>
-<span style="color: #000000">  </span><span style="color: #795E26">stop</span><span style="color: #000000">() {</span>
-<span style="color: #000000">    </span><span style="color: #0000FF">this</span><span style="color: #000000">.</span><span style="color: #001080">currentRun</span><span style="color: #000000">?.</span><span style="color: #795E26">unsubscribe</span><span style="color: #000000">()</span>
+<span style="color: #000000">})</span>
+</code></pre>
+				<p>If a set of timing conditions requires that an event be disregarded by all downstream handlers, a filter can change its event to not be seen by those handlers:</p>
+				<pre><code class="language-ts"><span style="color: #008000">// Increments will be missed by handlers matching on type</span>
+<span style="color: #001080">bus</span><span style="color: #000000">.</span><span style="color: #795E26">filter</span><span style="color: #000000">(</span><span style="color: #001080">CounterIncrement</span><span style="color: #000000">.</span><span style="color: #001080">match</span><span style="color: #000000">, (</span><span style="color: #001080">e</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">  </span><span style="color: #AF00DB">if</span><span style="color: #000000"> (</span><span style="color: #001080">count</span><span style="color: #000000"> &gt; </span><span style="color: #098658">99</span><span style="color: #000000">) {</span>
+<span style="color: #000000">    </span><span style="color: #001080">e</span><span style="color: #000000">.</span><span style="color: #001080">type</span><span style="color: #000000"> = </span><span style="color: #A31515">&quot;__ignored__&quot;</span><span style="color: #000000"> + </span><span style="color: #001080">e</span><span style="color: #000000">.</span><span style="color: #001080">type</span>
 <span style="color: #000000">  }</span>
 <span style="color: #000000">}</span>
-
 </code></pre>
-				<p> See <a href="https://github.com/deanrad/omnibus-react"><code>omnibus-react</code></a> for React-specific bindings.</p>
+				<blockquote>
+					<p><strong>spy</strong>: <code>bus.spy(handler)</code></p>
+				</blockquote>
+				<p>A spy handler runs synchronously for all runtime events, just before the listeners. The results of any <code>filter</code> is visible to any <code>spy</code>. Spies should not mutate events, and as long as they don&#39;t, they will see exactly what each listener will see.</p>
+				<hr>
+				<a href="#how-can-i-explain-why-we-should-use-this-to-my-team" id="how-can-i-explain-why-we-should-use-this-to-my-team" style="color: inherit; text-decoration: none;">
+					<h1>How Can I Explain Why We Should Use This to My Team?</h1>
+				</a>
+				<p>The main benefits of Omnibus are:</p>
+				<ul>
+					<li>Allows you to architect your application logic around events of interest to your application, not around volatile or error-prone framework-specific APIs.</li>
+					<li>Provides an execution container for typesafe, leak-proof async processes with reliable concurrency options to squash race conditions and prevent resource leaks.</li>
+				</ul>
+				<p>To the first point - framework-specific issues like &quot;prop-drilling&quot; and &quot;referential instability&quot; disappear when an event bus transparently connects components anywhere in the tree through a single, stable bus instance.</p>
+				<p>To the reliability point - just as XState is a predictable, safe, leak-proof state-container, Omnibus is that for async processes, because it uses the &gt;10 year old, tested options of RxJS: Observables and concurrency operators.</p>
+				<p>With Omnibus inside React, you can:</p>
+				<ul>
+					<li>Keep components and services testable—simply specify them in terms of messages they send or respond to, and listen - no mocking required!</li>
+					<li>Prevent the need to prop-drill, lift state, or introduce Contexts to do inter-component communication; sharing the bus is sufficient.</li>
+					<li>Develop UX to handle all edge-cases around API/service communication, even if those services aren&#39;t built yet, by decoupling from them with the event bus!</li>
+					<li>Keep memory footprint small, and prevent bundle bloat by allowing functionality to load/unload at runtime.</li>
+				</ul>
+				<p>With Omnibus over RxJS, you can:</p>
+				<ul>
+					<li>Compose your app one listener/handler at a time, never building a giant, unreadable chain.</li>
+					<li>Do little-to-no management of <code>Subscription</code> objects</li>
+					<li>Preserve readability of operator code: <code>concatMap</code> =&gt; <code>listenQueueing</code></li>
+					<li>Type <code>pipe()</code> and <code>import ... from &#39;rxjs/operators&#39;</code> less</li>
+				</ul>
+				<p>You can start with Omnibus with no RxJS logic at all - just handlers returning Promises. Then as you require capabilities that Observables offer—like cancelation— you can change what those handlers return. <em>Leaving the rest of your app unchanged!</em> No <code>async/await</code> is required. And you need not mix several types of async code like: middlewares, async/await, Promise chaining and framework-specific APIs. Just use events and listeners.</p>
+				<p>In short - the kinds of upgrades one must do in web development, such as migrating code from uncancelable to cancelable, from REST endpoint to Web Socket, are made easy with Omnibus. And the UX can be made tight and responsive against any downstream behavior because of its modular, decoupled nature.</p>
+				<a href="#inspirations-references" id="inspirations-references" style="color: inherit; text-decoration: none;">
+					<h1>Inspirations, References</h1>
+				</a>
+				<ul>
+					<li>RxJS</li>
+					<li>Redux-Observable</li>
+					<li>XState</li>
+				</ul>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -130,8 +445,47 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-has-type-parameter tsd-is-external">
+						<a href="classes/Observable.html" class="tsd-kind-icon">Observable</a>
+					</li>
 					<li class=" tsd-kind-class tsd-has-type-parameter">
 						<a href="classes/Omnibus.html" class="tsd-kind-icon">Omnibus</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="interfaces/Thunk.html" class="tsd-kind-icon">Thunk</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="modules.html#ListenerReturnValue" class="tsd-kind-icon">Listener<wbr>Return<wbr>Value</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="modules.html#MapFn" class="tsd-kind-icon">Map<wbr>Fn</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="modules.html#Mapper" class="tsd-kind-icon">Mapper</a>
+					</li>
+					<li class=" tsd-kind-type-alias">
+						<a href="modules.html#ObserverKey" class="tsd-kind-icon">Observer<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="modules.html#Predicate" class="tsd-kind-icon">Predicate</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="modules.html#ResultCreator" class="tsd-kind-icon">Result<wbr>Creator</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="modules.html#TapObserver" class="tsd-kind-icon">Tap<wbr>Observer</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="modules.html#THRESHOLD" class="tsd-kind-icon">THRESHOLD</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="modules.html#after" class="tsd-kind-icon">after</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter tsd-is-external">
+						<a href="modules.html#concat" class="tsd-kind-icon">concat</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="modules.html#observableFromPromisedArray" class="tsd-kind-icon">observable<wbr>From<wbr>Promised<wbr>Array</a>
 					</li>
 				</ul>
 			</nav>
@@ -148,6 +502,7 @@
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
 			</ul>
 		</div>
 	</div>
