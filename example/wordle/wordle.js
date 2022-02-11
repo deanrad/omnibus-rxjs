@@ -45,6 +45,7 @@ const InputRow = ({ filledIn, activeLetter = 1 } /* words, guesses */) => {
 					<InputCell
 						key={label}
 						label={label}
+						width={2}
 						value={filledIn[label] || ''}
 						isActive={label === activeLetter}
 					/>
@@ -169,7 +170,16 @@ const App = ({ random, word }) => {
 		// } else {
 		// 	setActive((c) => Number(c) + 1 + '');
 		// }
-		setActive((c) => Number(c) + 1 + '');
+		// if (!key.leftArrow) {
+		const direction = key.leftArrow || key.backspace || key.delete ? -1 : 1;
+		setActive((c) => {
+			const newNumber = Number(c) + direction;
+			if (direction === -1) {
+				setFilledIn((old) => ({ ...old, [newNumber]: '' }));
+			}
+			return newNumber + '';
+		});
+		// }
 	});
 
 	function historyHas(letter) {
