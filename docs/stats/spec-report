@@ -1,3 +1,12 @@
+Browserslist: caniuse-lite is outdated. Please run:
+  npx browserslist@latest --update-db
+  Why you should do it regularly: https://github.com/browserslist/browserslist#browsers-data-updating
+Browserslist: caniuse-lite is outdated. Please run:
+  npx browserslist@latest --update-db
+  Why you should do it regularly: https://github.com/browserslist/browserslist#browsers-data-updating
+Browserslist: caniuse-lite is outdated. Please run:
+  npx browserslist@latest --update-db
+  Why you should do it regularly: https://github.com/browserslist/browserslist#browsers-data-updating
 PASS test/3rd-party.spec.ts
   Reference: FSA
     ✓ creates an action
@@ -26,40 +35,6 @@ PASS test/after.spec.ts
         ✓ defers subscription
         ✓ yields the value
 
-PASS test/createService.spec.ts
-  createService
-    ✓ triggers events from observable handlers when no error
-    ✓ triggers events from Promise handlers when no error
-    ✓ triggers events from Promise-factory handlers when no error
-    ✓ triggers events from observable handlers, even when they error
-    ✓ triggers events from generator handlers when no error
-    arguments
-      bus
-        ✎ todo recieves requests
-        ✎ todo recieves consequences
-      actionNamespace
-        ✎ todo prefixes action types
-      handler
-        ✎ todo is called when the bus has service/request events
-    return value
-      ✓ triggers a request to the bus when called
-      has a property for each actioncreator
-        ✓ has property requested
-        ✓ has property cancel
-        ✓ has property started
-        ✓ has property next
-        ✓ has property error
-        ✓ has property complete
-        ✓ has property canceled
-        ✓ has property stop()
-        ✎ todo removes listeners and cancels handlings when stop()-ed.
-    createQueueingService
-      ✓ calls createService with "listenQueueing"
-    createSwitchingService
-      ✓ calls createService with "listenSwitching"
-    createBlockingService
-      ✓ calls createService with "listenBlocking"
-
 PASS test/bus.spec.ts
   Bus
     ✓ can be instantiated with the BusItemType it will accept
@@ -70,14 +45,18 @@ PASS test/bus.spec.ts
         ✓ Returns an Observable of matching events
         ✓ Returns an Observable of filtered events
         ✓ is canceled by a reset
-      With a raw value
-        ✎ todo matches on equality of a value type
-        ✎ todo matches on subset of an object type
-      With an FSA matcher
-        ✓ works just like a predicate
+        Type safety
+          ✓ Returns a typed Observable of filtered events
+    #nextEvent
+      With a Predicate
+        ✓ resolves to the next matching event
+        ✓ rejects on a reset if it hasnt triggered yet
+        ✓ ignores a reset if it has triggered already
     #trigger
       ✓ puts an action on the bus
       ✓ Is not vulnerable to listener errors
+      Type Safety
+        ✓ typechecks argument against bus type
     #listen
       Handler
         Returning Observables
@@ -157,14 +136,18 @@ PASS test/utils.spec.ts
         ✓ Returns an Observable of matching events
         ✓ Returns an Observable of filtered events
         ✓ is canceled by a reset
-      With a raw value
-        ✎ todo matches on equality of a value type
-        ✎ todo matches on subset of an object type
-      With an FSA matcher
-        ✓ works just like a predicate
+        Type safety
+          ✓ Returns a typed Observable of filtered events
+    #nextEvent
+      With a Predicate
+        ✓ resolves to the next matching event
+        ✓ rejects on a reset if it hasnt triggered yet
+        ✓ ignores a reset if it has triggered already
     #trigger
       ✓ puts an action on the bus
       ✓ Is not vulnerable to listener errors
+      Type Safety
+        ✓ typechecks argument against bus type
     #listen
       Handler
         Returning Observables
@@ -248,8 +231,8 @@ PASS test/utils.spec.ts
   observableFromPromisedArray
     ✓ flattens a Promise for an array to an Observable of its items
 
-Test Suites: 5 passed, 5 total
-Tests:       17 todo, 125 passed, 142 total
+Test Suites: 4 passed, 4 total
+Tests:       8 todo, 116 passed, 124 total
 Snapshots:   19 passed, 19 total
-Time:        4.749 s
+Time:        8.528 s
 Ran all test suites.
