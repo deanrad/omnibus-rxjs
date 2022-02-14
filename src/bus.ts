@@ -229,7 +229,8 @@ export class Omnibus<TBusItem> {
     this.resets.next();
   }
 
-  /** Creates an EffectObserver that triggers an event on the bus, for each of the effects' `next` notifications.
+  /** Turns each value from the listener's return value into a new triggered event.
+   * Use this when the listener returns items suitable for putting directly onto the bus.
    */
   public observeAll<
     TConsequence extends TBusItem
@@ -241,10 +242,11 @@ export class Omnibus<TBusItem> {
     };
   }
 
-  /** Creates an EffectObserver that triggers events to the bus for each notification
-   * of the effect (next, error, complete), but also for (subscribe and unsubscribe).
-   * Accepts a map with of mapping functions, like FSA action creators. The corresponding
-   * notifications will be triggered to the bus as returned by these mapping functions. **/
+  /** Turns the specified events (next, error, complete, subscribe and unsubscribe)
+   * of the listeners' observable lifetime into triggered events.
+   * Uses a map with of mapping functions, like FSA action creators, to wrap the listener's notifications.
+   * Use this when the listener's values are not compatible with the bus, or to capture lifetime events.
+   *  **/
   public observeWith<TConsequence>(mapper: Mapper<TConsequence, TBusItem>) {
     // invariant - at least one key
     // @ts-ignore
