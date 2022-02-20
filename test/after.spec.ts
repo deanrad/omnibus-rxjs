@@ -6,10 +6,10 @@ describe.only('after', () => {
   it('is an Observable', () => {
     expect(after(1, () => 1)).toBeInstanceOf(Observable);
   });
-  // it('is awaitable', async () => {
-  //   const result = await after(1, '1.1');
-  //   expect(result).toEqual('1.1');
-  // });
+  it('is awaitable', async () => {
+    const result = await after(1, '1.1');
+    expect(result).toEqual('1.1');
+  });
   it('is thenable', async () => {
     return after(1, () => 52).then((result) => {
       expect(result).toEqual(52);
