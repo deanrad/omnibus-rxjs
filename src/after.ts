@@ -15,34 +15,26 @@ export interface Thunk<T> {
  *
  * @returns An Observable of the object or thunk return value, which can be the target of an `await`.
  */
-export function after<T>(
-  ms: number,
-  objOrFn?: T | Thunk<T> | Observable<T>
-): AwaitableObservable<T> {
-  const delay = ms <= 0 ? of(0) : timer(ms);
+export function after<T>(ms: number, fn: () => T) {
+  const obs = new Observable((notify) => {
+    if (ms === 0) {
+      notify.next(fn());
+      notify.complete()
+    }
+    const id = setTimeout(() => {
+      const retVal = fn();
+      notify.next(retVal)
+      notify.complete()
+    }, ms)
+    return () => { id && clearTimeout(id) }
+  })
+  Object.assign(obs, {
+    then(resolve: (v: T) => any, reject: (e: unknown) => unknown) {
+      return (firstValueFrom(obs) as PromiseLike<T>).then(resolve, reject);
+    },
+  });
 
-  const resultMapper =
-    typeof objOrFn === 'function'
-      ? (objOrFn as (value: Number) => any)
-      : () => objOrFn;
-
-  function isObservable<T>(obj: any): obj is Observable<T> {
-    return obj?.subscribe !== undefined;
-  }
-  // prettier-ignore
-  const resultObs: Observable<T> = delay.pipe(
-    isObservable<T>(objOrFn)
-      ? mergeMap(() => objOrFn)
-      : map(resultMapper)
-  );
-
-  // after is a 'thenable, thus usable with await.
-  // ref: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await
-  // @ts-ignore
-  resultObs.then = function (resolve, reject) {
-    return firstValueFrom(resultObs).then(resolve, reject);
-  };
-
-  return resultObs as AwaitableObservable<T>;
+  return obs as Observable<T> & PromiseLike<T>;
 }
+
 // #endregion

@@ -2,14 +2,14 @@ import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { after } from '../src/after';
 
-describe('after', () => {
+describe.only('after', () => {
   it('is an Observable', () => {
-    expect(after(1, 1)).toBeInstanceOf(Observable);
+    expect(after(1, () => 1)).toBeInstanceOf(Observable);
   });
-  it('is awaitable', async () => {
-    const result = await after(1, '1.1');
-    expect(result).toEqual('1.1');
-  });
+  // it('is awaitable', async () => {
+  //   const result = await after(1, '1.1');
+  //   expect(result).toEqual('1.1');
+  // });
   it('is thenable', async () => {
     return after(1, () => 52).then((result) => {
       expect(result).toEqual(52);
@@ -29,12 +29,12 @@ describe('after', () => {
   });
 
   describe('value arg', () => {
-    describe('when a value', () => {
-      it('is returned', async () => {
-        const result = await after(1, 2.718);
-        expect(result).toEqual(2.718);
-      });
-    });
+    // describe('when a value', () => {
+    //   it('is returned', async () => {
+    //     const result = await after(1, 2.718);
+    //     expect(result).toEqual(2.718);
+    //   });
+    // });
     describe('when a function', () => {
       it('schedules its execution later', async () => {
         let counter = 0;
@@ -48,27 +48,27 @@ describe('after', () => {
         expect(result).toEqual(2.71);
       });
     });
-    describe('when an Observable', () => {
-      it('defers subscription', async () => {
-        const events: Array<string> = [];
-        const toDefer = of(2).pipe(
-          tap({
-            subscribe() {
-              events.push('subscribe');
-            },
-          })
-        );
-        const subject = after(1, toDefer);
-        subject.subscribe();
-        expect(events).toEqual([]);
-        await after(2);
-        expect(events).toEqual(['subscribe']);
-      });
-      it('yields the value', async () => {
-        return after(1, of(2)).then((v) => {
-          expect(v).toEqual(2);
-        });
-      });
-    });
+    // describe('when an Observable', () => {
+    //   it('defers subscription', async () => {
+    //     const events: Array<string> = [];
+    //     const toDefer = of(2).pipe(
+    //       tap({
+    //         subscribe() {
+    //           events.push('subscribe');
+    //         },
+    //       })
+    //     );
+    //     const subject = after(1, toDefer);
+    //     subject.subscribe();
+    //     expect(events).toEqual([]);
+    //     await after(2);
+    //     expect(events).toEqual(['subscribe']);
+    //   });
+    //   it('yields the value', async () => {
+    //     return after(1, of(2)).then((v) => {
+    //       expect(v).toEqual(2);
+    //     });
+    //   });
+    // });
   });
 });

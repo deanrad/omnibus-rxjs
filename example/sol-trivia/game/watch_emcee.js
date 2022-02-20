@@ -1,4 +1,4 @@
-const { clusterApiUrl, Connection, Keypair } = require('@solana/web3.js');
+const { clusterApiUrl, Connection, Keypair, PublicKey } = require('@solana/web3.js');
 const { BehaviorSubject, Observable } = require('rxjs');
 const { bus } = require('../bus');
 
@@ -18,18 +18,22 @@ bus.listen(
 	(e) => e.type === 'address/monitor',
 	({ address }) =>
 		new Observable((notify) => {
-			connection.onAccountChange(address, (...args) => {
-				notify.next(args);
-			});
+			connection.onAccountChange(address, async (change) => {
+				const memo = JSON.parse((await connection.getConfirmedSignaturesForAddress2(address, { limit: 1 }))[0].memo.replace(/^.*{/, '{'))
+				notify.next({ ...change, memo });
+			}, 'processed');
 			return () => {
 				console.log('TODO unsubscribe connection from account change events');
 			};
 		}),
 	{
-		next(e) {
-			console.log('Emcee event: ', e);
+		next(change) {
+			const { data, owner } = change;
+			console.log('Emcee event: ', change);
 		},
 	}
 );
 
 bus.trigger({ type: 'address/monitor', address: emceeKeypair.publicKey });
+// XXX monitor memo for changes
+// bus.trigger({ type: 'address/monitor', address: new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr") });
