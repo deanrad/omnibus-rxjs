@@ -26,15 +26,22 @@ describe.only('after', () => {
         expect(result).toEqual(3);
       });
     });
+    describe('when a promise', () => {
+      it('chains onto its end', async () => {
+        let result = await after(Promise.resolve(), 2);
+        expect(result).toEqual(2)
+      })
+      it.todo('does not invoke mapper')
+    })
   });
 
   describe('value arg', () => {
-    // describe('when a value', () => {
-    //   it('is returned', async () => {
-    //     const result = await after(1, 2.718);
-    //     expect(result).toEqual(2.718);
-    //   });
-    // });
+    describe('when a value', () => {
+      it('is returned', async () => {
+        const result = await after(1, 2.718);
+        expect(result).toEqual(2.718);
+      });
+    });
     describe('when a function', () => {
       it('schedules its execution later', async () => {
         let counter = 0;

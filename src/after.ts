@@ -1,4 +1,4 @@
-import { firstValueFrom, Observable, of, timer } from 'rxjs';
+import { firstValueFrom, Observable, of, timer, concat, from, defer, merge } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 
 interface AwaitableObservable<T> extends PromiseLike<T>, Observable<T> { }
@@ -15,21 +15,24 @@ export interface Thunk<T> {
  *
  * @returns An Observable of the object or thunk return value, which can be the target of an `await`.
  */
-export function after<T>(ms: number, objOrFn: T | (() => T)) {
+export function after<T>(ms: number | Promise<any>, objOrFn: T | (() => T)) {
   const resultFn = (typeof (objOrFn) === "function" ? objOrFn : () => objOrFn) as () => T
 
-  const obs = new Observable((notify) => {
-    if (ms === 0) {
-      notify.next(resultFn());
-      notify.complete()
-    }
-    const id = setTimeout(() => {
-      const retVal = resultFn();
-      notify.next(retVal)
-      notify.complete()
-    }, ms)
-    return () => { id && clearTimeout(id) }
-  })
+  let obs: Observable<T>
+  if (ms === 0) obs = of(resultFn())
+
+  if (typeof ms === "number") {
+    obs = new Observable((notify) => {
+      const id = setTimeout(() => {
+        const retVal = resultFn();
+        notify.next(retVal)
+        notify.complete()
+      }, ms)
+      return () => { id && clearTimeout(id) }
+    })
+  } else {
+    obs = from((ms as Promise<T>).then(resultFn))
+  }
   Object.assign(obs, {
     then(resolve: (v: T) => any, reject: (e: unknown) => unknown) {
       return (firstValueFrom(obs) as PromiseLike<T>).then(resolve, reject);
