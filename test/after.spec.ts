@@ -31,7 +31,15 @@ describe.only('after', () => {
         let result = await after(Promise.resolve(), 2);
         expect(result).toEqual(2)
       })
-      it.todo('does not invoke mapper')
+      it('does not invoke mapper when canceled', async () => {
+        let flag = false
+        let result = after(Promise.resolve(), () => { flag = true }).subscribe();
+        result.unsubscribe()
+
+        await Promise.resolve()
+        // still flag is false
+        expect(flag).toBeFalsy()
+      })
     })
   });
 
