@@ -6,6 +6,15 @@ interface AwaitableObservable<T> extends PromiseLike<T>, Observable<T> { }
 export interface Thunk<T> {
   (): T;
 }
+
+function makeThenable<T>(obs: Observable<T>) {
+  Object.assign(obs, {
+    then(resolve: (v: T) => any, reject: (e: unknown) => unknown) {
+      return (firstValueFrom(obs) as PromiseLike<T>).then(resolve, reject);
+    },
+  });
+  return obs as Observable<T> & PromiseLike<T>;
+}
 /**
  * `after` is a better setTimeout, implemented as an Observable. 
  * `after` is both lazy, cancelable, and 'thenable'— it can be awaited like a Promise.
@@ -19,27 +28,14 @@ export interface Thunk<T> {
 export function after<T>(ms: number | Promise<any>, valueProvider?: T | (() => T) | Observable<T>) {
   const resultFn = (typeof (valueProvider) === "function" ? valueProvider : () => valueProvider) as () => T
 
-  let obs: Observable<T>
-  if (ms === 0) obs = of(resultFn())
+  // case: synchronous
+  if (ms === 0) {
+    return makeThenable(of(resultFn()))
+  }
 
-  if (typeof ms === "number") {
-    if ((valueProvider as Observable<T>)?.subscribe) {
-      const delay = timer(ms as unknown as number)
-      obs = delay.pipe(
-        mergeMap(() => (valueProvider as Observable<T>))
-      )
-    } else {
-      obs = new Observable((notify) => {
-        const id = setTimeout(() => {
-          const retVal = resultFn();
-          notify.next(retVal)
-          notify.complete()
-        }, ms)
-        return () => { id && clearTimeout(id) }
-      })
-    }
-  } else { // a Promise - doesnt work with an Observable
-    obs = new Observable(notify => {
+  // case: 1st argument Promise. Errors if last argument is an Observable.
+  if (typeof ms === "object" && (ms as PromiseLike<T>).then) {
+    const obs = new Observable(notify => {
       let canceled = false
       const conditionalSeq = (ms as Promise<T>).then(() => {
         if (!canceled) {
@@ -51,14 +47,28 @@ export function after<T>(ms: number | Promise<any>, valueProvider?: T | (() => T
       )
       return () => { canceled = true }
     })
+    return makeThenable(obs)
   }
-  Object.assign(obs, {
-    then(resolve: (v: T) => any, reject: (e: unknown) => unknown) {
-      return (firstValueFrom(obs) as PromiseLike<T>).then(resolve, reject);
-    },
-  });
 
-  return obs as Observable<T> & PromiseLike<T>;
+  // Case: 2nd argument Observable. Errors unless first arg is a number.
+  if ((valueProvider as Observable<T>)?.subscribe) {
+    const delay: Observable<number> = timer(ms as unknown as number)
+    return makeThenable(delay.pipe(
+      mergeMap(() => (valueProvider as Observable<T>))
+    ))
+  }
+
+  // Default - a value or thunk and a number of milliseconds
+  const obs = new Observable((notify) => {
+    const id = setTimeout(() => {
+      const retVal = resultFn();
+      notify.next(retVal)
+      notify.complete()
+    }, ms as number)
+    return () => { id && clearTimeout(id) }
+  })
+
+  return makeThenable(obs)
 }
 
 // #endregion
