@@ -32,8 +32,18 @@ export function after<T>(ms: number | Promise<any>, objOrFn?: T | (() => T)) {
     })
   } else if (isObservable(objOrFn)) {
   } else {
-    const seqPromise = (ms as Promise<T>).then(resultFn)
-    obs = from(seqPromise)
+    obs = new Observable(notify => {
+      let canceled = false
+      const conditionalSeq = (ms as Promise<T>).then(() => {
+        if (!canceled) {
+          const result = resultFn()
+          notify.next(result)
+          notify.complete()
+        }
+      }
+      )
+      return () => { canceled = true }
+    })
   }
   Object.assign(obs, {
     then(resolve: (v: T) => any, reject: (e: unknown) => unknown) {

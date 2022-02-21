@@ -31,7 +31,7 @@ describe.only('after', () => {
         let result = await after(Promise.resolve(), 2);
         expect(result).toEqual(2)
       })
-      it('does not invoke mapper when canceled', async () => {
+      it('does not invoke mapper when canceled before Promise resolves', async () => {
         let flag = false
         let result = after(Promise.resolve(), () => { flag = true }).subscribe();
         result.unsubscribe()
