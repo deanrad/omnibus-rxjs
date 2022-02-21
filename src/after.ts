@@ -1,4 +1,4 @@
-import { firstValueFrom, Observable, of, timer, concat, from, defer, merge } from 'rxjs';
+import { firstValueFrom, Observable, of, timer, concat, from, defer, merge, isObservable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 
 interface AwaitableObservable<T> extends PromiseLike<T>, Observable<T> { }
@@ -30,6 +30,7 @@ export function after<T>(ms: number | Promise<any>, objOrFn?: T | (() => T)) {
       }, ms)
       return () => { id && clearTimeout(id) }
     })
+  } else if (isObservable(objOrFn)) {
   } else {
     obs = from((ms as Promise<T>).then(resultFn))
   }
