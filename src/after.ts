@@ -7,31 +7,38 @@ export interface Thunk<T> {
   (): T;
 }
 /**
- * `after` is a composable `setTimeout`, based on Observables.
- * `after` returns an Observable of the value, or result of the function call, after the number of milliseconds given.
- * For a delay of 0, the function is executed synchronously when `.subscribe()` is called.
- * `after` is 'thenable' - and can be awaited like a Promise.
- * However, since underneath it is an Observable, `after` is both lazy and cancelable!
- *
- * @returns An Observable of the object or thunk return value, which can be the target of an `await`.
+ * `after` is a better setTimeout, implemented as an Observable. 
+ * `after` is both lazy, cancelable, and 'thenable'— it can be awaited like a Promise.
+* `after` returns an Observable of the value, or result of the function call, or the Observable, after the given delay.
+ *  For a delay of 0, the function is executed synchronously when `.subscribe()` is called.
+ * 
+ * @returns An delayed Observable of the object, thunk return value, or Observable's notification(s).
+ * @argument ms Either a number of milliseconds, or a Promise. 
+ * @argument valueProvider Can be a value, a function returning a value, or an Observable.
  */
-export function after<T>(ms: number | Promise<any>, objOrFn?: T | (() => T)) {
-  const resultFn = (typeof (objOrFn) === "function" ? objOrFn : () => objOrFn) as () => T
+export function after<T>(ms: number | Promise<any>, valueProvider?: T | (() => T) | Observable<T>) {
+  const resultFn = (typeof (valueProvider) === "function" ? valueProvider : () => valueProvider) as () => T
 
   let obs: Observable<T>
   if (ms === 0) obs = of(resultFn())
 
   if (typeof ms === "number") {
-    obs = new Observable((notify) => {
-      const id = setTimeout(() => {
-        const retVal = resultFn();
-        notify.next(retVal)
-        notify.complete()
-      }, ms)
-      return () => { id && clearTimeout(id) }
-    })
-  } else if (isObservable(objOrFn)) {
-  } else {
+    if ((valueProvider as Observable<T>)?.subscribe) {
+      const delay = timer(ms as unknown as number)
+      obs = delay.pipe(
+        mergeMap(() => (valueProvider as Observable<T>))
+      )
+    } else {
+      obs = new Observable((notify) => {
+        const id = setTimeout(() => {
+          const retVal = resultFn();
+          notify.next(retVal)
+          notify.complete()
+        }, ms)
+        return () => { id && clearTimeout(id) }
+      })
+    }
+  } else { // a Promise - doesnt work with an Observable
     obs = new Observable(notify => {
       let canceled = false
       const conditionalSeq = (ms as Promise<T>).then(() => {

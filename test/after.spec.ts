@@ -2,7 +2,7 @@ import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { after } from '../src/after';
 
-describe.only('after', () => {
+describe('after', () => {
   it('is an Observable', () => {
     expect(after(1, () => 1)).toBeInstanceOf(Observable);
   });
