@@ -42,6 +42,12 @@ describe.only('after', () => {
         expect(result).toEqual(2.718);
       });
     });
+    describe('when undefined', () => {
+      it('is ok', async () => {
+        const result = await after(1);
+        expect(result).toBeUndefined();
+      });
+    });
     describe('when a function', () => {
       it('schedules its execution later', async () => {
         let counter = 0;
@@ -55,27 +61,27 @@ describe.only('after', () => {
         expect(result).toEqual(2.71);
       });
     });
-    // describe('when an Observable', () => {
-    //   it('defers subscription', async () => {
-    //     const events: Array<string> = [];
-    //     const toDefer = of(2).pipe(
-    //       tap({
-    //         subscribe() {
-    //           events.push('subscribe');
-    //         },
-    //       })
-    //     );
-    //     const subject = after(1, toDefer);
-    //     subject.subscribe();
-    //     expect(events).toEqual([]);
-    //     await after(2);
-    //     expect(events).toEqual(['subscribe']);
-    //   });
-    //   it('yields the value', async () => {
-    //     return after(1, of(2)).then((v) => {
-    //       expect(v).toEqual(2);
-    //     });
-    //   });
-    // });
+    describe('when an Observable', () => {
+      it('defers subscription', async () => {
+        const events: Array<string> = [];
+        const toDefer = of(2).pipe(
+          tap({
+            subscribe() {
+              events.push('subscribe');
+            },
+          })
+        );
+        const subject = after(1, toDefer);
+        subject.subscribe();
+        expect(events).toEqual([]);
+        await after(2);
+        expect(events).toEqual(['subscribe']);
+      });
+      it('yields the value', async () => {
+        return after(1, of(2)).then((v) => {
+          expect(v).toEqual(2);
+        });
+      });
+    });
   });
 });

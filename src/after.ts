@@ -15,7 +15,7 @@ export interface Thunk<T> {
  *
  * @returns An Observable of the object or thunk return value, which can be the target of an `await`.
  */
-export function after<T>(ms: number | Promise<any>, objOrFn: T | (() => T)) {
+export function after<T>(ms: number | Promise<any>, objOrFn?: T | (() => T)) {
   const resultFn = (typeof (objOrFn) === "function" ? objOrFn : () => objOrFn) as () => T
 
   let obs: Observable<T>
