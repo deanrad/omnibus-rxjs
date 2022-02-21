@@ -31,6 +31,7 @@ describe('after', () => {
         let result = await after(Promise.resolve(), 2);
         expect(result).toEqual(2)
       })
+
       it('does not invoke mapper when canceled before Promise resolves', async () => {
         let flag = false
         let result = after(Promise.resolve(), () => { flag = true }).subscribe();
@@ -39,6 +40,11 @@ describe('after', () => {
         await Promise.resolve()
         // still flag is false
         expect(flag).toBeFalsy()
+      });
+
+      it('recieves the value of the delay in its valueProducer', async () => {
+        let result = await after(Promise.resolve(3.14), (n: number) => 2 * n)
+        expect(result).toEqual(6.28)
       })
     })
   });

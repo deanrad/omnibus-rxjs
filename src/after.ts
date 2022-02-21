@@ -25,8 +25,8 @@ function makeThenable<T>(obs: Observable<T>) {
  * @argument ms Either a number of milliseconds, or a Promise. 
  * @argument valueProvider Can be a value, a function returning a value, or an Observable.
  */
-export function after<T>(ms: number | Promise<any>, valueProvider?: T | (() => T) | Observable<T>) {
-  const resultFn = (typeof (valueProvider) === "function" ? valueProvider : () => valueProvider) as () => T
+export function after<T>(ms: number | Promise<any>, valueProvider?: T | ((v?: T) => T) | Observable<T>) {
+  const resultFn = (typeof (valueProvider) === "function" ? valueProvider : () => valueProvider) as (v?: T) => T
 
   // case: synchronous
   if (ms === 0) {
@@ -37,9 +37,9 @@ export function after<T>(ms: number | Promise<any>, valueProvider?: T | (() => T
   if (typeof ms === "object" && (ms as PromiseLike<T>).then) {
     const obs = new Observable(notify => {
       let canceled = false
-      const conditionalSeq = (ms as Promise<T>).then(() => {
+      const conditionalSeq = (ms as Promise<T>).then((resolved) => {
         if (!canceled) {
-          const result = resultFn()
+          const result = resultFn(resolved)
           notify.next(result)
           notify.complete()
         }
