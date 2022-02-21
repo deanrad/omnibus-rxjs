@@ -32,7 +32,8 @@ export function after<T>(ms: number | Promise<any>, objOrFn?: T | (() => T)) {
     })
   } else if (isObservable(objOrFn)) {
   } else {
-    obs = from((ms as Promise<T>).then(resultFn))
+    const seqPromise = (ms as Promise<T>).then(resultFn)
+    obs = from(seqPromise)
   }
   Object.assign(obs, {
     then(resolve: (v: T) => any, reject: (e: unknown) => unknown) {
