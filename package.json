@@ -29,6 +29,7 @@
     "stats:commit": "yarn stats:all; git add docs/stats; git commit -m 'Update code stats' -n",
     "stats:watch": "nodemon -w src/ -e ts scripts/code-stats.js",
     "size": "size-limit",
+    "env:build:configure": "export NNODE_OPIONS=--openssl-legacy-provider",
     "doc": "typedoc",
     "doctoc": "doctoc .",
     "docs:commit": "yarn doc && git add docs/ && git commit -m 'Update docs' -n",
