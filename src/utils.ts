@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { Observable, of, from } from 'rxjs';
 import { delay, mergeAll } from 'rxjs/operators';
+import { after } from './after'
 
 // See https://dev.to/deanius/the-thresholds-of-perception-in-ux-435g
 export const THRESHOLD = {
@@ -35,6 +36,26 @@ export function observableFromPromisedArray<T>(pa: Promise<Array<T>>) {
   return from(pa).pipe(mergeAll());
 }
 
+/**
+Converts a Promise for an array (or an array), into an Observable of the
+individual items of the array, delivered as next notifications all at the
+end of the provided delay.
+@param provideArray the function returning the array, or Promised array
+@param ms the delay after which to begin notifications
+*/
+export function observeArray<T>(
+  provideArray: () => (Array<T> | Promise<Array<T>>),
+  ms = 0
+) {
+  return new Observable<T>(notify => {
+    after(ms).then(provideArray).then(all => {
+      all.forEach(one => {
+        notify.next(one)
+      })
+      notify.complete()
+    })
+  })
+}
 /** Observables consuming durations of time including sync,tick,promise,timeout */
 export const DURATION = {
   // @ts-ignore

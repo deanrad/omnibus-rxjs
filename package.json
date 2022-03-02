@@ -1,6 +1,6 @@
 {
   "name": "omnibus-rxjs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "author": "Dean Radcliffe",
   "repository": "https://github.com/deanrad/omnibus-rxjs",
@@ -33,7 +33,6 @@
     "doc": "typedoc",
     "doctoc": "doctoc .",
     "docs:commit": "yarn doc && git add docs/ && git commit -m 'Update docs' -n",
-    "prepublishOnly": "yarn test:full && yarn stats:commit && yarn docs:commit",
     "build": "rimraf dist && tsc && timeout --foreground --preserve-status 10 rollup -c rollup.config.js; yarn size"
   },
   "size-limit": [

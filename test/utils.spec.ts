@@ -7,11 +7,13 @@ import {
   of,
   toArray,
 } from 'rxjs';
+import { after } from '../src';
 import {
   AWAITABLE,
   DURATION,
   THRESHOLD,
   observableFromPromisedArray,
+  observeArray
 } from '../src/utils';
 import { TestObservable } from './bus.spec';
 
@@ -216,8 +218,51 @@ describe('observableFromPromisedArray', () => {
     expect(seen).toEqual([]);
 
     await Promise.resolve();
-    
+
     expect(seen).toEqual(_items);
     expect(sub).toHaveProperty('closed', true);
+  });
+});
+
+describe('observeArray', () => {
+  it('flattens a Promise for an array to an Observable of its items', async () => {
+    const _items = ['1', '2', '3'];
+    const items = observeArray(() => Promise.resolve(_items));
+
+    const seen: typeof _items = [];
+    await new Promise<void>(resolve => {
+      items.subscribe({
+        next: (i) => {
+          seen.push(i)
+        },
+        complete: () => {
+          resolve()
+        }
+      })
+    })
+
+    expect(seen).toEqual(_items);
+  });
+
+  it('flattens a Promise for an array to an Observable of its items, after a delay', async () => {
+    const DELAY = 10;
+    const _items = ['1', '2', '3'];
+    const items = observeArray(() => Promise.resolve(_items), DELAY);
+
+    const seen: typeof _items = [];
+    const done = new Promise<void>(resolve => {
+      items.subscribe({
+        next: (i) => {
+          seen.push(i)
+        },
+        complete: () => {
+          resolve()
+        }
+      })
+    })
+
+    expect(seen).toEqual([]);
+    await after(DELAY)
+    expect(seen).toEqual(_items);
   });
 });
