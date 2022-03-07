@@ -250,7 +250,7 @@ describe('observeArray', () => {
     const items = observeArray(() => Promise.resolve(_items), DELAY);
 
     const seen: typeof _items = [];
-    const done = new Promise<void>(resolve => {
+    const _done = new Promise<void>(resolve => {
       items.subscribe({
         next: (i) => {
           seen.push(i)
