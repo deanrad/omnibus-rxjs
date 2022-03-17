@@ -1,6 +1,6 @@
 {
   "name": "omnibus-rxjs",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "author": "Dean Radcliffe",
   "repository": "https://github.com/deanrad/omnibus-rxjs",
@@ -29,11 +29,11 @@
     "stats:commit": "yarn stats:all; git add docs/stats; git commit -m 'Update code stats' -n",
     "stats:watch": "nodemon -w src/ -e ts scripts/code-stats.js",
     "size": "size-limit",
-    "env:build:configure": "export NNODE_OPIONS=--openssl-legacy-provider",
+    "env:build:configure": "export NODE_OPTIONS=--openssl-legacy-provider",
     "doc": "typedoc",
     "doctoc": "doctoc .",
     "docs:commit": "yarn doc && git add docs/ && git commit -m 'Update docs' -n",
-    "build": "rimraf dist && tsc && timeout --foreground --preserve-status 10 rollup -c rollup.config.js; yarn size"
+    "build": "rimraf dist && tsc && timeout --foreground --preserve-status 10 rollup -c rollup.config.js"
   },
   "size-limit": [
     {

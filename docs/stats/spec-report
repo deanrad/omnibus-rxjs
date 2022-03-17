@@ -117,6 +117,53 @@ PASS test/bus.spec.ts
       ✓ endpointStream observable
       ✓ valueStream observable
 
+PASS test/createService.spec.ts
+  createService
+    ✓ triggers events from observable handlers when no error
+    ✓ triggers events from Promise handlers when no error
+    ✓ triggers events from Promise-factory handlers when no error
+    ✓ triggers events from observable handlers, even when they error
+    ✓ triggers events from generator handlers when no error
+    arguments
+      bus
+        ✎ todo recieves requests
+        ✎ todo recieves observed events
+      actionNamespace
+        ✎ todo prefixes action types
+      handler
+        ✓ can return a zero-argument function
+        ✓ can return an item an Observable will be made from
+      reducerProducer
+        ✓ can return a Redux Style reducer
+        ✓ can return a ReduxToolkit-Style reducer
+    return value
+      ✓ triggers a request to the bus when called
+      #state
+        ✓ reduces into .state
+      #isActive
+        ✓ initially is false
+        ✓ becomes true when a handler is in-flight
+        ✓ emits changes only on request, completed, error, unsubscribe, and when changed
+        ✓ terminates on a reset
+        ✓ has a final value of false on bus.reset()
+        ✓ has a final value of false on stop()
+      #actions: a property for each actioncreator
+        ✓ has property request
+        ✓ has property cancel
+        ✓ has property started
+        ✓ has property next
+        ✓ has property error
+        ✓ has property complete
+        ✓ has property canceled
+        ✓ has property stop()
+        ✎ todo removes listeners and cancels handlings when stop()-ed.
+    createQueueingService
+      ✓ calls createService with "listenQueueing"
+    createSwitchingService
+      ✓ calls createService with "listenSwitching"
+    createBlockingService
+      ✓ calls createService with "listenBlocking"
+
 PASS test/utils.spec.ts
   Bus
     ✓ can be instantiated with the BusItemType it will accept
@@ -221,9 +268,12 @@ PASS test/utils.spec.ts
       ✓ tests ok
   observableFromPromisedArray
     ✓ flattens a Promise for an array to an Observable of its items
+  observeArray
+    ✓ flattens a Promise for an array to an Observable of its items
+    ✓ flattens a Promise for an array to an Observable of its items, after a delay
 
-Test Suites: 4 passed, 4 total
-Tests:       8 todo, 116 passed, 124 total
+Test Suites: 5 passed, 5 total
+Tests:       12 todo, 146 passed, 158 total
 Snapshots:   19 passed, 19 total
-Time:        2.593 s
+Time:        1.22 s
 Ran all test suites.

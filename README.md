@@ -94,7 +94,7 @@ There is [TodoMVC](https://codesandbox.io/s/todos-omnibus-rtkquery-mjjwn). The R
 
 The [7 GUIs](https://eugenkiss.github.io/7guis/) are a series of UX challenges which range from a simple counter to a highly dynamic spreadsheet with formulae and cell references.
 
-- [1-Counter](https://codesandbox.io/s/7guis-1-counter-xstate-omnibus-rmuh6)
+- [1-Counter](https://codesandbox.io/s/7guis-1-counter-glh0cm)
 - [2-Temperature](https://codesandbox.io/s/7guis-2-temperature-n36pf?file=/src/index.tsx)
 - 3-Flight Booker
 - 4-Timer
