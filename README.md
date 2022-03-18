@@ -98,7 +98,7 @@ The [7 GUIs](https://eugenkiss.github.io/7guis/) are a series of UX challenges w
 - [2-Temperature](https://codesandbox.io/s/7guis-2-temperature-n36pf?file=/src/index.tsx)
 - 3-Flight Booker
 - 4-Timer
-- 5-CRUD
+- [5-CRUD](https://codesandbox.io/s/7guis-5-crud-omnibus-z99bd0)
 - [6-Circles](https://codesandbox.io/s/7guis-6-circles-omnibus-bnfsm)
 - [7-Cells (command-line)](https://github.com/deanrad/omnibus-rxjs/tree/master/example/7guis-cells)
 
