@@ -13,7 +13,7 @@ import { concat } from 'rxjs'
 describe('createService', () => {
   const testNamespace = 'testService';
   const bus = new Omnibus<Action<any>>();
-  const handler = jest.fn((s) => {
+  const handler = jest.fn((_) => {
     // console.log(s);
   });
   let testService = createService<string, string, Error>(
@@ -33,11 +33,11 @@ describe('createService', () => {
       it.todo('prefixes action types');
     });
     describe('handler', () => {
-      it('can return a zero-argument function', async () => {
+      it('can return an item an Observable will be made from', async () => {
         const service = createService<void, number, Error>(
           testNamespace,
           bus,
-          () => () => Promise.resolve(3.14159)
+          () => Promise.resolve(3.14159) // for options see https://rxjs.dev/api/index/function/from
         )
         const seen: Action<unknown>[] = [];
         bus.spy(e => seen.push(e));
@@ -48,11 +48,11 @@ describe('createService', () => {
           payload: 3.14159
         })
       })
-      it('can return an item an Observable will be made from', async () => {
+      it('can return a zero-argument function', async () => {
         const service = createService<void, number, Error>(
           testNamespace,
           bus,
-          () => Promise.resolve(3.14159) // for options see https://rxjs.dev/api/index/function/from
+          () => () => Promise.resolve(3.14159)
         )
         const seen: Action<unknown>[] = [];
         bus.spy(e => seen.push(e));

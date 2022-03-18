@@ -22,14 +22,14 @@ import { filter, takeUntil, tap } from 'rxjs/operators';
 
 //#region types
 export type Predicate<T> = (item: T) => boolean;
-export type ListenerReturnValue<T, TConsequence> =
+export type HandlerReturnValue<T, TConsequence> =
   | ((o: Observer<T>) => void)
   | (() => ObservableInput<TConsequence>)
   | ObservableInput<TConsequence>
   | void;
 export type ResultCreator<T, TConsequence> = (
   item: T
-) => ListenerReturnValue<T, TConsequence>;
+) => HandlerReturnValue<T, TConsequence>;
 
 type SubscribeObserver = {
   subscribe: () => void;

@@ -71,13 +71,15 @@
 						<section class="tsd-index-section ">
 							<h3>Interfaces</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-interface tsd-has-type-parameter"><a href="interfaces/ActionCreators.html" class="tsd-kind-icon">Action<wbr>Creators</a></li>
+								<li class="tsd-kind-interface tsd-has-type-parameter"><a href="interfaces/Service.html" class="tsd-kind-icon">Service</a></li>
 								<li class="tsd-kind-interface tsd-has-type-parameter"><a href="interfaces/Thunk.html" class="tsd-kind-icon">Thunk</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Type aliases</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="modules.html#ListenerReturnValue" class="tsd-kind-icon">Listener<wbr>Return<wbr>Value</a></li>
+								<li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="modules.html#HandlerReturnValue" class="tsd-kind-icon">Handler<wbr>Return<wbr>Value</a></li>
 								<li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="modules.html#MapFn" class="tsd-kind-icon">Map<wbr>Fn</a></li>
 								<li class="tsd-kind-type-alias tsd-has-type-parameter"><a href="modules.html#Mapper" class="tsd-kind-icon">Mapper</a></li>
 								<li class="tsd-kind-type-alias"><a href="modules.html#ObserverKey" class="tsd-kind-icon">Observer<wbr>Key</a></li>
@@ -97,6 +99,11 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#after" class="tsd-kind-icon">after</a></li>
 								<li class="tsd-kind-function tsd-has-type-parameter tsd-is-external"><a href="modules.html#concat" class="tsd-kind-icon">concat</a></li>
+								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#createBlockingService" class="tsd-kind-icon">create<wbr>Blocking<wbr>Service</a></li>
+								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#createQueueingService" class="tsd-kind-icon">create<wbr>Queueing<wbr>Service</a></li>
+								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#createService" class="tsd-kind-icon">create<wbr>Service</a></li>
+								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#createSwitchingService" class="tsd-kind-icon">create<wbr>Switching<wbr>Service</a></li>
+								<li class="tsd-kind-function"><a href="modules.html#matchesAny" class="tsd-kind-icon">matches<wbr>Any</a></li>
 								<li class="tsd-kind-function tsd-has-type-parameter"><a href="modules.html#observableFromPromisedArray" class="tsd-kind-icon">observable<wbr>From<wbr>Promised<wbr>Array</a></li>
 							</ul>
 						</section>
@@ -106,12 +113,12 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Type aliases</h2>
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-has-type-parameter">
-					<a name="ListenerReturnValue" class="tsd-anchor"></a>
-					<h3>Listener<wbr>Return<wbr>Value</h3>
-					<div class="tsd-signature tsd-kind-icon">Listener<wbr>Return<wbr>Value&lt;T, TConsequence&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>o<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Observer</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">ObservableInput</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">ObservableInput</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></div>
+					<a name="HandlerReturnValue" class="tsd-anchor"></a>
+					<h3>Handler<wbr>Return<wbr>Value</h3>
+					<div class="tsd-signature tsd-kind-icon">Handler<wbr>Return<wbr>Value&lt;T, TConsequence&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>o<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Observer</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">ObservableInput</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">ObservableInput</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/0eab2bf/src/bus.ts#L25">src/bus.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/baae010/src/bus.ts#L25">src/bus.ts:25</a></li>
 						</ul>
 					</aside>
 					<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -130,7 +137,7 @@
 					<div class="tsd-signature tsd-kind-icon">Map<wbr>Fn&lt;T, U&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>t<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">U</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/0eab2bf/src/bus.ts#L40">src/bus.ts:40</a></li>
+							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/baae010/src/bus.ts#L40">src/bus.ts:40</a></li>
 						</ul>
 					</aside>
 					<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -170,7 +177,7 @@
 					<div class="tsd-signature tsd-kind-icon">Mapper&lt;T, U&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><a href="modules.html#ObserverKey" class="tsd-signature-type" data-tsd-kind="Type alias">ObserverKey</a><span class="tsd-signature-symbol">, </span><a href="modules.html#MapFn" class="tsd-signature-type" data-tsd-kind="Type alias">MapFn</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">U</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/0eab2bf/src/bus.ts#L41">src/bus.ts:41</a></li>
+							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/baae010/src/bus.ts#L41">src/bus.ts:41</a></li>
 						</ul>
 					</aside>
 					<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -189,7 +196,7 @@
 					<div class="tsd-signature tsd-kind-icon">Observer<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">PartialObserver</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">SubscribeObserver</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/0eab2bf/src/bus.ts#L39">src/bus.ts:39</a></li>
+							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/baae010/src/bus.ts#L39">src/bus.ts:39</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -199,7 +206,7 @@
 					<div class="tsd-signature tsd-kind-icon">Predicate&lt;T&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>item<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/0eab2bf/src/bus.ts#L24">src/bus.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/baae010/src/bus.ts#L24">src/bus.ts:24</a></li>
 						</ul>
 					</aside>
 					<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -233,10 +240,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-has-type-parameter">
 					<a name="ResultCreator" class="tsd-anchor"></a>
 					<h3>Result<wbr>Creator</h3>
-					<div class="tsd-signature tsd-kind-icon">Result<wbr>Creator&lt;T, TConsequence&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>item<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="modules.html#ListenerReturnValue" class="tsd-signature-type" data-tsd-kind="Type alias">ListenerReturnValue</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-signature tsd-kind-icon">Result<wbr>Creator&lt;T, TConsequence&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>item<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><a href="modules.html#HandlerReturnValue" class="tsd-signature-type" data-tsd-kind="Type alias">HandlerReturnValue</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/0eab2bf/src/bus.ts#L30">src/bus.ts:30</a></li>
+							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/baae010/src/bus.ts#L30">src/bus.ts:30</a></li>
 						</ul>
 					</aside>
 					<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -253,7 +260,7 @@
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter-signature">
 								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias">
-									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>item<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="modules.html#ListenerReturnValue" class="tsd-signature-type" data-tsd-kind="Type alias">ListenerReturnValue</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span></li>
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>item<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="modules.html#HandlerReturnValue" class="tsd-signature-type" data-tsd-kind="Type alias">HandlerReturnValue</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span></li>
 								</ul>
 								<ul class="tsd-descriptions">
 									<li class="tsd-description">
@@ -263,7 +270,7 @@
 												<h5>item: <span class="tsd-signature-type">T</span></h5>
 											</li>
 										</ul>
-										<h4 class="tsd-returns-title">Returns <a href="modules.html#ListenerReturnValue" class="tsd-signature-type" data-tsd-kind="Type alias">ListenerReturnValue</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span></h4>
+										<h4 class="tsd-returns-title">Returns <a href="modules.html#HandlerReturnValue" class="tsd-signature-type" data-tsd-kind="Type alias">HandlerReturnValue</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TConsequence</span><span class="tsd-signature-symbol">&gt;</span></h4>
 									</li>
 								</ul>
 							</li>
@@ -276,7 +283,7 @@
 					<div class="tsd-signature tsd-kind-icon">Tap<wbr>Observer&lt;T&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">PartialObserver</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">SubscribeObserver</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/0eab2bf/src/bus.ts#L38">src/bus.ts:38</a></li>
+							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/baae010/src/bus.ts#L38">src/bus.ts:38</a></li>
 						</ul>
 					</aside>
 					<h4 class="tsd-type-parameters-title">Type parameters</h4>
@@ -295,7 +302,7 @@
 					<div class="tsd-signature tsd-kind-icon">THRESHOLD<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>AnimationLong<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>AnimationShort<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>Blink<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>Chorus<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>Debounce<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>DeepBreath<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>EDMBeat<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>Echo<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>Frame<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>Frame60<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>Frame90<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>MovieFrame<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>PageLoadMax<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>Sentence<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>Thought<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>TypingKey48<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>TypingKey90<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>TypingKeyMobile<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>Unison<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = ...</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/0eab2bf/src/utils.ts#L6">src/utils.ts:6</a></li>
+							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/baae010/src/utils.ts#L7">src/utils.ts:7</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -374,7 +381,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/0eab2bf/src/after.ts#L18">src/after.ts:18</a></li>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/baae010/src/after.ts#L18">src/after.ts:18</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -457,6 +464,552 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function tsd-has-type-parameter">
+					<a name="createBlockingService" class="tsd-anchor"></a>
+					<h3>create<wbr>Blocking<wbr>Service</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Blocking<wbr>Service&lt;TRequest, TNext, TError, TState&gt;<span class="tsd-signature-symbol">(</span>actionNamespace<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, bus<span class="tsd-signature-symbol">: </span><a href="classes/Omnibus.html" class="tsd-signature-type" data-tsd-kind="Class">Omnibus</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>e<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">HandlerReturnValue</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">&gt;</span>, reducerProducer<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">(</span>acs<span class="tsd-signature-symbol">?: </span><a href="interfaces/ActionCreators.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionCreators</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">TState</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="interfaces/Service.html" class="tsd-signature-type" data-tsd-kind="Interface">Service</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TState</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/baae010/src/createService.ts#L273">src/createService.ts:273</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Like Redux Toolkit&#39;s createAsyncThunk, but using an event bus, not Redux for communication,
+										and both cancelable, and concurrency-controllable. Prevents a new handler from starting
+									if one is in progress - handy for having a singleton handler</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>TRequest</h4>
+								</li>
+								<li>
+									<h4>TNext</h4>
+								</li>
+								<li>
+									<h4>TError</h4>
+								</li>
+								<li>
+									<h4>TState = <span class="tsd-signature-type">object</span></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>actionNamespace: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Prefix of all actions eg dog/request</p>
+									</div>
+								</li>
+								<li>
+									<h5>bus: <a href="classes/Omnibus.html" class="tsd-signature-type" data-tsd-kind="Class">Omnibus</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The Omnibus event bus read and written to</p>
+									</div>
+								</li>
+								<li>
+									<h5>handler: <span class="tsd-signature-symbol">(</span>e<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">HandlerReturnValue</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Function returning Promise, Observable or generator from which events are generated</p>
+									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>e<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HandlerReturnValue</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">&gt;</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>e: <span class="tsd-signature-type">TRequest</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HandlerReturnValue</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">&gt;</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5>reducerProducer: <span class="tsd-signature-symbol">(</span>acs<span class="tsd-signature-symbol">?: </span><a href="interfaces/ActionCreators.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionCreators</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">TState</span><span class="tsd-signature-symbol"> = ...</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Function returning a reducer for #state - recieves ActionCreators as its argument.</p>
+									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>acs<span class="tsd-signature-symbol">?: </span><a href="interfaces/ActionCreators.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionCreators</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">TState</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5><span class="tsd-flag ts-flagOptional">Optional</span> acs: <a href="interfaces/ActionCreators.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionCreators</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">TState</span></h4>
+													<ul class="tsd-parameters">
+														<li class="tsd-parameter-signature">
+															<ul class="tsd-signatures tsd-kind-type-literal">
+																<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span></li>
+															</ul>
+															<ul class="tsd-descriptions">
+																<li class="tsd-description">
+																	<h4 class="tsd-parameters-title">Parameters</h4>
+																	<ul class="tsd-parameters">
+																		<li>
+																			<h5>state: <span class="tsd-signature-type">TState</span></h5>
+																		</li>
+																		<li>
+																			<h5>action: <span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
+																		</li>
+																	</ul>
+																	<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">TState</span></h4>
+																</li>
+															</ul>
+														</li>
+													</ul>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="interfaces/Service.html" class="tsd-signature-type" data-tsd-kind="Interface">Service</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TState</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-has-type-parameter">
+					<a name="createQueueingService" class="tsd-anchor"></a>
+					<h3>create<wbr>Queueing<wbr>Service</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Queueing<wbr>Service&lt;TRequest, TNext, TError, TState&gt;<span class="tsd-signature-symbol">(</span>actionNamespace<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, bus<span class="tsd-signature-symbol">: </span><a href="classes/Omnibus.html" class="tsd-signature-type" data-tsd-kind="Class">Omnibus</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>e<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">HandlerReturnValue</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">&gt;</span>, reducerProducer<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">(</span>acs<span class="tsd-signature-symbol">?: </span><a href="interfaces/ActionCreators.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionCreators</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">TState</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="interfaces/Service.html" class="tsd-signature-type" data-tsd-kind="Interface">Service</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TState</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/baae010/src/createService.ts#L206">src/createService.ts:206</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Like Redux Toolkit&#39;s createAsyncThunk, but using an event bus, not Redux for communication,
+										and both cancelable, and concurrency-controllable. Queues up handlers if
+									they return deferred objects: () =&gt; Promise or Observable.</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>TRequest</h4>
+								</li>
+								<li>
+									<h4>TNext</h4>
+								</li>
+								<li>
+									<h4>TError</h4>
+								</li>
+								<li>
+									<h4>TState = <span class="tsd-signature-type">object</span></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>actionNamespace: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Prefix of all actions eg dog/request</p>
+									</div>
+								</li>
+								<li>
+									<h5>bus: <a href="classes/Omnibus.html" class="tsd-signature-type" data-tsd-kind="Class">Omnibus</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The Omnibus event bus read and written to</p>
+									</div>
+								</li>
+								<li>
+									<h5>handler: <span class="tsd-signature-symbol">(</span>e<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">HandlerReturnValue</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Function returning Promise, Observable or generator from which events are generated</p>
+									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>e<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HandlerReturnValue</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">&gt;</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>e: <span class="tsd-signature-type">TRequest</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HandlerReturnValue</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">&gt;</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5>reducerProducer: <span class="tsd-signature-symbol">(</span>acs<span class="tsd-signature-symbol">?: </span><a href="interfaces/ActionCreators.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionCreators</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">TState</span><span class="tsd-signature-symbol"> = ...</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Function returning a reducer for #state - recieves ActionCreators as its argument.</p>
+									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>acs<span class="tsd-signature-symbol">?: </span><a href="interfaces/ActionCreators.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionCreators</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">TState</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5><span class="tsd-flag ts-flagOptional">Optional</span> acs: <a href="interfaces/ActionCreators.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionCreators</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">TState</span></h4>
+													<ul class="tsd-parameters">
+														<li class="tsd-parameter-signature">
+															<ul class="tsd-signatures tsd-kind-type-literal">
+																<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span></li>
+															</ul>
+															<ul class="tsd-descriptions">
+																<li class="tsd-description">
+																	<h4 class="tsd-parameters-title">Parameters</h4>
+																	<ul class="tsd-parameters">
+																		<li>
+																			<h5>state: <span class="tsd-signature-type">TState</span></h5>
+																		</li>
+																		<li>
+																			<h5>action: <span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
+																		</li>
+																	</ul>
+																	<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">TState</span></h4>
+																</li>
+															</ul>
+														</li>
+													</ul>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="interfaces/Service.html" class="tsd-signature-type" data-tsd-kind="Interface">Service</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TState</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-has-type-parameter">
+					<a name="createService" class="tsd-anchor"></a>
+					<h3>create<wbr>Service</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Service&lt;TRequest, TNext, TError, TState&gt;<span class="tsd-signature-symbol">(</span>actionNamespace<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, bus<span class="tsd-signature-symbol">: </span><a href="classes/Omnibus.html" class="tsd-signature-type" data-tsd-kind="Class">Omnibus</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>e<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">HandlerReturnValue</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">&gt;</span>, reducerProducer<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">(</span>acs<span class="tsd-signature-symbol">?: </span><a href="interfaces/ActionCreators.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionCreators</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">TState</span>, listenMode<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">&quot;listen&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;listenQueueing&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;listenSwitching&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;listenBlocking&quot;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="interfaces/Service.html" class="tsd-signature-type" data-tsd-kind="Interface">Service</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TState</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/baae010/src/createService.ts#L89">src/createService.ts:89</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Like Redux Toolkit&#39;s createAsyncThunk, but using an event bus, not Redux for communication,
+										and both cancelable, and concurrency-controllable. By default
+									runs handlers simultaneously.</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>TRequest</h4>
+								</li>
+								<li>
+									<h4>TNext</h4>
+								</li>
+								<li>
+									<h4>TError</h4>
+								</li>
+								<li>
+									<h4>TState = <span class="tsd-signature-type">object</span></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>actionNamespace: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Prefix of all actions: The &#39;search&#39; in search/request</p>
+									</div>
+								</li>
+								<li>
+									<h5>bus: <a href="classes/Omnibus.html" class="tsd-signature-type" data-tsd-kind="Class">Omnibus</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The Omnibus event bus triggered to and listened on</p>
+									</div>
+								</li>
+								<li>
+									<h5>handler: <span class="tsd-signature-symbol">(</span>e<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">HandlerReturnValue</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>A function returning a Promise, Observable, or Promise thunk from whose life-cycle events are triggered.</p>
+									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>e<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HandlerReturnValue</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">&gt;</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>e: <span class="tsd-signature-type">TRequest</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HandlerReturnValue</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">&gt;</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5>reducerProducer: <span class="tsd-signature-symbol">(</span>acs<span class="tsd-signature-symbol">?: </span><a href="interfaces/ActionCreators.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionCreators</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">TState</span><span class="tsd-signature-symbol"> = ...</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>A function returning a reducer which populates <code>.state</code>. Recieves ActionCreators as its argument.</p>
+									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>acs<span class="tsd-signature-symbol">?: </span><a href="interfaces/ActionCreators.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionCreators</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">TState</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5><span class="tsd-flag ts-flagOptional">Optional</span> acs: <a href="interfaces/ActionCreators.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionCreators</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">TState</span></h4>
+													<ul class="tsd-parameters">
+														<li class="tsd-parameter-signature">
+															<ul class="tsd-signatures tsd-kind-type-literal">
+																<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span></li>
+															</ul>
+															<ul class="tsd-descriptions">
+																<li class="tsd-description">
+																	<h4 class="tsd-parameters-title">Parameters</h4>
+																	<ul class="tsd-parameters">
+																		<li>
+																			<h5>state: <span class="tsd-signature-type">TState</span></h5>
+																		</li>
+																		<li>
+																			<h5>action: <span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
+																		</li>
+																	</ul>
+																	<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">TState</span></h4>
+																</li>
+															</ul>
+														</li>
+													</ul>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5>listenMode: <span class="tsd-signature-type">&quot;listen&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;listenQueueing&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;listenSwitching&quot;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;listenBlocking&quot;</span><span class="tsd-signature-symbol"> = &#x27;listen&#x27;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Concurrency strategy for when an existing handler is in progress.</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="interfaces/Service.html" class="tsd-signature-type" data-tsd-kind="Interface">Service</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TState</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-has-type-parameter">
+					<a name="createSwitchingService" class="tsd-anchor"></a>
+					<h3>create<wbr>Switching<wbr>Service</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Switching<wbr>Service&lt;TRequest, TNext, TError, TState&gt;<span class="tsd-signature-symbol">(</span>actionNamespace<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, bus<span class="tsd-signature-symbol">: </span><a href="classes/Omnibus.html" class="tsd-signature-type" data-tsd-kind="Class">Omnibus</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span>, handler<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>e<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">HandlerReturnValue</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">&gt;</span>, reducerProducer<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">(</span>acs<span class="tsd-signature-symbol">?: </span><a href="interfaces/ActionCreators.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionCreators</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">TState</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="interfaces/Service.html" class="tsd-signature-type" data-tsd-kind="Interface">Service</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TState</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/baae010/src/createService.ts#L237">src/createService.ts:237</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Like Redux Toolkit&#39;s createAsyncThunk, but using an event bus, not Redux for communication,
+										and both cancelable, and concurrency-controllable. Prevents events from a previous handling
+									from being emitted, and cancels the handler if it returned an Observable.</p>
+								</div>
+							</div>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>TRequest</h4>
+								</li>
+								<li>
+									<h4>TNext</h4>
+								</li>
+								<li>
+									<h4>TError</h4>
+								</li>
+								<li>
+									<h4>TState = <span class="tsd-signature-type">object</span></h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>actionNamespace: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Prefix of all actions eg dog/request</p>
+									</div>
+								</li>
+								<li>
+									<h5>bus: <a href="classes/Omnibus.html" class="tsd-signature-type" data-tsd-kind="Class">Omnibus</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>The Omnibus event bus read and written to</p>
+									</div>
+								</li>
+								<li>
+									<h5>handler: <span class="tsd-signature-symbol">(</span>e<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">HandlerReturnValue</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Function returning Promise, Observable or generator from which events are generated</p>
+									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>e<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">HandlerReturnValue</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">&gt;</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>e: <span class="tsd-signature-type">TRequest</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">HandlerReturnValue</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">&gt;</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5>reducerProducer: <span class="tsd-signature-symbol">(</span>acs<span class="tsd-signature-symbol">?: </span><a href="interfaces/ActionCreators.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionCreators</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">TState</span><span class="tsd-signature-symbol"> = ...</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>Function returning a reducer for #state - recieves ActionCreators as its argument.</p>
+									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>acs<span class="tsd-signature-symbol">?: </span><a href="interfaces/ActionCreators.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionCreators</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">TState</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5><span class="tsd-flag ts-flagOptional">Optional</span> acs: <a href="interfaces/ActionCreators.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionCreators</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">TState</span></h4>
+													<ul class="tsd-parameters">
+														<li class="tsd-parameter-signature">
+															<ul class="tsd-signatures tsd-kind-type-literal">
+																<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span>, action<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TState</span></li>
+															</ul>
+															<ul class="tsd-descriptions">
+																<li class="tsd-description">
+																	<h4 class="tsd-parameters-title">Parameters</h4>
+																	<ul class="tsd-parameters">
+																		<li>
+																			<h5>state: <span class="tsd-signature-type">TState</span></h5>
+																		</li>
+																		<li>
+																			<h5>action: <span class="tsd-signature-type">Action</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></h5>
+																		</li>
+																	</ul>
+																	<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">TState</span></h4>
+																</li>
+															</ul>
+														</li>
+													</ul>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="interfaces/Service.html" class="tsd-signature-type" data-tsd-kind="Interface">Service</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TState</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="matchesAny" class="tsd-anchor"></a>
+					<h3>matches<wbr>Any</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">matches<wbr>Any<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>acs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ActionCreator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>e<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/baae010/src/createService.ts#L71">src/createService.ts:71</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<dl class="tsd-comment-tags">
+									<dt>example</dt>
+									<dd><p>bus.listen(matchesAny(Actions.complete, Actions.error), handler)</p>
+									</dd>
+								</dl>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>acs: <span class="tsd-signature-type">ActionCreator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">(</span>e<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">boolean</span></h4>
+							<ul class="tsd-parameters">
+								<li class="tsd-parameter-signature">
+									<ul class="tsd-signatures tsd-kind-type-literal">
+										<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>e<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+									</ul>
+									<ul class="tsd-descriptions">
+										<li class="tsd-description">
+											<h4 class="tsd-parameters-title">Parameters</h4>
+											<ul class="tsd-parameters">
+												<li>
+													<h5>e: <span class="tsd-signature-type">any</span></h5>
+												</li>
+											</ul>
+											<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+										</li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-has-type-parameter">
 					<a name="observableFromPromisedArray" class="tsd-anchor"></a>
 					<h3>observable<wbr>From<wbr>Promised<wbr>Array</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-has-type-parameter">
@@ -466,7 +1019,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/0eab2bf/src/utils.ts#L34">src/utils.ts:34</a></li>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/baae010/src/utils.ts#L35">src/utils.ts:35</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -512,10 +1065,16 @@
 						<a href="classes/Omnibus.html" class="tsd-kind-icon">Omnibus</a>
 					</li>
 					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="interfaces/ActionCreators.html" class="tsd-kind-icon">Action<wbr>Creators</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="interfaces/Service.html" class="tsd-kind-icon">Service</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
 						<a href="interfaces/Thunk.html" class="tsd-kind-icon">Thunk</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
-						<a href="modules.html#ListenerReturnValue" class="tsd-kind-icon">Listener<wbr>Return<wbr>Value</a>
+						<a href="modules.html#HandlerReturnValue" class="tsd-kind-icon">Handler<wbr>Return<wbr>Value</a>
 					</li>
 					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
 						<a href="modules.html#MapFn" class="tsd-kind-icon">Map<wbr>Fn</a>
@@ -545,6 +1104,21 @@
 						<a href="modules.html#concat" class="tsd-kind-icon">concat</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="modules.html#createBlockingService" class="tsd-kind-icon">create<wbr>Blocking<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="modules.html#createQueueingService" class="tsd-kind-icon">create<wbr>Queueing<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="modules.html#createService" class="tsd-kind-icon">create<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="modules.html#createSwitchingService" class="tsd-kind-icon">create<wbr>Switching<wbr>Service</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#matchesAny" class="tsd-kind-icon">matches<wbr>Any</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
 						<a href="modules.html#observableFromPromisedArray" class="tsd-kind-icon">observable<wbr>From<wbr>Promised<wbr>Array</a>
 					</li>
 				</ul>
@@ -563,6 +1137,9 @@
 			<ul class="tsd-legend">
 				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
 				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
 			</ul>
 		</div>
 	</div>

@@ -14,7 +14,8 @@ import {
 import { scan, map, distinctUntilChanged, endWith, takeUntil } from 'rxjs/operators';
 import { Action, ActionCreator, actionCreatorFactory } from 'typescript-fsa';
 
-interface ActionCreators<TRequest, TNext, TError> {
+/** A standardized convention of actions this service listens to, and responsds with. */
+export interface ActionCreators<TRequest, TNext, TError> {
   request: ActionCreator<TRequest>;
   cancel: ActionCreator<void>;
   started: ActionCreator<void>;
@@ -25,14 +26,48 @@ interface ActionCreators<TRequest, TNext, TError> {
 }
 
 interface Stoppable {
+  /** Terminates the listener, any of its Observable handlings.
+   * @returns The closed subscription.
+   */
   stop(): Subscription;
 }
 
-type ListenerReturnValue<TNext> =
+
+/**
+ * A handler may return a Promise, a Promise-returning function, an Observable,
+ * an iterable, or `void`. See RxJS' ObservableInput type, and `from` for more.
+ */
+type HandlerReturnValue<TNext> =
   | (() => ObservableInput<TNext>)
   | ObservableInput<TNext>
   | void;
 
+/**
+ * A service is a listener over a bus, which triggers responses in some combination to
+ * the requests it recieves. On each request it runs a handler
+ *  (subject to its concurrency strategy) then triggers events based on that handler's lifecycle.
+ *  For a service defined with the prefix "time", its event schema would be:
+ * 
+ * - `time/request` - client: requests the time
+ * - `time/cancel` - client: cancel the current request for the time
+ * - `time/started` - server: time resolution has begun
+ * - `time/next` - server: contains the time as a payload
+ * - `time/complete` - server: no more times will be sent
+ * - `time/error` - server: an error occurred (the listener remains alive due to internal rescueing)
+ * - `time/canceled` - server: has canceled the current request for the time
+ */
+export interface Service<TRequest, TNext, TError, TState> extends Stoppable {
+  /** Invoke the service as a function directly. */
+  (req: TRequest): void,
+  /** The ActionCreator factories this service listens for, and responds with. */
+  actions: ActionCreators<TRequest, TNext, TError>,
+  /** Indicates whether a handling is in progress. Use `.value`, or `subscribe()` for updates.  */
+  isActive: BehaviorSubject<boolean>,
+  /** Uses the reducer to aggregate the events that are produced from its handlers, emitting a new state for each action (de-duping is not done). Use `.value`, or `subscribe()` for updates. */
+  state: BehaviorSubject<TState>
+}
+
+/** @example bus.listen(matchesAny(Actions.complete, Actions.error), handler) */
 export function matchesAny(...acs: ActionCreator<any>[]) {
   return (e: any) => {
     return !!acs.find((ac) => ac.match(e));
@@ -42,19 +77,19 @@ export function matchesAny(...acs: ActionCreator<any>[]) {
 /**
  * Like Redux Toolkit's createAsyncThunk, but using an event bus, not Redux for communication,
  * and both cancelable, and concurrency-controllable. By default
- * runs handlers simultaneously
+ * runs handlers simultaneously.
  * 
- * @param actionNamespace - Prefix of all actions eg dog/request
- * @param bus - The Omnibus event bus read and written to
- * @param handler - Function returning Promise, Observable or generator from which events are generated
- * @param reducerProducer - Function returning a reducer for #state - recieves ActionCreators as its argument.
+ * @param actionNamespace - Prefix of all actions: The 'search' in search/request
+ * @param bus - The Omnibus event bus triggered to and listened on
+ * @param handler - A function returning a Promise, Observable, or Promise thunk from whose life-cycle events are triggered.
+ * @param reducerProducer - A function returning a reducer which populates `.state`. Recieves ActionCreators as its argument.
  * @param listenMode - Concurrency strategy for when an existing handler is in progress.
  * @returns 
  */
 export function createService<TRequest, TNext, TError, TState = object>(
   actionNamespace: string,
   bus: Omnibus<Action<TRequest | TNext | TError>>,
-  handler: (e: TRequest) => ListenerReturnValue<TNext>,
+  handler: (e: TRequest) => HandlerReturnValue<TNext>,
   reducerProducer: (
     acs?: ActionCreators<TRequest, TNext, TError>
   ) => (state: TState, action: Action<any>) => TState = () =>
@@ -66,7 +101,7 @@ export function createService<TRequest, TNext, TError, TState = object>(
     | 'listenQueueing'
     | 'listenSwitching'
     | 'listenBlocking' = 'listen'
-) {
+): Service<TRequest, TNext, TError, TState> {
   const namespacedAction = actionCreatorFactory(actionNamespace);
 
   const ACs: ActionCreators<TRequest, TNext, TError> = {
@@ -171,14 +206,14 @@ export function createService<TRequest, TNext, TError, TState = object>(
 export function createQueueingService<TRequest, TNext, TError, TState = object>(
   actionNamespace: string,
   bus: Omnibus<Action<TRequest | TNext | TError>>,
-  handler: (e: TRequest) => ListenerReturnValue<TNext>,
+  handler: (e: TRequest) => HandlerReturnValue<TNext>,
   reducerProducer: (
     acs?: ActionCreators<TRequest, TNext, TError>
   ) => (state: TState, action: Action<any>) => TState = () =>
       (state: TState, _: any) => {
         return state;
       }
-) {
+): Service<TRequest, TNext, TError, TState> {
   return createService(
     actionNamespace,
     bus,
@@ -207,14 +242,14 @@ export function createSwitchingService<
 >(
   actionNamespace: string,
   bus: Omnibus<Action<TRequest | TNext | TError>>,
-  handler: (e: TRequest) => ListenerReturnValue<TNext>,
+  handler: (e: TRequest) => HandlerReturnValue<TNext>,
   reducerProducer: (
     acs?: ActionCreators<TRequest, TNext, TError>
   ) => (state: TState, action: Action<any>) => TState = () =>
       (state: TState, _: any) => {
         return state;
       }
-) {
+): Service<TRequest, TNext, TError, TState> {
   return createService(
     actionNamespace,
     bus,
@@ -238,13 +273,13 @@ export function createSwitchingService<
 export function createBlockingService<TRequest, TNext, TError, TState = object>(
   actionNamespace: string,
   bus: Omnibus<Action<TRequest | TNext | TError>>,
-  handler: (e: TRequest) => ListenerReturnValue<TNext>,
+  handler: (e: TRequest) => HandlerReturnValue<TNext>,
   reducerProducer: (
     acs?: ActionCreators<TRequest, TNext, TError>
   ) => (state: TState, action: Action<any>) => TState = () =>
       (state: TState, _: any) => {
         return state;
-      }) {
+      }): Service<TRequest, TNext, TError, TState> {
   return createService(
     actionNamespace,
     bus,

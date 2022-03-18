@@ -1,13 +1,3 @@
-PASS test/3rd-party.spec.ts
-  Reference: FSA
-    ✓ creates an action
-    ✓ provides a predicate #match
-  Reference: RxJS
-    Observable subscriptions
-      ✓ can deliver events synchronously
-      ✓ can deliver events with Promise
-      ✓ can deliver events with setTimeout(0)
-
 PASS test/after.spec.ts
   after
     ✓ is an Observable
@@ -25,6 +15,63 @@ PASS test/after.spec.ts
       when an Observable
         ✓ defers subscription
         ✓ yields the value
+
+PASS test/3rd-party.spec.ts
+  Reference: FSA
+    ✓ creates an action
+    ✓ provides a predicate #match
+  Reference: RxJS
+    Observable subscriptions
+      ✓ can deliver events synchronously
+      ✓ can deliver events with Promise
+      ✓ can deliver events with setTimeout(0)
+
+PASS test/createService.spec.ts
+  createService
+    ✓ triggers events from observable handlers when no error
+    ✓ triggers events from Promise handlers when no error
+    ✓ triggers events from Promise-factory handlers when no error
+    ✓ triggers events from observable handlers, even when they error
+    ✓ triggers events from generator handlers when no error
+    arguments
+      bus
+        ✎ todo recieves requests
+        ✎ todo recieves observed events
+      actionNamespace
+        ✎ todo prefixes action types
+      handler
+        ✓ can return an item an Observable will be made from
+        ✓ can return a zero-argument function
+      reducerProducer
+        ✓ can return a Redux Style reducer
+        ✓ can return a ReduxToolkit-Style reducer
+    return value
+      ✓ triggers a request to the bus when called
+      #state
+        ✓ reduces into .state
+      #isActive
+        ✓ initially is false
+        ✓ becomes true when a handler is in-flight
+        ✓ emits changes only on request, completed, error, unsubscribe, and when changed
+        ✓ terminates on a reset
+        ✓ has a final value of false on bus.reset()
+        ✓ has a final value of false on stop()
+      #actions: a property for each actioncreator
+        ✓ has property request
+        ✓ has property cancel
+        ✓ has property started
+        ✓ has property next
+        ✓ has property error
+        ✓ has property complete
+        ✓ has property canceled
+        ✓ has property stop()
+        ✎ todo removes listeners and cancels handlings when stop()-ed.
+    createQueueingService
+      ✓ calls createService with "listenQueueing"
+    createSwitchingService
+      ✓ calls createService with "listenSwitching"
+    createBlockingService
+      ✓ calls createService with "listenBlocking"
 
 PASS test/bus.spec.ts
   Bus
@@ -116,53 +163,6 @@ PASS test/bus.spec.ts
       ✓ dyingStream observable
       ✓ endpointStream observable
       ✓ valueStream observable
-
-PASS test/createService.spec.ts
-  createService
-    ✓ triggers events from observable handlers when no error
-    ✓ triggers events from Promise handlers when no error
-    ✓ triggers events from Promise-factory handlers when no error
-    ✓ triggers events from observable handlers, even when they error
-    ✓ triggers events from generator handlers when no error
-    arguments
-      bus
-        ✎ todo recieves requests
-        ✎ todo recieves observed events
-      actionNamespace
-        ✎ todo prefixes action types
-      handler
-        ✓ can return a zero-argument function
-        ✓ can return an item an Observable will be made from
-      reducerProducer
-        ✓ can return a Redux Style reducer
-        ✓ can return a ReduxToolkit-Style reducer
-    return value
-      ✓ triggers a request to the bus when called
-      #state
-        ✓ reduces into .state
-      #isActive
-        ✓ initially is false
-        ✓ becomes true when a handler is in-flight
-        ✓ emits changes only on request, completed, error, unsubscribe, and when changed
-        ✓ terminates on a reset
-        ✓ has a final value of false on bus.reset()
-        ✓ has a final value of false on stop()
-      #actions: a property for each actioncreator
-        ✓ has property request
-        ✓ has property cancel
-        ✓ has property started
-        ✓ has property next
-        ✓ has property error
-        ✓ has property complete
-        ✓ has property canceled
-        ✓ has property stop()
-        ✎ todo removes listeners and cancels handlings when stop()-ed.
-    createQueueingService
-      ✓ calls createService with "listenQueueing"
-    createSwitchingService
-      ✓ calls createService with "listenSwitching"
-    createBlockingService
-      ✓ calls createService with "listenBlocking"
 
 PASS test/utils.spec.ts
   Bus
@@ -275,5 +275,5 @@ PASS test/utils.spec.ts
 Test Suites: 5 passed, 5 total
 Tests:       12 todo, 146 passed, 158 total
 Snapshots:   19 passed, 19 total
-Time:        1.22 s
+Time:        1.062 s
 Ran all test suites.
