@@ -1,3 +1,22 @@
+PASS test/toggleMap.spec.ts
+  toggleMap - the missing *Map operator
+    with no running subscription
+      ✓ starts one
+    with an already running subscription
+      ✓ unsubscribes it, not starting a new one
+    mapper function
+      ✓ gives info about both the cause and the effect
+
+PASS test/3rd-party.spec.ts
+  Reference: FSA
+    ✓ creates an action
+    ✓ provides a predicate #match
+  Reference: RxJS
+    Observable subscriptions
+      ✓ can deliver events synchronously
+      ✓ can deliver events with Promise
+      ✓ can deliver events with setTimeout(0)
+
 PASS test/after.spec.ts
   after
     ✓ is an Observable
@@ -15,16 +34,6 @@ PASS test/after.spec.ts
       when an Observable
         ✓ defers subscription
         ✓ yields the value
-
-PASS test/3rd-party.spec.ts
-  Reference: FSA
-    ✓ creates an action
-    ✓ provides a predicate #match
-  Reference: RxJS
-    Observable subscriptions
-      ✓ can deliver events synchronously
-      ✓ can deliver events with Promise
-      ✓ can deliver events with setTimeout(0)
 
 PASS test/createService.spec.ts
   createService
@@ -272,8 +281,8 @@ PASS test/utils.spec.ts
     ✓ flattens a Promise for an array to an Observable of its items
     ✓ flattens a Promise for an array to an Observable of its items, after a delay
 
-Test Suites: 5 passed, 5 total
-Tests:       12 todo, 146 passed, 158 total
+Test Suites: 6 passed, 6 total
+Tests:       12 todo, 149 passed, 161 total
 Snapshots:   19 passed, 19 total
-Time:        1.062 s
+Time:        1.791 s
 Ran all test suites.
