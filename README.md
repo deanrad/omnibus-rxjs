@@ -90,7 +90,7 @@ With that specification, no test-framework specific mocks need to be written —
 
 # Example Applications
 
-There is [TodoMVC](https://codesandbox.io/s/todos-omnibus-rtkquery-mjjwn). The Redux Toolkit [Async Counter](https://codesandbox.io/s/poly-redux-counter-solved-m5cm0). An RxJS-style [typeahead search](https://codesandbox.io/s/createobservableservice-6zy19). And a rework of the XState Dog Fetcher known as [Cat Fetcher](https://codesandbox.io/s/cat-fetcher-with-omnibus-kr3yw)
+There is [TodoMVC](https://codesandbox.io/s/todos-omnibus-rtkquery-mjjwn). The Redux Toolkit [Async Counter](https://codesandbox.io/s/omnibus-async-counter-0q95qz). An RxJS-style [typeahead search](https://codesandbox.io/s/createobservableservice-6zy19). And a rework of the XState Dog Fetcher known as [Cat Fetcher](https://codesandbox.io/s/cat-fetcher-with-omnibus-kr3yw)
 
 The [7 GUIs](https://eugenkiss.github.io/7guis/) are a series of UX challenges which range from a simple counter to a highly dynamic spreadsheet with formulae and cell references.
 
