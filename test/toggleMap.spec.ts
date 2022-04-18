@@ -58,7 +58,7 @@ describe('toggleMap - the missing *Map operator', () => {
       const onStatuses: string[] = [];
       const _switch = new Subject<number>();
       connectWires = jest.fn();
-      const light = _switch
+      _switch
         .pipe(
           toggleMap(
             () => turnLightOn$,

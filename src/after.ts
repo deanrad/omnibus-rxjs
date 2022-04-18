@@ -32,7 +32,9 @@ export function after<T>(
   // prettier-ignore
   const resultObs: Observable<T> = delay.pipe(
     isObservable<T>(objOrFn)
+      // then replace the delay emission with the observable's
       ? mergeMap(() => objOrFn)
+      // otherwise emit the single value
       : map(resultMapper)
   );
 

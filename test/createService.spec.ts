@@ -6,9 +6,9 @@ import {
 } from '../src/createService';
 import { Action } from 'typescript-fsa';
 
-import { Omnibus } from '../src/bus'
-import { after } from '../src/after'
-import { concat } from 'rxjs'
+import { Omnibus } from '../src/bus';
+import { after } from '../src/after';
+import { concat } from 'rxjs';
 
 describe('createService', () => {
   const testNamespace = 'testService';
@@ -38,69 +38,69 @@ describe('createService', () => {
           testNamespace,
           bus,
           () => Promise.resolve(3.14159) // for options see https://rxjs.dev/api/index/function/from
-        )
+        );
         const seen: Action<unknown>[] = [];
-        bus.spy(e => seen.push(e));
+        bus.spy((e) => seen.push(e));
         service();
-        await Promise.resolve()
+        await Promise.resolve();
         expect(seen).toContainEqual({
           type: 'testService/next',
-          payload: 3.14159
-        })
-      })
+          payload: 3.14159,
+        });
+      });
       it('can return a zero-argument function', async () => {
         const service = createService<void, number, Error>(
           testNamespace,
           bus,
           () => () => Promise.resolve(3.14159)
-        )
+        );
         const seen: Action<unknown>[] = [];
-        bus.spy(e => seen.push(e));
+        bus.spy((e) => seen.push(e));
         service();
-        await Promise.resolve()
+        await Promise.resolve();
         expect(seen).toContainEqual({
           type: 'testService/next',
-          payload: 3.14159
-        })
-      })
+          payload: 3.14159,
+        });
+      });
     });
     describe('reducerProducer', () => {
-      const initialState = { count: 0 }
+      const initialState = { count: 0 };
       const reduxStyle = (state = initialState, e: Action<unknown>) => {
         if (!e) return state;
         if (e?.type !== 'counter/started') return state;
 
-        return { count: state.count + 1 }
-      }
+        return { count: state.count + 1 };
+      };
       const rtkStyle = (state: typeof initialState, e: Action<unknown>) => {
         if (e?.type !== 'counter/started') return state;
 
-        return { count: state.count + 1 }
+        return { count: state.count + 1 };
       };
       rtkStyle.getInitialState = () => initialState;
 
       it('can return a Redux Style reducer', () => {
-        const counterService = createService<void, number, Error, typeof initialState>(
-          'counter',
-          bus,
-          handler,
-          () => reduxStyle
-        );
-        expect(counterService.state.value).toHaveProperty('count', 0)
-        counterService()
-        expect(counterService.state.value).toHaveProperty('count', 1)
-      })
+        const counterService = createService<
+          void,
+          number,
+          Error,
+          typeof initialState
+        >('counter', bus, handler, () => reduxStyle);
+        expect(counterService.state.value).toHaveProperty('count', 0);
+        counterService();
+        expect(counterService.state.value).toHaveProperty('count', 1);
+      });
       it('can return a ReduxToolkit-Style reducer', () => {
-        const counterService = createService<void, number, Error, typeof initialState>(
-          'counter',
-          bus,
-          handler,
-          () => rtkStyle
-        );
-        expect(counterService.state.value).toHaveProperty('count', 0)
-        counterService()
-        expect(counterService.state.value).toHaveProperty('count', 1)
-      })
+        const counterService = createService<
+          void,
+          number,
+          Error,
+          typeof initialState
+        >('counter', bus, handler, () => rtkStyle);
+        expect(counterService.state.value).toHaveProperty('count', 0);
+        counterService();
+        expect(counterService.state.value).toHaveProperty('count', 1);
+      });
     });
   });
   describe('return value', () => {
@@ -114,8 +114,8 @@ describe('createService', () => {
         const reducer = (state = initial, e) => {
           if (e?.type !== ACs.next.type) return state;
           return {
-            constants: [...state.constants, e?.payload]
-          }
+            constants: [...state.constants, e?.payload],
+          };
         };
         return reducer;
       };
@@ -125,7 +125,11 @@ describe('createService', () => {
           number,
           Error,
           InitialState
-        >(testNamespace, bus, handler, reducerProducer
+        >(
+          testNamespace,
+          bus,
+          handler,
+          reducerProducer
           // createReducer(initial, {
           //   [ACs.next.type]: (all, e) => {
           //     all.constants.push(e.payload);
@@ -220,6 +224,12 @@ describe('createService', () => {
 
         await after(ASYNC_DELAY);
         expect(statuses).toEqual([false, true, false]);
+      });
+    });
+    describe('#bus', () => {
+      it('refers to the bus it was created with', () => {
+        const stateService = createService(testNamespace, bus, handler);
+        expect(stateService.bus === bus).toBeTruthy();
       });
     });
 

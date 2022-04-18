@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Omnibus } from './bus'
+import { Omnibus } from './bus';
 import {
   Subscription,
   Observable,
@@ -8,10 +8,15 @@ import {
   EMPTY,
   defer,
   BehaviorSubject,
-
 } from 'rxjs';
 
-import { scan, map, distinctUntilChanged, endWith, takeUntil } from 'rxjs/operators';
+import {
+  scan,
+  map,
+  distinctUntilChanged,
+  endWith,
+  takeUntil,
+} from 'rxjs/operators';
 import { Action, ActionCreator, actionCreatorFactory } from 'typescript-fsa';
 
 /** A standardized convention of actions this service listens to, and responsds with. */
@@ -32,7 +37,6 @@ interface Stoppable {
   stop(): Subscription;
 }
 
-
 /**
  * A handler may return a Promise, a Promise-returning function, an Observable,
  * an iterable, or `void`. See RxJS' ObservableInput type, and `from` for more.
@@ -47,7 +51,7 @@ type HandlerReturnValue<TNext> =
  * the requests it recieves. On each request it runs a handler
  *  (subject to its concurrency strategy) then triggers events based on that handler's lifecycle.
  *  For a service defined with the prefix "time", its event schema would be:
- * 
+ *
  * - `time/request` - client: requests the time
  * - `time/cancel` - client: cancel the current request for the time
  * - `time/started` - server: time resolution has begun
@@ -58,13 +62,15 @@ type HandlerReturnValue<TNext> =
  */
 export interface Service<TRequest, TNext, TError, TState> extends Stoppable {
   /** Invoke the service as a function directly. */
-  (req: TRequest): void,
+  (req: TRequest): void;
   /** The ActionCreator factories this service listens for, and responds with. */
-  actions: ActionCreators<TRequest, TNext, TError>,
+  actions: ActionCreators<TRequest, TNext, TError>;
   /** Indicates whether a handling is in progress. Use `.value`, or `subscribe()` for updates.  */
-  isActive: BehaviorSubject<boolean>,
+  isActive: BehaviorSubject<boolean>;
   /** Uses the reducer to aggregate the events that are produced from its handlers, emitting a new state for each action (de-duping is not done). Use `.value`, or `subscribe()` for updates. */
-  state: BehaviorSubject<TState>
+  state: BehaviorSubject<TState>;
+  /** An untyped reference to the bus this service listens and triggers on */
+  bus: Omnibus<unknown>;
 }
 
 /** @example bus.listen(matchesAny(Actions.complete, Actions.error), handler) */
@@ -78,13 +84,13 @@ export function matchesAny(...acs: ActionCreator<any>[]) {
  * Like Redux Toolkit's createAsyncThunk, but using an event bus, not Redux for communication,
  * and both cancelable, and concurrency-controllable. By default
  * runs handlers simultaneously.
- * 
+ *
  * @param actionNamespace - Prefix of all actions: The 'search' in search/request
  * @param bus - The Omnibus event bus triggered to and listened on
  * @param handler - A function returning a Promise, Observable, or Promise thunk from whose life-cycle events are triggered.
  * @param reducerProducer - A function returning a reducer which populates `.state`. Recieves ActionCreators as its argument.
  * @param listenMode - Concurrency strategy for when an existing handler is in progress.
- * @returns 
+ * @returns
  */
 export function createService<TRequest, TNext, TError, TState = object>(
   actionNamespace: string,
@@ -93,9 +99,9 @@ export function createService<TRequest, TNext, TError, TState = object>(
   reducerProducer: (
     acs?: ActionCreators<TRequest, TNext, TError>
   ) => (state: TState, action: Action<any>) => TState = () =>
-      (state: TState, _: any) => {
-        return state;
-      },
+    (state: TState, _: any) => {
+      return state;
+    },
   listenMode:
     | 'listen'
     | 'listenQueueing'
@@ -151,9 +157,7 @@ export function createService<TRequest, TNext, TError, TState = object>(
           ? defer(oneResult)
           : EMPTY
         : from(oneResult ?? EMPTY);
-    return obsResult.pipe(
-      takeUntil(bus.query(ACs.cancel.match))
-    )
+    return obsResult.pipe(takeUntil(bus.query(ACs.cancel.match)));
   };
   const sub = bus[listenMode](
     ACs.request.match,
@@ -186,6 +190,7 @@ export function createService<TRequest, TNext, TError, TState = object>(
   const returnValue = Object.assign(requestor, { actions: ACs }, controls, {
     isActive,
     state,
+    bus,
   });
 
   return returnValue;
@@ -195,13 +200,13 @@ export function createService<TRequest, TNext, TError, TState = object>(
  * Like Redux Toolkit's createAsyncThunk, but using an event bus, not Redux for communication,
  * and both cancelable, and concurrency-controllable. Queues up handlers if
  * they return deferred objects: () => Promise or Observable.
- * 
+ *
  * @param actionNamespace - Prefix of all actions eg dog/request
  * @param bus - The Omnibus event bus read and written to
  * @param handler - Function returning Promise, Observable or generator from which events are generated
  * @param reducerProducer - Function returning a reducer for #state - recieves ActionCreators as its argument.
  * @param listenMode - Concurrency strategy for when an existing handler is in progress.
- * @returns 
+ * @returns
  */
 export function createQueueingService<TRequest, TNext, TError, TState = object>(
   actionNamespace: string,
@@ -210,9 +215,9 @@ export function createQueueingService<TRequest, TNext, TError, TState = object>(
   reducerProducer: (
     acs?: ActionCreators<TRequest, TNext, TError>
   ) => (state: TState, action: Action<any>) => TState = () =>
-      (state: TState, _: any) => {
-        return state;
-      }
+    (state: TState, _: any) => {
+      return state;
+    }
 ): Service<TRequest, TNext, TError, TState> {
   return createService(
     actionNamespace,
@@ -225,14 +230,14 @@ export function createQueueingService<TRequest, TNext, TError, TState = object>(
 
 /**
  * Like Redux Toolkit's createAsyncThunk, but using an event bus, not Redux for communication,
- * and both cancelable, and concurrency-controllable. Prevents events from a previous handling 
+ * and both cancelable, and concurrency-controllable. Prevents events from a previous handling
  * from being emitted, and cancels the handler if it returned an Observable.
  * @param actionNamespace - Prefix of all actions eg dog/request
  * @param bus - The Omnibus event bus read and written to
  * @param handler - Function returning Promise, Observable or generator from which events are generated
  * @param reducerProducer - Function returning a reducer for #state - recieves ActionCreators as its argument.
  * @param listenMode - Concurrency strategy for when an existing handler is in progress.
- * @returns 
+ * @returns
  */
 export function createSwitchingService<
   TRequest,
@@ -246,9 +251,9 @@ export function createSwitchingService<
   reducerProducer: (
     acs?: ActionCreators<TRequest, TNext, TError>
   ) => (state: TState, action: Action<any>) => TState = () =>
-      (state: TState, _: any) => {
-        return state;
-      }
+    (state: TState, _: any) => {
+      return state;
+    }
 ): Service<TRequest, TNext, TError, TState> {
   return createService(
     actionNamespace,
@@ -268,7 +273,7 @@ export function createSwitchingService<
  * @param handler - Function returning Promise, Observable or generator from which events are generated
  * @param reducerProducer - Function returning a reducer for #state - recieves ActionCreators as its argument.
  * @param listenMode - Concurrency strategy for when an existing handler is in progress.
- * @returns 
+ * @returns
  */
 export function createBlockingService<TRequest, TNext, TError, TState = object>(
   actionNamespace: string,
@@ -277,9 +282,10 @@ export function createBlockingService<TRequest, TNext, TError, TState = object>(
   reducerProducer: (
     acs?: ActionCreators<TRequest, TNext, TError>
   ) => (state: TState, action: Action<any>) => TState = () =>
-      (state: TState, _: any) => {
-        return state;
-      }): Service<TRequest, TNext, TError, TState> {
+    (state: TState, _: any) => {
+      return state;
+    }
+): Service<TRequest, TNext, TError, TState> {
   return createService(
     actionNamespace,
     bus,

@@ -6,7 +6,7 @@ import {
   OperatorFunction,
   PartialObserver,
   Subject,
-  Subscription
+  Subscription,
 } from 'rxjs';
 import { defer, EMPTY, from } from 'rxjs';
 import {
@@ -98,10 +98,14 @@ export class Omnibus<TBusItem> {
       // first() errors if stream completes (which resets cause)
       const errsIfNotFirst = this.query(matcher).pipe(first());
       errsIfNotFirst.subscribe({
-        error() { reject('Bus was reset.') },
-        next(v: TMatchType) { resolve(v) }
-      })
-    })
+        error() {
+          reject('Bus was reset.');
+        },
+        next(v: TMatchType) {
+          resolve(v);
+        },
+      });
+    });
   }
 
   /**
@@ -279,13 +283,13 @@ export class Omnibus<TBusItem> {
     const obsResult: Observable<TConsequence> =
       typeof oneResult === 'function'
         ? // @ts-ignore
-        oneResult.length === 0
+          oneResult.length === 0
           ? // @ts-ignore
-          defer(oneResult)
+            defer(oneResult)
           : // @ts-ignore
-          new Observable(oneResult)
+            new Observable(oneResult)
         : // @ts-ignore
-        from(oneResult ?? EMPTY);
+          from(oneResult ?? EMPTY);
     return obsResult;
   }
 
