@@ -7,16 +7,6 @@ PASS test/toggleMap.spec.ts
     mapper function
       ✓ gives info about both the cause and the effect
 
-PASS test/3rd-party.spec.ts
-  Reference: FSA
-    ✓ creates an action
-    ✓ provides a predicate #match
-  Reference: RxJS
-    Observable subscriptions
-      ✓ can deliver events synchronously
-      ✓ can deliver events with Promise
-      ✓ can deliver events with setTimeout(0)
-
 PASS test/after.spec.ts
   after
     ✓ is an Observable
@@ -34,6 +24,16 @@ PASS test/after.spec.ts
       when an Observable
         ✓ defers subscription
         ✓ yields the value
+
+PASS test/3rd-party.spec.ts
+  Reference: FSA
+    ✓ creates an action
+    ✓ provides a predicate #match
+  Reference: RxJS
+    Observable subscriptions
+      ✓ can deliver events synchronously
+      ✓ can deliver events with Promise
+      ✓ can deliver events with setTimeout(0)
 
 PASS test/createService.spec.ts
   createService
@@ -65,6 +65,8 @@ PASS test/createService.spec.ts
         ✓ terminates on a reset
         ✓ has a final value of false on bus.reset()
         ✓ has a final value of false on stop()
+      #bus
+        ✓ refers to the bus it was created with
       #actions: a property for each actioncreator
         ✓ has property request
         ✓ has property cancel
@@ -82,97 +84,6 @@ PASS test/createService.spec.ts
     createBlockingService
       ✓ calls createService with "listenBlocking"
 
-PASS test/bus.spec.ts
-  Bus
-    ✓ can be instantiated with the BusItemType it will accept
-    Typings
-      ✓ types - can make more actions
-    #query
-      With a Predicate
-        ✓ Returns an Observable of matching events
-        ✓ Returns an Observable of filtered events
-        ✓ is canceled by a reset
-        Type safety
-          ✓ Returns a typed Observable of filtered events
-    #nextEvent
-      With a Predicate
-        ✓ resolves to the next matching event
-        ✓ rejects on a reset if it hasnt triggered yet
-        ✓ ignores a reset if it has triggered already
-    #trigger
-      ✓ puts an action on the bus
-      ✓ Is not vulnerable to listener errors
-      Type Safety
-        ✓ typechecks argument against bus type
-    #listen
-      Handler
-        Returning Observables
-          retriggering via observeWith
-            ✓ can send events from effects back through the bus
-          retrigging via observeAll
-            ✓ puts all return values
-        Returning Promises
-          With a callback-based observer
-            ✓ can trigger new events
-        Returning functions
-          ✓ can return 0-arity function to call defer()
-          ✓ can return 1-arity function to create Observable via new Observable()
-        Can return any ObservableInput
-          ✓ Unpacks strings since theyre Iterable
-          ✓ Works with generators
-          ✓ allows for no/void return value
-      Observer
-        ✎ todo contains callbacks attached to the handler lifecycle
-    #listenQueueing
-      ✓ serializes execution
-    #listenSwitching
-      ✓ cancels existing, and starts a new Subscription
-    #listenBlocking
-      ✓ cancels existing, and starts a new Subscription
-    #listen #trigger #trigger
-      handlers which error
-        Not rescued
-          ✓ does not continue listening
-        Rescued
-          ✓ continues listening
-    #reset
-      ✓ ends all listeners
-      ✓ ends all handlers
-    #spy
-      ✓ calls the function passed to it on any event, before any listener
-      ✓ returns a subscription for cancelation
-      #spy #spy
-        ✓ runs spies in the order appended
-    #guard
-      ✎ todo returns a subscription for cancelation
-      callback
-        ✎ todo is called on matching events
-        when it throws
-          ✓ allows rejection of bus items by throwing
-          ✓ doesnt terminate the guard when throwing
-        return value
-          ✓ can mutate the payload
-      #guard #guard
-        ✓ runs guards in the order created
-      #spy #guard
-        ✓ runs guards before any spies
-    #filter
-      ✎ todo returns a subscription for cancelation
-      callback
-        ✓ may replace the action with another, after guards and before spies
-  Robust Error Handling
-    Errors dont stop triggering, kill the listener, allow other listeners
-      ✓ empty observable
-      ✓ syncError observable
-      ✓ resolvedPromise observable
-      ✓ rejectedPromise observable
-      ✓ endpointValue observable
-      ✓ timeout observable
-      ✓ endpointError observable
-      ✓ dyingStream observable
-      ✓ endpointStream observable
-      ✓ valueStream observable
-
 PASS test/utils.spec.ts
   Bus
     ✓ can be instantiated with the BusItemType it will accept
@@ -185,11 +96,6 @@ PASS test/utils.spec.ts
         ✓ is canceled by a reset
         Type safety
           ✓ Returns a typed Observable of filtered events
-    #nextEvent
-      With a Predicate
-        ✓ resolves to the next matching event
-        ✓ rejects on a reset if it hasnt triggered yet
-        ✓ ignores a reset if it has triggered already
     #trigger
       ✓ puts an action on the bus
       ✓ Is not vulnerable to listener errors
@@ -248,9 +154,11 @@ PASS test/utils.spec.ts
       #spy #guard
         ✓ runs guards before any spies
     #filter
+      ✓ only responds to its own events
       ✎ todo returns a subscription for cancelation
       callback
         ✓ may replace the action with another, after guards and before spies
+        ✓ may remove the action by returning null or undefined
   Robust Error Handling
     Errors dont stop triggering, kill the listener, allow other listeners
       ✓ empty observable
@@ -281,8 +189,96 @@ PASS test/utils.spec.ts
     ✓ flattens a Promise for an array to an Observable of its items
     ✓ flattens a Promise for an array to an Observable of its items, after a delay
 
+PASS test/bus.spec.ts
+  Bus
+    ✓ can be instantiated with the BusItemType it will accept
+    Typings
+      ✓ types - can make more actions
+    #query
+      With a Predicate
+        ✓ Returns an Observable of matching events
+        ✓ Returns an Observable of filtered events
+        ✓ is canceled by a reset
+        Type safety
+          ✓ Returns a typed Observable of filtered events
+    #trigger
+      ✓ puts an action on the bus
+      ✓ Is not vulnerable to listener errors
+      Type Safety
+        ✓ typechecks argument against bus type
+    #listen
+      Handler
+        Returning Observables
+          retriggering via observeWith
+            ✓ can send events from effects back through the bus
+          retrigging via observeAll
+            ✓ puts all return values
+        Returning Promises
+          With a callback-based observer
+            ✓ can trigger new events
+        Returning functions
+          ✓ can return 0-arity function to call defer()
+          ✓ can return 1-arity function to create Observable via new Observable()
+        Can return any ObservableInput
+          ✓ Unpacks strings since theyre Iterable
+          ✓ Works with generators
+          ✓ allows for no/void return value
+      Observer
+        ✎ todo contains callbacks attached to the handler lifecycle
+    #listenQueueing
+      ✓ serializes execution
+    #listenSwitching
+      ✓ cancels existing, and starts a new Subscription
+    #listenBlocking
+      ✓ cancels existing, and starts a new Subscription
+    #listen #trigger #trigger
+      handlers which error
+        Not rescued
+          ✓ does not continue listening
+        Rescued
+          ✓ continues listening
+    #reset
+      ✓ ends all listeners
+      ✓ ends all handlers
+    #spy
+      ✓ calls the function passed to it on any event, before any listener
+      ✓ returns a subscription for cancelation
+      #spy #spy
+        ✓ runs spies in the order appended
+    #guard
+      ✎ todo returns a subscription for cancelation
+      callback
+        ✎ todo is called on matching events
+        when it throws
+          ✓ allows rejection of bus items by throwing
+          ✓ doesnt terminate the guard when throwing
+        return value
+          ✓ can mutate the payload
+      #guard #guard
+        ✓ runs guards in the order created
+      #spy #guard
+        ✓ runs guards before any spies
+    #filter
+      ✓ only responds to its own events
+      ✎ todo returns a subscription for cancelation
+      callback
+        ✓ may replace the action with another, after guards and before spies
+        ✓ may remove the action by returning null or undefined
+  Robust Error Handling
+    Errors dont stop triggering, kill the listener, allow other listeners
+      ✓ empty observable
+      ✓ syncError observable
+      ✓ resolvedPromise observable
+      ✓ rejectedPromise observable
+      ✓ endpointValue observable
+      ✓ timeout observable
+      ✓ endpointError observable
+      ✓ dyingStream observable
+      ✓ endpointStream observable
+      ✓ valueStream observable
+
 Test Suites: 6 passed, 6 total
-Tests:       12 todo, 149 passed, 161 total
+Tests:       12 todo, 148 passed, 160 total
 Snapshots:   19 passed, 19 total
-Time:        1.791 s
+Time:        0.935 s
 Ran all test suites.
