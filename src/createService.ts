@@ -136,9 +136,7 @@ export function createService<TRequest, TNext, TError, TState = object>(
     reducer.getInitialState ? reducer.getInitialState() : reducer()
   );
   const stateSub = bus
-    .query(
-      matchesAny(ACs.started, ACs.next, ACs.error, ACs.complete, ACs.canceled)
-    )
+    .query(matchesAny(...Object.values(ACs)))
     .pipe(scan((all, e) => reducer(all, e), state.value))
     .subscribe(state);
 
