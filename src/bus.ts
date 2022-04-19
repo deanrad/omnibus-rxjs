@@ -118,16 +118,21 @@ export class Omnibus<TBusItem> {
     });
 
     let filteredItem = item;
+    let canceled = false;
     this.filters.forEach(([predicate, filter]) => {
-      /* istanbul ignore next */ // just doesnt get picked up
       if (!predicate(item)) return;
 
       const filterResult = filter(filteredItem);
-      /* istanbul ignore next */ // just doesnt get picked up
+
       if (filterResult !== null && filterResult !== undefined) {
         filteredItem = filterResult;
+      } else {
+        canceled = true;
       }
     });
+    if (canceled) {
+      return;
+    }
 
     this.spies.forEach(([predicate, handler]) => {
       predicate(filteredItem) && handler(filteredItem);

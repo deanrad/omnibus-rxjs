@@ -822,19 +822,42 @@ Array [
 
   describe('#filter', () => {
     it.todo('returns a subscription for cancelation');
-    describe('callback', () => {
-      it(
-        'may replace the action with another, after guards and before spies',
-        capturing(StringBus, (seen) => {
-          StringBus.filter(
-            () => true,
-            (s) => s.substr(0, 4)
-          );
-          StringBus.trigger('BOOYEAH');
+    it('only responds to its own events', () => {
+      const seen = [];
 
-          expect(seen).toEqual(['BOOY']);
-        })
+      StringBus.filter(
+        (s) => s === 'never',
+        (s) => seen.push(s)
       );
+      StringBus.trigger('always');
+      expect(seen).toEqual([]);
+    });
+
+    describe('callback', () => {
+      it('may replace the action with another, after guards and before spies', () => {
+        const seen = [];
+        StringBus.spy((e) => seen.push(e));
+        StringBus.filter(
+          () => true,
+          (s) => s.substr(0, 4)
+        );
+        StringBus.trigger('BOOYEAH');
+
+        expect(seen).toEqual(['BOOY']);
+      });
+
+      it('may remove the action by returning null or undefined', () => {
+        const seen = [];
+        StringBus.spy((e) => seen.push(e));
+
+        StringBus.filter(
+          () => true,
+          () => null // removes it
+        );
+        StringBus.trigger('BOOYEAH');
+
+        expect(seen).toEqual([]);
+      });
     });
   });
 });
