@@ -57,7 +57,7 @@ export class Omnibus<TBusItem> {
   private channel: Subject<TBusItem>;
   private resets: Subject<void>;
   private guards: Array<[Predicate<TBusItem>, (item: TBusItem) => void]>;
-  private filters: Array<[Predicate<TBusItem>, (item: TBusItem) => TBusItem]>;
+  private filters: Array<[Predicate<TBusItem>, (item: TBusItem) => TBusItem|null|undefined]>;
   private spies: Array<[Predicate<TBusItem>, (item: TBusItem) => void]>;
 
   /** While unhandled listener errors terminate the listener,
@@ -222,7 +222,7 @@ export class Omnibus<TBusItem> {
    * Throwing an exception will raise to the triggerer, but not terminate the guard.*/
   public filter<TMatchType extends TBusItem = TBusItem>(
     matcher: (i: TBusItem) => i is TMatchType,
-    fn: (item: TBusItem) => TBusItem
+    fn: (item: TBusItem) => TBusItem|null|undefined
   ) {
     this.filters.push([matcher, fn]);
     return this.createRemovalSub(matcher, fn, this.filters);
