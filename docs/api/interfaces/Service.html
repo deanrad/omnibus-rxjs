@@ -123,7 +123,7 @@
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/00af242/src/createService.ts#L61">src/createService.ts:61</a></li>
+								<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/81d36b2/src/createService.ts#L65">src/createService.ts:65</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -158,6 +158,7 @@
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="Service.html#actions" class="tsd-kind-icon">actions</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="Service.html#bus" class="tsd-kind-icon">bus</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="Service.html#isActive" class="tsd-kind-icon">is<wbr>Active</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="Service.html#state" class="tsd-kind-icon">state</a></li>
 							</ul>
@@ -179,7 +180,7 @@
 					<div class="tsd-signature tsd-kind-icon">actions<span class="tsd-signature-symbol">:</span> <a href="ActionCreators.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionCreators</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/00af242/src/createService.ts#L63">src/createService.ts:63</a></li>
+							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/81d36b2/src/createService.ts#L67">src/createService.ts:67</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -189,12 +190,27 @@
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="bus" class="tsd-anchor"></a>
+					<h3>bus</h3>
+					<div class="tsd-signature tsd-kind-icon">bus<span class="tsd-signature-symbol">:</span> <a href="../classes/Omnibus.html" class="tsd-signature-type" data-tsd-kind="Class">Omnibus</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/81d36b2/src/createService.ts#L73">src/createService.ts:73</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>An untyped reference to the bus this service listens and triggers on</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="isActive" class="tsd-anchor"></a>
 					<h3>is<wbr>Active</h3>
 					<div class="tsd-signature tsd-kind-icon">is<wbr>Active<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">BehaviorSubject</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/00af242/src/createService.ts#L65">src/createService.ts:65</a></li>
+							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/81d36b2/src/createService.ts#L69">src/createService.ts:69</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -209,7 +225,7 @@
 					<div class="tsd-signature tsd-kind-icon">state<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">BehaviorSubject</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TState</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/00af242/src/createService.ts#L67">src/createService.ts:67</a></li>
+							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/81d36b2/src/createService.ts#L71">src/createService.ts:71</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -232,7 +248,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from Stoppable.stop</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/00af242/src/createService.ts#L32">src/createService.ts:32</a></li>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/81d36b2/src/createService.ts#L37">src/createService.ts:37</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -273,6 +289,9 @@
 						<ul>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="Service.html#actions" class="tsd-kind-icon">actions</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="Service.html#bus" class="tsd-kind-icon">bus</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-interface">
 								<a href="Service.html#isActive" class="tsd-kind-icon">is<wbr>Active</a>
