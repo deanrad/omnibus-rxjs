@@ -57,7 +57,9 @@ export class Omnibus<TBusItem> {
   private channel: Subject<TBusItem>;
   private resets: Subject<void>;
   private guards: Array<[Predicate<TBusItem>, (item: TBusItem) => void]>;
-  private filters: Array<[Predicate<TBusItem>, (item: TBusItem) => TBusItem|null|undefined]>;
+  private filters: Array<
+    [Predicate<TBusItem>, (item: TBusItem) => TBusItem | null | undefined]
+  >;
   private spies: Array<[Predicate<TBusItem>, (item: TBusItem) => void]>;
 
   /** While unhandled listener errors terminate the listener,
@@ -140,15 +142,16 @@ export class Omnibus<TBusItem> {
     this.channel.next(filteredItem);
   }
 
-  /** Attach side-effect executors to the bus via `listen`.
+  /** Triggers effects upon matching events, using an ASAP Concurrency Strategy.
+   * Newly returned effects are begun immediately, without regard to resource constraints, and may complete in any order (ala `mergeMap`).
    *
    * @param matcher A predicate (returning Boolean) function to determine the subset of Event Bus events the handler will be invoked for.
-   * @param handler Creates an Observable of work. Called for each matching event. ConcurrencyMode is applied to it.
-   * @param observer Does something with the .
+   * @param handler Called for each matching event, returns an ObservableInput (an Iterable,Promise,Observable)
+   * @param observer Provides functions to be called upon notifications of the handler
    * @returns a subscription that can be used to unsubscribe the listener, thereby canceling work in progress.
    */
   public listen<TConsequence, TMatchType extends TBusItem = TBusItem>(
-    matcher: (i: TBusItem) => i is TMatchType,
+    matcher: ((i: TBusItem) => i is TMatchType) | ((i: TBusItem) => boolean),
     handler: ResultCreator<TMatchType, TConsequence>,
     observer?: TapObserver<TConsequence>,
     operator = mergeMap
@@ -184,27 +187,45 @@ export class Omnibus<TBusItem> {
     return consequences.subscribe(errorNotifier);
   }
 
-  /** Calls listen with concatMap (queueing) semantics */
+  /** Triggers effects upon matching events, using a Queueing Concurrency Strategy.
+   * Newly returned effects are enqueued and always complete in the order they were triggered (ala `concatMap`).
+   * @param matcher A predicate (returning Boolean) function to determine the subset of Event Bus events the handler will be invoked for.
+   * @param handler Called for each matching event, returns an ObservableInput (an Iterable,Promise,Observable)
+   * @param observer Provides functions to be called upon notifications of the handler
+   * @returns a subscription that can be used to unsubscribe the listener, thereby canceling work in progress.
+   */
   public listenQueueing<TConsequence, TMatchType extends TBusItem = TBusItem>(
-    matcher: (i: TBusItem) => i is TMatchType,
+    matcher: ((i: TBusItem) => i is TMatchType) | ((i: TBusItem) => boolean),
     handler: ResultCreator<TMatchType, TConsequence>,
     observer?: TapObserver<TConsequence>
   ) {
     return this.listen(matcher, handler, observer, concatMap);
   }
 
-  /** Calls listen with switchMap (restarting) semantics */
+  /** Triggers effects upon matching events, using a Queueing Concurrency Strategy.
+   * Any existing effect is canceled (if it is an Observable, not a Promise) before the new effect is begun (ala `switchMap`).
+   * @param matcher A predicate (returning Boolean) function to determine the subset of Event Bus events the handler will be invoked for.
+   * @param handler Called for each matching event, returns an ObservableInput (an Iterable,Promise,Observable)
+   * @param observer Provides functions to be called upon notifications of the handler
+   * @returns a subscription that can be used to unsubscribe the listener, thereby canceling work in progress.
+   */
   public listenSwitching<TConsequence, TMatchType extends TBusItem = TBusItem>(
-    matcher: (i: TBusItem) => i is TMatchType,
+    matcher: ((i: TBusItem) => i is TMatchType) | ((i: TBusItem) => boolean),
     handler: ResultCreator<TMatchType, TConsequence>,
     observer?: TapObserver<TConsequence>
   ) {
     return this.listen(matcher, handler, observer, switchMap);
   }
 
-  /** Calls listen with blocking (exhausting) semantics */
+  /** Triggers effects upon matching events, using a Blocking (Modal/Singleton) Concurrency Strategy.
+   * A new effect is not begun if one is in progress. (ala `exhaustMap`).
+   * @param matcher A predicate (returning Boolean) function to determine the subset of Event Bus events the handler will be invoked for.
+   * @param handler Called for each matching event, returns an ObservableInput (an Iterable,Promise,Observable)
+   * @param observer Provides functions to be called upon notifications of the handler
+   * @returns a subscription that can be used to unsubscribe the listener, thereby canceling work in progress.
+   */
   public listenBlocking<TConsequence, TMatchType extends TBusItem = TBusItem>(
-    matcher: (i: TBusItem) => i is TMatchType,
+    matcher: ((i: TBusItem) => i is TMatchType) | ((i: TBusItem) => boolean),
     handler: ResultCreator<TMatchType, TConsequence>,
     observer?: TapObserver<TConsequence>
   ) {
@@ -222,7 +243,7 @@ export class Omnibus<TBusItem> {
    * Throwing an exception will raise to the triggerer, but not terminate the guard.*/
   public filter<TMatchType extends TBusItem = TBusItem>(
     matcher: (i: TBusItem) => i is TMatchType,
-    fn: (item: TBusItem) => TBusItem|null|undefined
+    fn: (item: TBusItem) => TBusItem | null | undefined
   ) {
     this.filters.push([matcher, fn]);
     return this.createRemovalSub(matcher, fn, this.filters);
