@@ -251,11 +251,35 @@ describe('createService', () => {
         });
       });
 
-      it('has property stop()', () => {
-        expect(testService).toHaveProperty('stop');
-        testService.stop();
+      describe('Cancelation', () => {
+        const testService = createService('test-async', bus, () =>
+          after(10, Math.PI)
+        );
+
+        it('can cancel with property cancelCurrent()', async () => {
+          const seen = eventsOf(bus);
+          testService(1);
+          testService.cancelCurrent();
+          // also bus.trigger(testService.actions.cancel());
+          // long enough to see completion
+          await after(100);
+          expect(seen.map((e) => e.type)).toEqual([
+            'test-async/request',
+            'test-async/cancel',
+          ]);
+        });
+        it('has property stop()', () => {
+          expect(testService).toHaveProperty('stop');
+        });
+        it('removes listeners and cancels handlings when stop()-ed.', async () => {
+          expect(testService).toHaveProperty('stop');
+          const seen = eventsOf(bus);
+          testService(1);
+          testService.stop();
+          await after(100);
+          expect(seen.map((e) => e.type)).toEqual(['test-async/request']);
+        });
       });
-      it.todo('removes listeners and cancels handlings when stop()-ed.');
     });
     it('triggers a request to the bus when called', () => {
       const seen = eventsOf(bus);

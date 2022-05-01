@@ -21,7 +21,9 @@ import { Action, ActionCreator, actionCreatorFactory } from 'typescript-fsa';
 
 /** A standardized convention of actions this service listens to, and responsds with. */
 export interface ActionCreators<TRequest, TNext, TError> {
+  /** invokes the service */
   request: ActionCreator<TRequest>;
+  /** cancels the current invocation of the service */
   cancel: ActionCreator<void>;
   started: ActionCreator<void>;
   next: ActionCreator<TNext>;
@@ -35,6 +37,11 @@ interface Stoppable {
    * @returns The closed subscription.
    */
   stop(): Subscription;
+  /** Cancels the current listening by triggering service.actions.cancel.
+   * The effect is truly canceled if it was started from an Observable.
+   * The canceled event will appear on the bus, and no more next events.
+   */
+  cancelCurrent(): void;
 }
 
 /**
@@ -183,6 +190,9 @@ export function createService<TRequest, TNext, TError, TState = object>(
       stateSub.unsubscribe(); // flow no more values to it
       state.complete(); // make isStopped = true
       return sub;
+    },
+    cancelCurrent() {
+      bus.trigger(ACs.cancel());
     },
   };
   const returnValue = Object.assign(requestor, { actions: ACs }, controls, {
