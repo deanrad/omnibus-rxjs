@@ -1,7 +1,6 @@
 // @ts-nocheck
 import { Observable, of, from } from 'rxjs';
 import { delay, mergeAll } from 'rxjs/operators';
-import type { Action } from 'typescript-fsa';
 import { after } from './after';
 
 // See https://dev.to/deanius/the-thresholds-of-perception-in-ux-435g
