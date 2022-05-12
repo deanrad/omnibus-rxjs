@@ -26,6 +26,32 @@ describe('after', () => {
         expect(result).toEqual(3);
       });
     });
+    describe('when a Promise', () => {
+      it('becomes a chained Promise', async () => {
+        const result = after(Promise.resolve(1), 2);
+        expect(result).toHaveProperty('subscribe');
+        let resultVal = await after(Promise.resolve(1), 2);
+        expect(resultVal).toEqual(2);
+      });
+
+      it('doesnt evaluate the mapper unless subscribed/awaited', async () => {
+        let called = false;
+        const result = after(Promise.resolve(1), () => {
+          called = true;
+          return 4;
+        });
+        expect(called).toBeFalsy();
+        await Promise.resolve();
+        expect(called).toBeFalsy();
+
+        expect(result).toHaveProperty('subscribe');
+
+        let resultVal = await result;
+
+        expect(resultVal).toEqual(4);
+        expect(called).toBeTruthy();
+      });
+    });
   });
 
   describe('value arg', () => {

@@ -1,4 +1,4 @@
-import { firstValueFrom, Observable, of, timer } from 'rxjs';
+import { firstValueFrom, from, Observable, of, timer } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 
 interface AwaitableObservable<T> extends PromiseLike<T>, Observable<T> {}
@@ -8,7 +8,7 @@ export interface Thunk<T> {
 }
 /**
  * `after` is a composable `setTimeout`, based on Observables.
- * `after` returns an Observable of the value, or result of the function call, after the number of milliseconds given.
+ * `after` returns an Observable of the value, or result of the function call, after the Promise, or the number of milliseconds given.
  * For a delay of 0, the function is executed synchronously when `.subscribe()` is called.
  * `after` is 'thenable' - and can be awaited like a Promise.
  * However, since underneath it is an Observable, `after` is both lazy and cancelable!
@@ -16,15 +16,17 @@ export interface Thunk<T> {
  * @returns An Observable of the object or thunk return value, which can be the target of an `await`.
  */
 export function after<T>(
-  ms: number,
+  msOrPromise: number | Promise<unknown>,
   objOrFn?: T | Thunk<T> | Observable<T>
 ): AwaitableObservable<T> {
-  const delay = ms <= 0 ? of(0) : timer(ms);
-
   const resultMapper =
     typeof objOrFn === 'function'
       ? (objOrFn as (value: Number) => any)
       : () => objOrFn;
+
+  // prettier-ignore
+  // @ts-ignore
+  const delay = msOrPromise.then ? from(msOrPromise) : msOrPromise <= 0 ? of(0) : timer(msOrPromise);
 
   function isObservable<T>(obj: any): obj is Observable<T> {
     return obj?.subscribe !== undefined;
