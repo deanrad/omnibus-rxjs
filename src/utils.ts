@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { Observable, of, from } from 'rxjs';
 import { delay, mergeAll } from 'rxjs/operators';
+import type { Action } from 'typescript-fsa';
 import { after } from './after';
 
 // See https://dev.to/deanius/the-thresholds-of-perception-in-ux-435g
@@ -75,4 +76,12 @@ export const AWAITABLE = {
     all[name] = () => AWAITABLE.Duration(THRESHOLD[name], 'name');
     return all;
   }, {} as { [key: string]: () => Observable<unknown> }),
+};
+
+/** Returns a predicate that matches an exact Event bus item (with `===`)*/
+export const is = (val: any) => (e: any) => e === val;
+
+/** Returns a predicate that matches an FSA with the given type*/
+export const isType = (type: string) => (e: { type: string }) => {
+  return e.type === type;
 };

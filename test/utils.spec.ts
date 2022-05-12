@@ -13,7 +13,9 @@ import {
   DURATION,
   THRESHOLD,
   observableFromPromisedArray,
-  observeArray
+  observeArray,
+  is,
+  isType,
 } from '../src/utils';
 import { TestObservable } from './bus.spec';
 
@@ -230,16 +232,16 @@ describe('observeArray', () => {
     const items = observeArray(() => Promise.resolve(_items));
 
     const seen: typeof _items = [];
-    await new Promise<void>(resolve => {
+    await new Promise<void>((resolve) => {
       items.subscribe({
         next: (i) => {
-          seen.push(i)
+          seen.push(i);
         },
         complete: () => {
-          resolve()
-        }
-      })
-    })
+          resolve();
+        },
+      });
+    });
 
     expect(seen).toEqual(_items);
   });
@@ -250,19 +252,36 @@ describe('observeArray', () => {
     const items = observeArray(() => Promise.resolve(_items), DELAY);
 
     const seen: typeof _items = [];
-    const _done = new Promise<void>(resolve => {
+    const _done = new Promise<void>((resolve) => {
       items.subscribe({
         next: (i) => {
-          seen.push(i)
+          seen.push(i);
         },
         complete: () => {
-          resolve()
-        }
-      })
-    })
+          resolve();
+        },
+      });
+    });
 
     expect(seen).toEqual([]);
-    await after(DELAY)
+    await after(DELAY);
     expect(seen).toEqual(_items);
+  });
+});
+
+describe('matchers', () => {
+  describe('is', () => {
+    it('Returns a predicate that matches an exact item', () => {
+      const pred = is('foo');
+      expect(pred('moo')).toBeFalsy();
+      expect(pred('foo')).toBeTruthy();
+    });
+  });
+  describe('isType', () => {
+    it('Returns a predicate that matches the type of an FSA', () => {
+      const pred = isType('foo');
+      expect(pred({ type: 'moo' })).toBeFalsy();
+      expect(pred({ type: 'foo' })).toBeTruthy();
+    });
   });
 });

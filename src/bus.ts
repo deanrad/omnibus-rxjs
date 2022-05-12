@@ -38,7 +38,7 @@ type SubscribeObserver = {
 export type TapObserver<T> = PartialObserver<T> | SubscribeObserver;
 export type ObserverKey = keyof PartialObserver<any> | keyof SubscribeObserver;
 export type MapFn<T, U> = (t?: T) => U;
-export type Mapper<T, U> = Record<ObserverKey, MapFn<T, U>>;
+export type Mapper<T, U> = Partial<Record<ObserverKey, MapFn<T, U>>>;
 
 const thunkTrue = () => true;
 //#endregion
