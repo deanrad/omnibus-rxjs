@@ -18,7 +18,7 @@
       "jest"
     ],
     "sourceMap": true,
-    "removeComments": true,
+    "removeComments": false,
     "declaration": true,
     "declarationDir": "dist/tsc/types"
   },
