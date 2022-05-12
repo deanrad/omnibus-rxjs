@@ -477,6 +477,81 @@ Array [
     describe('Observer', () => {
       it.todo('contains callbacks attached to the handler lifecycle');
     });
+    describe('triggering from within', () => {
+      it('pre-empts in listeners that follow, but not spies or earlier', () => {
+        const heardViaEarlyListen = [];
+        const heardViaLateListen = [];
+        const seenViaSpy = [];
+
+        miniBus.spy((e) => {
+          seenViaSpy.push(e);
+        });
+
+        miniBus.listen(
+          () => true,
+          (e) => {
+            heardViaEarlyListen.push(e);
+          }
+        );
+
+        const sub = miniBus.listen(
+          (e) => e === 1,
+          () => {
+            miniBus.trigger(2);
+          }
+        );
+        miniBus.listen(
+          () => true,
+          (e) => {
+            heardViaLateListen.push(e);
+          }
+        );
+
+        miniBus.trigger(1);
+        expect(seenViaSpy).toEqual([1, 2]);
+        expect(heardViaEarlyListen).toEqual([1, 2]);
+        expect(heardViaLateListen).toEqual([2, 1]);
+        sub.unsubscribe();
+      });
+      it('via after(0), ', async () => {
+        const heardViaEarlyListen = [];
+        const heardViaLateListen = [];
+        const seenViaSpy = [];
+
+        miniBus.spy((e) => {
+          seenViaSpy.push(e);
+        });
+
+        miniBus.listen(
+          () => true,
+          (e) => {
+            heardViaEarlyListen.push(e);
+          }
+        );
+
+        const sub = miniBus.listen(
+          (e) => e === 1,
+          () => {
+            return after(0, () => miniBus.trigger(2));
+          }
+        );
+        miniBus.listen(
+          () => true,
+          (e) => {
+            heardViaLateListen.push(e);
+          }
+        );
+
+        miniBus.trigger(1);
+        await Promise.resolve();
+        expect(seenViaSpy).toEqual([1, 2]);
+        expect(heardViaEarlyListen).toEqual([1, 2]);
+        expect(heardViaLateListen).toEqual([2, 1]);
+        // with a delay on any synchronous observables returned, we can agree on order
+        // expect(heardViaLateListen).toEqual([1, 2]);
+        sub.unsubscribe();
+      });
+    });
   });
   describe('#listenQueueing (same signature as #listen, but with concatMap)', () => {
     it('serializes execution', async () => {
@@ -816,6 +891,35 @@ Array [
 
         miniBus.trigger('foo'.length);
         expect(seen).toEqual([1, 2]);
+      });
+    });
+
+    describe('#trigger from within', () => {
+      it('pre-empts the initial trigger', () => {
+        const seen = [];
+
+        const sub = miniBus.guard(
+          (e) => e === 1,
+          () => miniBus.trigger(2)
+        );
+        miniBus.spy((e) => seen.push(e));
+
+        miniBus.trigger(1);
+        expect(seen).toEqual([2, 1]);
+        sub.unsubscribe();
+      });
+      it('can follow the initial trigger', async () => {
+        const seen = [];
+
+        miniBus.guard(
+          (e) => e === 1,
+          () => Promise.resolve().then(() => miniBus.trigger(2.1))
+        );
+        miniBus.spy((e) => seen.push(e));
+        miniBus.trigger(1);
+
+        await Promise.resolve();
+        expect(seen).toEqual([1, 2.1]);
       });
     });
   });

@@ -177,6 +177,10 @@ export class Omnibus<TBusItem> {
         }
         // @ts-ignore
         return obsResult.pipe(...pipes);
+        // what if we wait a teense, so listeners always agree on order?
+        // const delay = from(Promise.resolve()).pipe(mergeMap(() => EMPTY));
+        // @ts-ignore
+        // return concat(delay, obsResult.pipe(...pipes));
       })
     );
     const errorNotifier: PartialObserver<unknown> = {
