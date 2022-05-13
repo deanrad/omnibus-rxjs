@@ -123,7 +123,7 @@
 					<li class="tsd-description">
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/67ddf2f/src/createService.ts#L72">src/createService.ts:72</a></li>
+								<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/acf8199/src/createService.ts#L75">src/createService.ts:75</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-comment tsd-typography">
@@ -167,6 +167,7 @@
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="Service.html#cancelCurrent" class="tsd-kind-icon">cancel<wbr>Current</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="Service.html#cancelCurrentAndQueued" class="tsd-kind-icon">cancel<wbr>Current<wbr>And<wbr>Queued</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-interface tsd-is-inherited"><a href="Service.html#stop" class="tsd-kind-icon">stop</a></li>
 							</ul>
 						</section>
@@ -181,7 +182,7 @@
 					<div class="tsd-signature tsd-kind-icon">actions<span class="tsd-signature-symbol">:</span> <a href="ActionCreators.html" class="tsd-signature-type" data-tsd-kind="Interface">ActionCreators</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TRequest</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TNext</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">TError</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/67ddf2f/src/createService.ts#L74">src/createService.ts:74</a></li>
+							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/acf8199/src/createService.ts#L77">src/createService.ts:77</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -193,10 +194,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="bus" class="tsd-anchor"></a>
 					<h3>bus</h3>
-					<div class="tsd-signature tsd-kind-icon">bus<span class="tsd-signature-symbol">:</span> <a href="../classes/Omnibus.html" class="tsd-signature-type" data-tsd-kind="Class">Omnibus</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-signature tsd-kind-icon">bus<span class="tsd-signature-symbol">:</span> <a href="../classes/Omnibus.html" class="tsd-signature-type" data-tsd-kind="Class">Omnibus</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/67ddf2f/src/createService.ts#L80">src/createService.ts:80</a></li>
+							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/acf8199/src/createService.ts#L83">src/createService.ts:83</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -211,7 +212,7 @@
 					<div class="tsd-signature tsd-kind-icon">is<wbr>Active<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">BehaviorSubject</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/67ddf2f/src/createService.ts#L76">src/createService.ts:76</a></li>
+							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/acf8199/src/createService.ts#L79">src/createService.ts:79</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -226,7 +227,7 @@
 					<div class="tsd-signature tsd-kind-icon">state<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">BehaviorSubject</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TState</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/67ddf2f/src/createService.ts#L78">src/createService.ts:78</a></li>
+							<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/acf8199/src/createService.ts#L81">src/createService.ts:81</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -249,14 +250,38 @@
 							<aside class="tsd-sources">
 								<p>Inherited from Stoppable.cancelCurrent</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/67ddf2f/src/createService.ts#L44">src/createService.ts:44</a></li>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/acf8199/src/createService.ts#L43">src/createService.ts:43</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Cancels the current listening by triggering service.actions.cancel.
+									<p>Cancels the current handling by triggering service.actions.cancel.
 										The effect is truly canceled if it was started from an Observable.
 									The canceled event will appear on the bus, and no more next events.</p>
+								</div>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+					<a name="cancelCurrentAndQueued" class="tsd-anchor"></a>
+					<h3>cancel<wbr>Current<wbr>And<wbr>Queued</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">cancel<wbr>Current<wbr>And<wbr>Queued<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from Stoppable.cancelCurrentAndQueued</p>
+								<ul>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/acf8199/src/createService.ts#L47">src/createService.ts:47</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Cancels the current handling by triggering service.actions.cancel.
+									In addition, any operations enqueued will not be begun. (Safe to call even if not a queueing service.)</p>
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -274,7 +299,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from Stoppable.stop</p>
 								<ul>
-									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/67ddf2f/src/createService.ts#L39">src/createService.ts:39</a></li>
+									<li>Defined in <a href="https://github.com/deanrad/omnibus-rxjs/blob/acf8199/src/createService.ts#L38">src/createService.ts:38</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -327,6 +352,9 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
 								<a href="Service.html#cancelCurrent" class="tsd-kind-icon">cancel<wbr>Current</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
+								<a href="Service.html#cancelCurrentAndQueued" class="tsd-kind-icon">cancel<wbr>Current<wbr>And<wbr>Queued</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-interface tsd-is-inherited">
 								<a href="Service.html#stop" class="tsd-kind-icon">stop</a>
