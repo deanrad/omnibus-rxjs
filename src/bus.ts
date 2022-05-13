@@ -82,7 +82,7 @@ export class Omnibus<TBusItem> {
    * @returns
    */
   public query<TMatchType extends TBusItem = TBusItem>(
-    matcher: (i: TBusItem) => i is TMatchType
+    matcher: ((i: TBusItem) => i is TMatchType) | ((i: TBusItem) => boolean)
   ) {
     return this.channel
       .asObservable()
@@ -99,6 +99,7 @@ export class Omnibus<TBusItem> {
     return new Promise<TMatchType>((resolve, reject) => {
       // first() errors if stream completes (which resets cause)
       const errsIfNotFirst = this.query(matcher).pipe(first());
+      // @ts-ignore
       errsIfNotFirst.subscribe({
         error() {
           reject('Bus was reset.');
