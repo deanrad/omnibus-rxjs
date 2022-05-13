@@ -256,7 +256,7 @@ describe('createService', () => {
           after(10, Math.PI)
         );
 
-        it('can cancel with property cancelCurrent()', async () => {
+        it('can cancel with .cancelCurrent()', async () => {
           const seen = eventsOf(bus);
           testService(1);
           testService.cancelCurrent();
@@ -266,6 +266,39 @@ describe('createService', () => {
           expect(seen.map((e) => e.type)).toEqual([
             'test-async/request',
             'test-async/cancel',
+          ]);
+        });
+        it('can cancel existing, and any queued with .cancelCurrentAndQueued()', async () => {
+          // const bus = new Omnibus<Action<number>();
+          const seen = eventsOf(bus);
+
+          const qService = createQueueingService('number', bus, (n) =>
+            after(10, n)
+          );
+
+          const { actions: ACs } = qService;
+          qService(1);
+          qService(2);
+
+          qService.cancelCurrentAndQueued();
+
+          expect(qService.isActive.value).toBeFalsy();
+          qService(3);
+
+          // long enough to see completion
+          await after(100);
+          expect(seen).toEqual([
+            ACs.request(1),
+            ACs.started(), // 1
+            ACs.request(2), // 2
+            ACs.cancel(),
+            ACs.complete(), // 1
+            ACs.started(), // 2
+            ACs.complete(), // 2
+            ACs.request(3),
+            ACs.started(), // 3
+            ACs.next(3),
+            ACs.complete(),
           ]);
         });
         it('has property stop()', () => {

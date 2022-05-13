@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Omnibus } from './bus';
 import {
   Subscription,
@@ -37,11 +36,15 @@ interface Stoppable {
    * @returns The closed subscription.
    */
   stop(): Subscription;
-  /** Cancels the current listening by triggering service.actions.cancel.
+  /** Cancels the current handling by triggering service.actions.cancel.
    * The effect is truly canceled if it was started from an Observable.
    * The canceled event will appear on the bus, and no more next events.
    */
   cancelCurrent(): void;
+  /** Cancels the current handling by triggering service.actions.cancel.
+   * In addition, any operations enqueued will not be begun. (Safe to call even if not a queueing service.)
+   */
+  cancelCurrentAndQueued(): void;
 }
 
 /**
@@ -77,7 +80,7 @@ export interface Service<TRequest, TNext, TError, TState> extends Stoppable {
   /** Uses the reducer to aggregate the events that are produced from its handlers, emitting a new state for each action (de-duping is not done). Use `.value`, or `subscribe()` for updates. */
   state: BehaviorSubject<TState>;
   /** An untyped reference to the bus this service listens and triggers on */
-  bus: Omnibus<unknown>;
+  bus: Omnibus<any>;
 }
 
 /** @example bus.listen(matchesAny(Actions.complete, Actions.error), handler) */
@@ -101,7 +104,7 @@ export function matchesAny(...acs: ActionCreator<any>[]) {
  */
 export function createService<TRequest, TNext, TError, TState = object>(
   actionNamespace: string,
-  bus: Omnibus<Action<TRequest | TNext | TError>>,
+  bus: Omnibus<Action<TRequest | TNext | TError | void>>,
   handler: (e: TRequest) => HandlerReturnValue<TNext>,
   reducerProducer: (
     acs?: ActionCreators<TRequest, TNext, TError>
@@ -140,6 +143,7 @@ export function createService<TRequest, TNext, TError, TState = object>(
 
   const reducer = reducerProducer(ACs);
   const state = new BehaviorSubject<TState>(
+    // @ts-ignore // RTK reducers use this style
     reducer.getInitialState ? reducer.getInitialState() : reducer()
   );
   const stateSub = bus
@@ -147,9 +151,12 @@ export function createService<TRequest, TNext, TError, TState = object>(
     .pipe(scan((all, e) => reducer(all, e), state.value))
     .subscribe(state);
 
+  let cancelCounter = new BehaviorSubject<number>(0);
+
   // The base return value
   const requestor = (req: TRequest) => {
     const action = ACs.request(req);
+    action.meta = { cancelIdxAtCreation: cancelCounter.value };
     bus.trigger(action);
   };
 
@@ -162,8 +169,25 @@ export function createService<TRequest, TNext, TError, TState = object>(
           ? defer(oneResult)
           : EMPTY
         : from(oneResult ?? EMPTY);
-    return obsResult.pipe(takeUntil(bus.query(ACs.cancel.match)));
+
+    const { cancelIdxAtCreation } = e.meta || {};
+    delete e.meta;
+
+    return new Observable((observer) => {
+      // cancelCurrentAndQueued has been called so exit immediately, complete()-ing so others can queue later.
+      if (cancelCounter.value > cancelIdxAtCreation) {
+        observer.complete();
+        return;
+      }
+
+      const sub = obsResult
+        .pipe(takeUntil(bus.query(ACs.cancel.match)))
+        .subscribe(observer);
+
+      return () => sub.unsubscribe();
+    }) as Observable<TNext>;
   };
+
   const sub = bus[listenMode](
     ACs.request.match,
     wrappedHandler,
@@ -194,6 +218,10 @@ export function createService<TRequest, TNext, TError, TState = object>(
     cancelCurrent() {
       bus.trigger(ACs.cancel());
     },
+    cancelCurrentAndQueued() {
+      cancelCounter.next(cancelCounter.value + 1);
+      bus.trigger(ACs.cancel());
+    },
   };
   const returnValue = Object.assign(requestor, { actions: ACs }, controls, {
     isActive,
@@ -218,7 +246,7 @@ export function createService<TRequest, TNext, TError, TState = object>(
  */
 export function createQueueingService<TRequest, TNext, TError, TState = object>(
   actionNamespace: string,
-  bus: Omnibus<Action<TRequest | TNext | TError>>,
+  bus: Omnibus<Action<TRequest | TNext | TError | void>>,
   handler: (e: TRequest) => HandlerReturnValue<TNext>,
   reducerProducer: (
     acs?: ActionCreators<TRequest, TNext, TError>
@@ -254,7 +282,7 @@ export function createSwitchingService<
   TState = object
 >(
   actionNamespace: string,
-  bus: Omnibus<Action<TRequest | TNext | TError>>,
+  bus: Omnibus<Action<TRequest | TNext | TError | void>>,
   handler: (e: TRequest) => HandlerReturnValue<TNext>,
   reducerProducer: (
     acs?: ActionCreators<TRequest, TNext, TError>
@@ -285,7 +313,7 @@ export function createSwitchingService<
  */
 export function createBlockingService<TRequest, TNext, TError, TState = object>(
   actionNamespace: string,
-  bus: Omnibus<Action<TRequest | TNext | TError>>,
+  bus: Omnibus<Action<TRequest | TNext | TError | void>>,
   handler: (e: TRequest) => HandlerReturnValue<TNext>,
   reducerProducer: (
     acs?: ActionCreators<TRequest, TNext, TError>
