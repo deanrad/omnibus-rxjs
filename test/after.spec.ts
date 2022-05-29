@@ -1,5 +1,5 @@
-import { Observable, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import { tap, materialize } from 'rxjs/operators';
 import { after } from '../src/after';
 
 describe('after', () => {
@@ -94,6 +94,20 @@ describe('after', () => {
         return after(1, of(2)).then((v) => {
           expect(v).toEqual(2);
         });
+      });
+      it('can create an error emitter', async () => {
+        const seen = [];
+        const errThrower = after(50, throwError('oops')).pipe(
+          materialize(),
+          tap((i) => seen.push(i))
+        );
+        errThrower.subscribe();
+        expect(seen).toEqual([]);
+        await after(100);
+        expect(seen).toEqual([
+          // Note the lack of a kind:"N" 'next' notification
+          { kind: 'E', error: 'oops', hasValue: false, value: undefined },
+        ]);
       });
     });
   });

@@ -2,6 +2,8 @@ import { from, ObservableInput } from 'rxjs';
 import { Action } from 'typescript-fsa';
 import { Omnibus } from '../../src/bus';
 import { isType } from '../../src/utils';
+import { toggleMap } from '../../src/toggleMap';
+import { after } from '../../src/after';
 
 const tree = generateDataTree(
   `# 0. React Problems Solved via an Event Bus
@@ -65,6 +67,54 @@ describe('Search - can switch between DFS and BFS with just a one-line diff!', (
  1.2 Can't update unmounted component errors
  1.3 Streaming
  1.1.1 fetch persists for unmounted components`);
+    });
+  });
+
+  // lesser used modes
+  describe('Switching', () => {
+    it('can be done with a switching listener', () => {
+      const bus = new Omnibus<Action<any | undefined>>();
+      setupBus(bus);
+
+      bus.listenSwitching(...predicateAndHandler, bus.observeAll());
+
+      // kick it off
+      bus.trigger({ type: 'search', payload: {} });
+
+      expect(seen.join('\n')).toEqual(`
+ 0. React Problems Solved via an Event Bus
+ 1. Performance
+ 1.1 Resource Leaks
+ 1.1.1 fetch persists for unmounted components`);
+    });
+  });
+
+  describe('Blocking', () => {
+    it('can be done with a blocking listener', () => {
+      const bus = new Omnibus<Action<any | undefined>>();
+      setupBus(bus);
+
+      bus.listenBlocking(
+        isType('node'),
+        ({ payload: node }) => {
+          // An Observable of node events for each child
+          // Note: delayed by a tick, so it can actually block
+          return after(
+            Promise.resolve(),
+            from(
+              node.children.map((child) => ({ type: 'node', payload: child }))
+            )
+          );
+        },
+        bus.observeAll()
+      );
+
+      // kick it off
+      bus.trigger({ type: 'search', payload: {} });
+
+      expect(seen.join('\n')).toEqual(`
+ 0. React Problems Solved via an Event Bus
+ 1. Performance`);
     });
   });
 
