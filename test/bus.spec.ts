@@ -20,7 +20,7 @@ import {
   searchRequestCreator,
 } from '../example/debounced-search/searchService';
 import { Omnibus } from '../src/bus';
-import { DURATION } from '../src/utils';
+import { DURATION, is } from '../src/utils';
 import { after } from '../src/after';
 import { anyEvent } from './mockPredicates';
 
@@ -477,8 +477,8 @@ Array [
     describe('Observer', () => {
       it.todo('contains callbacks attached to the handler lifecycle');
     });
-    describe('triggering from within', () => {
-      it('pre-empts in listeners that follow, but not spies or earlier', () => {
+    describe('triggering synchronously from within a listener', () => {
+      it('preserves listener order', () => {
         const heardViaEarlyListen = [];
         const heardViaLateListen = [];
         const seenViaSpy = [];
@@ -510,7 +510,7 @@ Array [
         miniBus.trigger(1);
         expect(seenViaSpy).toEqual([1, 2]);
         expect(heardViaEarlyListen).toEqual([1, 2]);
-        expect(heardViaLateListen).toEqual([2, 1]);
+        expect(heardViaLateListen).toEqual([1, 2]);
         sub.unsubscribe();
       });
       it('via after(0), ', async () => {
@@ -546,9 +546,7 @@ Array [
         await Promise.resolve();
         expect(seenViaSpy).toEqual([1, 2]);
         expect(heardViaEarlyListen).toEqual([1, 2]);
-        expect(heardViaLateListen).toEqual([2, 1]);
-        // with a delay on any synchronous observables returned, we can agree on order
-        // expect(heardViaLateListen).toEqual([1, 2]);
+        expect(heardViaLateListen).toEqual([1, 2]);
         sub.unsubscribe();
       });
     });
@@ -667,6 +665,21 @@ Array [
           expect(seen).toEqual(['foo', 'rescued :(', 'bar', 'rescued :(']);
         });
       });
+    });
+    it('does not insert a tick between each trigger', async () => {
+      const seen = [];
+      const micro = new Omnibus<number>();
+      micro.listen(
+        () => true,
+        (e) => {
+          seen.push(e);
+        }
+      );
+      micro.trigger(2.7182);
+      micro.trigger(3.1416);
+
+      // synchronously available
+      expect(seen).toEqual([2.7182, 3.1416]);
     });
   });
 
@@ -937,6 +950,57 @@ Array [
       expect(seen).toEqual([]);
     });
 
+    describe('shouldnt trigger events, but if it does', () => {
+      it('should maintain order', () => {
+        const seen = [] as number[];
+        const heard = [] as number[];
+        miniBus.filter(is(1), (e) => {
+          miniBus.trigger(2);
+          return e;
+        });
+        miniBus.filter(
+          () => true,
+          (e) => {
+            seen.push(e);
+            return e;
+          }
+        );
+        miniBus.listen(
+          () => true,
+          (e) => {
+            heard.push(e);
+          }
+        );
+        miniBus.trigger(1);
+
+        // guard A triggers 2
+        // guard B sees 1,2
+        // listener "hears" 1,2
+        expect(seen).toEqual([1, 2]);
+        expect(heard).toEqual([1, 2]);
+      });
+      it('should maintain exception handling', () => {
+        // on our secondarily triggered action we throw
+        miniBus.guard(
+          (n) => n % 2 === 0,
+          (n) => {
+            throw new Error(`${n} not odd`);
+          }
+        );
+        miniBus.guard(
+          (e) => e === 1,
+          () => {
+            miniBus.trigger(2); // raises error
+          }
+        );
+
+        // minibus.trigger(1) should raise error
+        expect(() => {
+          miniBus.trigger(1);
+        }).toThrow();
+      });
+    });
+
     describe('callback', () => {
       it('may replace the action with another, after guards and before spies', () => {
         const seen = [];
@@ -962,70 +1026,6 @@ Array [
 
         expect(seen).toEqual([]);
       });
-    });
-  });
-});
-
-const commonObservables = [
-  ['C', 'empty'],
-  ['E', 'syncError'],
-  ['tVC', 'resolvedPromise'],
-  ['tE', 'rejectedPromise'],
-  ['TVC', 'endpointValue'],
-  ['TTE', 'timeout'],
-  ['TE', 'endpointError'],
-  ['TVE', 'dyingStream'],
-  ['TTNNC', 'endpointStream'],
-  ['TNTNC', 'valueStream'],
-];
-
-describe('Robust Error Handling', () => {
-  describe('Errors dont stop triggering, kill the listener, allow other listeners', () => {
-    commonObservables.forEach(([eventCodes, name]) => {
-      it(
-        `${name} observable (${eventCodes})`,
-        capturing(miniBus, async (events) => {
-          const subject = miniBus.listen(
-            () => true,
-            () => TestObservable(eventCodes)
-          );
-          const otherListenerConsequences = [];
-          miniBus.listen(
-            () => true,
-            (i) => {
-              otherListenerConsequences.push(i);
-              return EMPTY;
-            }
-          );
-          const seenErrors = [];
-          miniBus.errors.subscribe((e) => seenErrors.push(e));
-
-          expect(() => {
-            miniBus.trigger(5);
-            // 5 makes it onto the bus regardless
-            expect(events).toEqual([5]);
-          }).not.toThrow();
-
-          // and the bus is still alive
-          miniBus.trigger(6);
-          expect(events).toEqual([5, 6]);
-
-          // ensure weve waited a while
-          await DURATION.Timeout();
-          await DURATION.Timeout();
-          await DURATION.Timeout();
-
-          // but the errant listener is dead
-          if (eventCodes.endsWith('E')) {
-            expect(subject).toHaveProperty('closed', true);
-            // and we can see the errors
-            expect(seenErrors[0]).toHaveProperty('message', 'planned error');
-          }
-
-          // and the other listener didn't stop
-          expect(otherListenerConsequences).toEqual([5, 6]);
-        })
-      );
     });
   });
 });
