@@ -16,6 +16,7 @@ import {
   first,
   mergeMap,
   switchMap,
+  retry,
 } from 'rxjs/operators';
 import { filter, takeUntil, tap } from 'rxjs/operators';
 //#endregion
@@ -76,8 +77,16 @@ export class Omnibus<TBusItem> {
     this.filters = new Array();
     this.spies = new Array();
     this.handlings = new Subject<Observable<void>>();
-    // kick off non-cancelable listenings (doesnt need to be terminated on reset)
-    this.handlings.pipe(concatMap((handling) => handling)).subscribe();
+    // Fires each actions' handlers in triggering order, with error reporting/recovery
+    this.handlings
+      .pipe(
+        concatMap((handling) => handling),
+        tap({
+          error: (e) => this.errors.next(e),
+        }),
+        retry()
+      )
+      .subscribe();
   }
 
   /**
@@ -98,7 +107,7 @@ export class Omnibus<TBusItem> {
    * @param matcher A predicate which selects the resolved event
    */
   public nextEvent<TMatchType extends TBusItem = TBusItem>(
-    matcher: (i: TBusItem) => i is TMatchType
+    matcher: ((i: TBusItem) => i is TMatchType) | ((i: TBusItem) => boolean)
   ) {
     return new Promise<TMatchType>((resolve, reject) => {
       // first() errors if stream completes (which resets cause)
@@ -190,10 +199,6 @@ export class Omnibus<TBusItem> {
         }
         // @ts-ignore
         return obsResult.pipe(...pipes);
-        // what if we wait a teense, so listeners always agree on order?
-        // const delay = from(Promise.resolve()).pipe(mergeMap(() => EMPTY));
-        // @ts-ignore
-        // return concat(delay, obsResult.pipe(...pipes));
       })
     );
     const errorNotifier: PartialObserver<unknown> = {

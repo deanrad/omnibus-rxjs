@@ -890,6 +890,31 @@ Array [
         miniBus.trigger('foo'.length);
         expect(seen).toEqual([1, 2]);
       });
+      it('should maintain exception handling', () => {
+        const micro = new Omnibus<number>();
+        // on our secondarily triggered action we throw
+        micro.guard(
+          (n) => n % 2 === 0,
+          (n) => {
+            throw new Error(`${n} not odd`);
+          }
+        );
+        micro.guard(
+          (e) => e === 1,
+          () => {
+            try {
+              micro.trigger(2); // raises error
+            } catch (ex) {
+              throw 'Saw it';
+            }
+          }
+        );
+
+        // minibus.trigger(1) should raise error
+        expect(() => {
+          micro.trigger(1);
+        }).toThrow();
+      });
     });
 
     describe('#spy #guard', () => {
@@ -979,26 +1004,6 @@ Array [
         expect(seen).toEqual([1, 2]);
         expect(heard).toEqual([1, 2]);
       });
-      it('should maintain exception handling', () => {
-        // on our secondarily triggered action we throw
-        miniBus.guard(
-          (n) => n % 2 === 0,
-          (n) => {
-            throw new Error(`${n} not odd`);
-          }
-        );
-        miniBus.guard(
-          (e) => e === 1,
-          () => {
-            miniBus.trigger(2); // raises error
-          }
-        );
-
-        // minibus.trigger(1) should raise error
-        expect(() => {
-          miniBus.trigger(1);
-        }).toThrow();
-      });
     });
 
     describe('callback', () => {
@@ -1025,6 +1030,66 @@ Array [
         StringBus.trigger('BOOYEAH');
 
         expect(seen).toEqual([]);
+      });
+    });
+
+    describe('#filter #filter #trigger', () => {
+      it('no exception - error sent to bus.errors', () => {
+        const micro = new Omnibus<number>();
+        const seenErrors = [];
+        micro.errors.subscribe((e) => seenErrors.push(e));
+        // on our secondarily triggered action we throw
+        micro.filter(
+          (n) => n % 2 === 0,
+          (n) => {
+            throw `${n} not odd`;
+          }
+        );
+        micro.filter(
+          (e) => e === 1,
+          () => {
+            micro.trigger(2); // raises error
+          }
+        );
+
+        micro.trigger(1); // should populate errors
+        expect(seenErrors).toEqual(['2 not odd']);
+      });
+      it('continues to process events', () => {
+        const micro = new Omnibus<number>();
+        const seenErrors = [];
+        const seen = [];
+        const heard = [];
+        micro.guard(
+          () => true,
+          (e) => seen.push(e)
+        );
+        micro.errors.subscribe((e) => seenErrors.push(e));
+        // on our secondarily triggered action we throw
+        micro.filter(
+          (n) => n % 2 === 0,
+          (n) => {
+            throw `${n} not odd`;
+          }
+        );
+        micro.filter(
+          (e) => e === 1,
+          () => {
+            micro.trigger(2); // raises error
+          }
+        );
+        micro.listen(
+          () => true,
+          (e) => {
+            heard.push(e);
+          }
+        );
+        micro.trigger(-1);
+        micro.trigger(1); // should populate errors
+        expect(seenErrors).toEqual(['2 not odd']);
+        micro.trigger(3); // still works..
+        expect(seen).toEqual([-1, 1, 2, 3]);
+        expect(heard).toEqual([-1, 3]);
       });
     });
   });
