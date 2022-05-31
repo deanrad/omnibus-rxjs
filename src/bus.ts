@@ -16,6 +16,7 @@ import {
   first,
   mergeMap,
   switchMap,
+  retry,
 } from 'rxjs/operators';
 import { filter, takeUntil, tap } from 'rxjs/operators';
 //#endregion
@@ -61,6 +62,7 @@ export class Omnibus<TBusItem> {
     [Predicate<TBusItem>, (item: TBusItem) => TBusItem | null | undefined]
   >;
   private spies: Array<[Predicate<TBusItem>, (item: TBusItem) => void]>;
+  private handlings: Subject<Observable<void>>;
 
   /** While unhandled listener errors terminate the listener,
    * the cause of that error is available on channel.errors
@@ -74,6 +76,17 @@ export class Omnibus<TBusItem> {
     this.guards = new Array();
     this.filters = new Array();
     this.spies = new Array();
+    this.handlings = new Subject<Observable<void>>();
+    // Fires each actions' handlers in triggering order, with error reporting/recovery
+    this.handlings
+      .pipe(
+        concatMap((handling) => handling),
+        tap({
+          error: (e) => this.errors.next(e),
+        }),
+        retry()
+      )
+      .subscribe();
   }
 
   /**
@@ -94,7 +107,7 @@ export class Omnibus<TBusItem> {
    * @param matcher A predicate which selects the resolved event
    */
   public nextEvent<TMatchType extends TBusItem = TBusItem>(
-    matcher: (i: TBusItem) => i is TMatchType
+    matcher: ((i: TBusItem) => i is TMatchType) | ((i: TBusItem) => boolean)
   ) {
     return new Promise<TMatchType>((resolve, reject) => {
       // first() errors if stream completes (which resets cause)
@@ -122,25 +135,33 @@ export class Omnibus<TBusItem> {
 
     let filteredItem = item;
     let canceled = false;
-    this.filters.forEach(([predicate, filter]) => {
-      if (!predicate(item)) return;
 
-      const filterResult = filter(filteredItem);
+    const handling = new Observable<void>((notify) => {
+      this.filters.forEach(([predicate, filter]) => {
+        if (!predicate(item)) return;
 
-      if (filterResult !== null && filterResult !== undefined) {
-        filteredItem = filterResult;
-      } else {
-        canceled = true;
+        const filterResult = filter(filteredItem);
+
+        if (filterResult !== null && filterResult !== undefined) {
+          filteredItem = filterResult;
+        } else {
+          canceled = true;
+        }
+      });
+      if (canceled) {
+        notify.complete();
+        return;
       }
-    });
-    if (canceled) {
-      return;
-    }
 
-    this.spies.forEach(([predicate, handler]) => {
-      predicate(filteredItem) && handler(filteredItem);
+      this.spies.forEach(([predicate, handler]) => {
+        predicate(filteredItem) && handler(filteredItem);
+      });
+      this.channel.next(filteredItem);
+
+      notify.complete();
     });
-    this.channel.next(filteredItem);
+
+    this.handlings.next(handling);
   }
 
   /** Triggers effects upon matching events, using an ASAP Concurrency Strategy.
@@ -178,10 +199,6 @@ export class Omnibus<TBusItem> {
         }
         // @ts-ignore
         return obsResult.pipe(...pipes);
-        // what if we wait a teense, so listeners always agree on order?
-        // const delay = from(Promise.resolve()).pipe(mergeMap(() => EMPTY));
-        // @ts-ignore
-        // return concat(delay, obsResult.pipe(...pipes));
       })
     );
     const errorNotifier: PartialObserver<unknown> = {

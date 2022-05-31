@@ -25,6 +25,9 @@ PASS test/after.spec.ts
     delay arg
       when 0
         ✓ is synchronous
+      when a Promise
+        ✓ becomes a chained Promise
+        ✓ doesnt evaluate the mapper unless subscribed/awaited
     value arg
       when a value
         ✓ is returned
@@ -34,55 +37,7 @@ PASS test/after.spec.ts
       when an Observable
         ✓ defers subscription
         ✓ yields the value
-
-PASS test/createService.spec.ts
-  createService
-    ✓ triggers events from observable handlers when no error
-    ✓ triggers events from Promise handlers when no error
-    ✓ triggers events from Promise-factory handlers when no error
-    ✓ triggers events from observable handlers, even when they error
-    ✓ triggers events from generator handlers when no error
-    arguments
-      bus
-        ✎ todo recieves requests
-        ✎ todo recieves observed events
-      actionNamespace
-        ✎ todo prefixes action types
-      handler
-        ✓ can return an item an Observable will be made from
-        ✓ can return a zero-argument function
-      reducerProducer
-        ✓ can return a Redux Style reducer
-        ✓ can return a ReduxToolkit-Style reducer
-    return value
-      ✓ triggers a request to the bus when called
-      #state
-        ✓ reduces into .state
-      #isActive
-        ✓ initially is false
-        ✓ becomes true when a handler is in-flight
-        ✓ emits changes only on request, completed, error, unsubscribe, and when changed
-        ✓ terminates on a reset
-        ✓ has a final value of false on bus.reset()
-        ✓ has a final value of false on stop()
-      #bus
-        ✓ refers to the bus it was created with
-      #actions: a property for each actioncreator
-        ✓ has property request
-        ✓ has property cancel
-        ✓ has property started
-        ✓ has property next
-        ✓ has property error
-        ✓ has property complete
-        ✓ has property canceled
-        ✓ has property stop()
-        ✎ todo removes listeners and cancels handlings when stop()-ed.
-    createQueueingService
-      ✓ calls createService with "listenQueueing"
-    createSwitchingService
-      ✓ calls createService with "listenSwitching"
-    createBlockingService
-      ✓ calls createService with "listenBlocking"
+        ✓ can create an error emitter
 
 PASS test/bus.spec.ts
   Bus
@@ -125,6 +80,9 @@ PASS test/bus.spec.ts
           ✓ allows for no/void return value
       Observer
         ✎ todo contains callbacks attached to the handler lifecycle
+      triggering synchronously from within a listener
+        ✓ preserves listener order
+        ✓ via after(0), 
     #listenQueueing
       ✓ serializes execution
     #listenSwitching
@@ -132,6 +90,7 @@ PASS test/bus.spec.ts
     #listenBlocking
       ✓ cancels existing, and starts a new Subscription
     #listen #trigger #trigger
+      ✓ does not insert a tick between each trigger
       handlers which error
         Not rescued
           ✓ does not continue listening
@@ -158,24 +117,18 @@ PASS test/bus.spec.ts
         ✓ runs guards in the order created
       #spy #guard
         ✓ runs guards before any spies
+      #trigger from within
+        ✓ pre-empts the initial trigger
+        ✓ can follow the initial trigger
     #filter
       ✓ only responds to its own events
       ✎ todo returns a subscription for cancelation
+      shouldnt trigger events, but if it does
+        ✓ should maintain order
+        ✓ should maintain exception handling
       callback
         ✓ may replace the action with another, after guards and before spies
         ✓ may remove the action by returning null or undefined
-  Robust Error Handling
-    Errors dont stop triggering, kill the listener, allow other listeners
-      ✓ empty observable
-      ✓ syncError observable
-      ✓ resolvedPromise observable
-      ✓ rejectedPromise observable
-      ✓ endpointValue observable
-      ✓ timeout observable
-      ✓ endpointError observable
-      ✓ dyingStream observable
-      ✓ endpointStream observable
-      ✓ valueStream observable
 
 PASS test/utils.spec.ts
   Bus
@@ -218,6 +171,9 @@ PASS test/utils.spec.ts
           ✓ allows for no/void return value
       Observer
         ✎ todo contains callbacks attached to the handler lifecycle
+      triggering synchronously from within a listener
+        ✓ preserves listener order
+        ✓ via after(0), 
     #listenQueueing
       ✓ serializes execution
     #listenSwitching
@@ -225,6 +181,7 @@ PASS test/utils.spec.ts
     #listenBlocking
       ✓ cancels existing, and starts a new Subscription
     #listen #trigger #trigger
+      ✓ does not insert a tick between each trigger
       handlers which error
         Not rescued
           ✓ does not continue listening
@@ -251,24 +208,18 @@ PASS test/utils.spec.ts
         ✓ runs guards in the order created
       #spy #guard
         ✓ runs guards before any spies
+      #trigger from within
+        ✓ pre-empts the initial trigger
+        ✓ can follow the initial trigger
     #filter
       ✓ only responds to its own events
       ✎ todo returns a subscription for cancelation
+      shouldnt trigger events, but if it does
+        ✓ should maintain order
+        ✓ should maintain exception handling
       callback
         ✓ may replace the action with another, after guards and before spies
         ✓ may remove the action by returning null or undefined
-  Robust Error Handling
-    Errors dont stop triggering, kill the listener, allow other listeners
-      ✓ empty observable
-      ✓ syncError observable
-      ✓ resolvedPromise observable
-      ✓ rejectedPromise observable
-      ✓ endpointValue observable
-      ✓ timeout observable
-      ✓ endpointError observable
-      ✓ dyingStream observable
-      ✓ endpointStream observable
-      ✓ valueStream observable
   TestDurations
     ✓ Sync
     ✓ Promise
@@ -286,9 +237,66 @@ PASS test/utils.spec.ts
   observeArray
     ✓ flattens a Promise for an array to an Observable of its items
     ✓ flattens a Promise for an array to an Observable of its items, after a delay
+  matchers
+    is
+      ✓ Returns a predicate that matches an exact item
+    isType
+      ✓ Returns a predicate that matches the type of an FSA
+
+PASS test/createService.spec.ts
+  createService
+    ✓ triggers events from observable handlers when no error
+    ✓ triggers events from Promise handlers when no error
+    ✓ triggers events from Promise-factory handlers when no error
+    ✓ triggers events from observable handlers, even when they error
+    ✓ triggers events from generator handlers when no error
+    arguments
+      bus
+        ✎ todo recieves requests
+        ✎ todo recieves observed events
+      actionNamespace
+        ✎ todo prefixes action types
+      handler
+        ✓ can return an item an Observable will be made from
+        ✓ can return a zero-argument function
+      reducerProducer
+        ✓ can return a Redux Style reducer
+        ✓ can return a ReduxToolkit-Style reducer
+    return value
+      ✓ triggers a request to the bus when called
+      #state
+        ✓ reduces into .state
+      #isActive
+        ✓ initially is false
+        ✓ becomes true when a handler is in-flight
+        ✓ emits changes only on request, completed, error, unsubscribe, and when changed
+        ✓ terminates on a reset
+        ✓ has a final value of false on bus.reset()
+        ✓ has a final value of false on stop()
+      #bus
+        ✓ refers to the bus it was created with
+      #actions: a property for each actioncreator
+        ✓ has property request
+        ✓ has property cancel
+        ✓ has property started
+        ✓ has property next
+        ✓ has property error
+        ✓ has property complete
+        ✓ has property canceled
+        Cancelation
+          ✓ can cancel with .cancelCurrent()
+          ✓ can cancel existing, and any queued with .cancelCurrentAndQueued()
+          ✓ has property stop()
+          ✓ removes listeners and cancels handlings when stop()-ed.
+    createQueueingService
+      ✓ calls createService with "listenQueueing"
+    createSwitchingService
+      ✓ calls createService with "listenSwitching"
+    createBlockingService
+      ✓ calls createService with "listenBlocking"
 
 Test Suites: 6 passed, 6 total
-Tests:       12 todo, 154 passed, 166 total
+Tests:       11 todo, 156 passed, 167 total
 Snapshots:   19 passed, 19 total
-Time:        0.922 s
+Time:        0.959 s
 Ran all test suites.
