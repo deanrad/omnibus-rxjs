@@ -233,6 +233,21 @@ describe('createService', () => {
       });
     });
 
+    describe('#addTeardown', () => {
+      it('adds a function to be called once when stop() is invoked', () => {
+        let tornDownTimes = 0;
+        const stateService = createService(testNamespace, bus, handler);
+        stateService.addTeardown(() => {
+          tornDownTimes += 1;
+        });
+        expect(tornDownTimes).toEqual(0);
+        stateService.stop();
+        expect(tornDownTimes).toEqual(1);
+        stateService.stop();
+        expect(tornDownTimes).toEqual(1);
+      });
+    });
+
     describe('#actions: a property for each actioncreator', () => {
       [
         'request',
@@ -314,6 +329,7 @@ describe('createService', () => {
         });
       });
     });
+
     it('triggers a request to the bus when called', () => {
       const seen = eventsOf(bus);
       testService('3');

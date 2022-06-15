@@ -45,6 +45,10 @@ interface Stoppable {
    * In addition, any operations enqueued will not be begun. (Safe to call even if not a queueing service.)
    */
   cancelCurrentAndQueued(): void;
+  /**
+   * Adds a function to be called only once when stop() is invoked
+   */
+  addTeardown(teardownFn: Subscription['add']): void;
 }
 
 /**
@@ -188,6 +192,7 @@ export function createService<TRequest, TNext, TError, TState = object>(
     }) as Observable<TNext>;
   };
 
+  /** The main subscription of this service */
   const sub = bus[listenMode](
     ACs.request.match,
     wrappedHandler,
@@ -214,6 +219,9 @@ export function createService<TRequest, TNext, TError, TState = object>(
       stateSub.unsubscribe(); // flow no more values to it
       state.complete(); // make isStopped = true
       return sub;
+    },
+    addTeardown(teardownFn: Subscription['add']) {
+      sub.add(teardownFn);
     },
     cancelCurrent() {
       bus.trigger(ACs.cancel());
