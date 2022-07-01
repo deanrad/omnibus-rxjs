@@ -52,6 +52,24 @@ describe('after', () => {
         expect(called).toBeTruthy();
       });
     });
+    describe('when setTimeout', () => {
+      it('defers till setTimeout(0)', async () => {
+        let result = '';
+        after(setTimeout, () => {
+          result = 'timeout occurred';
+        }).subscribe();
+
+        expect(result).toEqual('');
+
+        // flushes only the microtask queue
+        await Promise.resolve();
+        expect(result).toEqual('');
+
+        // only by now is it good
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        expect(result).toEqual('timeout occurred');
+      });
+    });
   });
 
   describe('value arg', () => {
