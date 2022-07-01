@@ -16,7 +16,7 @@ export interface Thunk<T> {
  * @returns An Observable of the object or thunk return value, which can be the target of an `await`.
  */
 export function after<T>(
-  msOrPromise: number | Promise<unknown>,
+  delaySpec: number | Promise<unknown> | typeof setTimeout,
   objOrFn?: T | Thunk<T> | Observable<T>
 ): AwaitableObservable<T> {
   const resultMapper =
@@ -24,9 +24,12 @@ export function after<T>(
       ? (objOrFn as (value: Number) => any)
       : () => objOrFn;
 
-  // prettier-ignore
   // @ts-ignore
-  const delay = msOrPromise.then ? from(msOrPromise) : msOrPromise <= 0 ? of(0) : timer(msOrPromise);
+  let delay = delaySpec.then
+    ? from(delaySpec)
+    : delaySpec === setTimeout
+    ? from(new Promise((resolve) => setTimeout(resolve, 0)))
+    : timer(delaySpec);
 
   function isObservable<T>(obj: any): obj is Observable<T> {
     return obj?.subscribe !== undefined;

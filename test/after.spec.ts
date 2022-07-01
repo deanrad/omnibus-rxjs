@@ -52,6 +52,17 @@ describe('after', () => {
         expect(called).toBeTruthy();
       });
     });
+    describe('when setTimeout', () => {
+      it.only('defers till setTimeout(0)', async () => {
+        let result = '';
+        after(setTimeout, () => {
+          result = 'timeout occurred';
+        }).subscribe();
+        expect(result).toEqual('');
+        await new Promise((resolve) => setTimeout(resolve, 1));
+        expect(result).toEqual('timeout occurred');
+      });
+    });
   });
 
   describe('value arg', () => {
