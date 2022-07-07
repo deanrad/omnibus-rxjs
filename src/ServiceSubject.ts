@@ -1,6 +1,7 @@
 import { Omnibus } from '../src/bus';
 import { createService, Service, ActionCreators } from '../src/createService';
-import { distinctUntilChanged, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs/operators';
 import { Action, ActionCreator } from 'typescript-fsa';
 
 export class ServiceSubject<TRequest, TNext, TError, TState> {
@@ -8,6 +9,7 @@ export class ServiceSubject<TRequest, TNext, TError, TState> {
   public bus: Omnibus<Action<any>>;
   public actions: ActionCreators<TRequest, TNext, TError>;
   public state: Observable<TState>;
+  public isActive: Observable<boolean>;
 
   constructor(
     namespace: string,
@@ -25,6 +27,7 @@ export class ServiceSubject<TRequest, TNext, TError, TState> {
     );
     this.actions = this.service.actions;
     this.state = this.service.state.pipe(distinctUntilChanged());
+    this.isActive = this.service.isActive;
   }
 
   public next(request: TRequest) {
