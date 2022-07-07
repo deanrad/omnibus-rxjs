@@ -45,6 +45,12 @@ export class ServiceSubject<TRequest, TNext, TError, TState> {
   ) {
     return this.bus.guard(this.toPredicate(matcher), ...args);
   }
+  public cancelCurrent() {
+    this.service.cancelCurrent();
+  }
+  public cancelCurrentAndQueued() {
+    this.service.cancelCurrentAndQueued();
+  }
 
   private toPredicate(
     matcher: Parameters<Omnibus<Action<any>>['listen']>[0] | ActionCreator<any>
