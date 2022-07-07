@@ -6,71 +6,116 @@ import { of } from 'rxjs';
 // https://codesandbox.io/s/omnibus-rxjs-servicesubject-468xn5
 
 describe(ServiceSubject, () => {
-  it('handles a sync-value handler', () => {
-    const logs = [] as string[];
+  describe('Arguments', () => {
+    describe('namespace', () => {});
 
-    const counter = new ServiceSubject(
-      'counter',
-      (inc) => of(inc), // a synchronous handler
-      () => counterReducer
-    );
-    counter.guard(counter.actions.next, ({ payload: inc = 1 }) =>
-      logs.push(`Next increase: ${inc}`)
-    );
+    describe('handler', () => {
+      it('handles a sync-value handler', () => {
+        const logs = [] as string[];
 
-    counter.state.subscribe({
-      next(count) {
-        logs.push(`The new count is: ${count}`);
-      },
+        const counter = new ServiceSubject(
+          'counter',
+          (inc) => of(inc), // a synchronous handler
+          () => counterReducer
+        );
+        counter.guard(counter.actions.next, ({ payload: inc = 1 }) =>
+          logs.push(`Next increase: ${inc}`)
+        );
+
+        counter.state.subscribe({
+          next(count) {
+            logs.push(`The new count is: ${count}`);
+          },
+        });
+
+        expect(logs).toEqual(['The new count is: 0']);
+        counter.next(1);
+
+        expect(logs).toEqual([
+          'The new count is: 0',
+          'Next increase: 1',
+          'The new count is: 1',
+        ]);
+        counter.next(1.1);
+
+        expect(logs).toEqual([
+          'The new count is: 0',
+          'Next increase: 1',
+          'The new count is: 1',
+          'Next increase: 1.1',
+          'The new count is: 2.1',
+        ]);
+      });
+
+      it('handles an async handler', async () => {
+        const logs = [] as string[];
+
+        const counter = new ServiceSubject(
+          'counter',
+          (inc) => after(100, inc), // a synchronous handler
+          () => counterReducer
+        );
+        counter.guard(counter.actions.next, ({ payload: inc = 1 }) =>
+          logs.push(`Next increase: ${inc}`)
+        );
+
+        counter.state.subscribe({
+          next(count) {
+            logs.push(`The new count is: ${count}`);
+          },
+        });
+
+        expect(logs).toEqual(['The new count is: 0']);
+        counter.next(1.1);
+        expect(logs).toEqual(['The new count is: 0']);
+
+        await after(101);
+        expect(logs).toEqual([
+          'The new count is: 0',
+          'Next increase: 1.1',
+          'The new count is: 1.1',
+        ]);
+      });
     });
 
-    expect(logs).toEqual(['The new count is: 0']);
-    counter.next(1);
-
-    expect(logs).toEqual([
-      'The new count is: 0',
-      'Next increase: 1',
-      'The new count is: 1',
-    ]);
-    counter.next(1.1);
-
-    expect(logs).toEqual([
-      'The new count is: 0',
-      'Next increase: 1',
-      'The new count is: 1',
-      'Next increase: 1.1',
-      'The new count is: 2.1',
-    ]);
+    describe('reducer', () => {
+      it.todo('populates #state');
+    });
   });
 
-  it('handles an async handler', async () => {
-    const logs = [] as string[];
+  describe('next(): Sending requests', () => {
+    it.todo('calls bus.trigger');
+  });
+  describe('error(): Sending requests', () => {
+    it.todo('TODO Specify');
+  });
+  describe('complete(): Sending requests', () => {
+    it.todo('TODO Specify');
+  });
 
-    const counter = new ServiceSubject(
-      'counter',
-      (inc) => after(100, inc), // a synchronous handler
-      () => counterReducer
-    );
-    counter.guard(counter.actions.next, ({ payload: inc = 1 }) =>
-      logs.push(`Next increase: ${inc}`)
-    );
-
-    counter.state.subscribe({
-      next(count) {
-        logs.push(`The new count is: ${count}`);
-      },
+  describe('SubscriptionLike', () => {
+    describe('unsubscribe', () => {
+      it.todo('terminates all effects/handlers');
+      it.todo('errs on future request');
     });
+  });
 
-    expect(logs).toEqual(['The new count is: 0']);
-    counter.next(1.1);
-    expect(logs).toEqual(['The new count is: 0']);
-
-    await after(101);
-    expect(logs).toEqual([
-      'The new count is: 0',
-      'Next increase: 1.1',
-      'The new count is: 1.1',
-    ]);
+  describe('Omnibus pass-throughs', () => {
+    describe('reset', () => {
+      it.todo('passes through');
+    });
+    describe('query', () => {
+      it.todo('passes through');
+    });
+    describe('guard', () => {
+      it.todo('passes through');
+    });
+    describe('cancelCurrent', () => {
+      it.todo('TODO Specify');
+    });
+    describe('cancelCurrentAndQueued', () => {
+      it.todo('TODO Specify');
+    });
   });
 });
 

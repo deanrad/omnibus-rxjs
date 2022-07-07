@@ -1,15 +1,15 @@
 import { Omnibus } from '../src/bus';
 import { createService, Service, ActionCreators } from '../src/createService';
-import { Observable, Subject, SubscriptionLike } from 'rxjs';
+import { Observable, SubscriptionLike } from 'rxjs';
 import { distinctUntilChanged } from 'rxjs/operators';
 import { Action, ActionCreator } from 'typescript-fsa';
 
-export class ServiceSubject<TRequest, TNext, TError, TState>
+export class ServiceSubject<TRequest, TNext, TState>
   implements SubscriptionLike
 {
-  private service: Service<TRequest, TNext, TError, TState>;
+  private service: Service<TRequest, TNext, Error, TState>;
   public bus: Omnibus<Action<any>>;
-  public actions: ActionCreators<TRequest, TNext, TError>;
+  public actions: ActionCreators<TRequest, TNext, Error>;
   public state: Observable<TState>;
   public isActive: Observable<boolean>;
   public closed: boolean;
@@ -18,11 +18,11 @@ export class ServiceSubject<TRequest, TNext, TError, TState>
     namespace: string,
     handler: (e: TRequest) => any,
     reducerFactory: (
-      acs?: ActionCreators<TRequest, TNext, TError>
+      acs?: ActionCreators<TRequest, TNext, Error>
     ) => (state: TState, action: Action<any>) => TState
   ) {
     this.bus = new Omnibus();
-    this.service = createService<TRequest, TNext, TError, TState>(
+    this.service = createService<TRequest, TNext, Error, TState>(
       namespace,
       this.bus,
       handler,
