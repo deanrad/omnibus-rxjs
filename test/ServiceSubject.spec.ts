@@ -100,6 +100,11 @@ describe(ServiceSubject, () => {
     });
   });
 
+  describe('#state', () => {
+    it.todo('can be read via .value')
+    it.todo('can be subscribed via .subscribe')
+  })
+
   describe('Omnibus pass-throughs', () => {
     describe('reset', () => {
       it.todo('passes through');

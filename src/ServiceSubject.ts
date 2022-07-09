@@ -29,7 +29,7 @@ export class ServiceSubject<TRequest, TNext, TState>
       reducerFactory
     );
     this.actions = this.service.actions;
-    this.state = this.service.state.pipe(distinctUntilChanged());
+    this.state = this.service.state;
     this.isActive = this.service.isActive;
     this.closed = false;
   }
