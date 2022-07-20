@@ -256,7 +256,10 @@ export class Omnibus<TBusItem> {
 
   /** Run a function (synchronously) for all runtime events, prior to all spies and listeners.
    * Throwing an exception will raise to the triggerer, but not terminate the guard.*/
-  public guard(matcher: Predicate<TBusItem>, fn: (item: TBusItem) => void) {
+  public guard<TMatchType extends TBusItem = TBusItem>(
+    matcher: (i: TBusItem) => i is TMatchType,
+    fn: (item: TBusItem) => void
+  ) {
     this.guards.push([matcher, fn]);
     return this.createRemovalSub(matcher, fn, this.guards);
   }
