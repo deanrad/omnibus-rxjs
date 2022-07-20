@@ -1,10 +1,9 @@
 import { ServiceSubject } from '../src/ServiceSubject';
 import { after } from '../src/after';
-import { of } from 'rxjs';
+import { distinctUntilChanged, of } from 'rxjs';
 
 // Play live at
 // https://codesandbox.io/s/omnibus-rxjs-servicesubject-468xn5
-
 describe(ServiceSubject, () => {
   describe('Arguments', () => {
     describe('namespace', () => {});
@@ -22,7 +21,7 @@ describe(ServiceSubject, () => {
           logs.push(`Next increase: ${inc}`)
         );
 
-        counter.state.subscribe({
+        counter.state.pipe(distinctUntilChanged()).subscribe({
           next(count) {
             logs.push(`The new count is: ${count}`);
           },
@@ -59,7 +58,7 @@ describe(ServiceSubject, () => {
           logs.push(`Next increase: ${inc}`)
         );
 
-        counter.state.subscribe({
+        counter.state.pipe(distinctUntilChanged()).subscribe({
           next(count) {
             logs.push(`The new count is: ${count}`);
           },
@@ -101,9 +100,9 @@ describe(ServiceSubject, () => {
   });
 
   describe('#state', () => {
-    it.todo('can be read via .value')
-    it.todo('can be subscribed via .subscribe')
-  })
+    it.todo('can be read via .value');
+    it.todo('can be subscribed via .subscribe');
+  });
 
   describe('Omnibus pass-throughs', () => {
     describe('reset', () => {

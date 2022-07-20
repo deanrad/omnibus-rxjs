@@ -79,6 +79,8 @@ export interface Service<TRequest, TNext, TError, TState> extends Stoppable {
   (req: TRequest): void;
   /** The ActionCreator factories this service listens for, and responds with. */
   actions: ActionCreators<TRequest, TNext, TError>;
+  /** An Observable of just the events of this service on the bus */
+  events: Observable<Action<void | TRequest | TNext | TError>>;
   /** Indicates whether a handling is in progress. Use `.value`, or `subscribe()` for updates.  */
   isActive: BehaviorSubject<boolean>;
   /** Uses the reducer to aggregate the events that are produced from its handlers, emitting a new state for each action (de-duping is not done). Use `.value`, or `subscribe()` for updates. */
@@ -235,6 +237,7 @@ export function createService<TRequest, TNext, TError, TState = object>(
     isActive,
     state,
     bus,
+    events: bus.query(matchesAny(...Object.values(ACs))),
   });
 
   return returnValue;

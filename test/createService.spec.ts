@@ -176,7 +176,6 @@ describe('createService', () => {
 
       it('does not reduce if handler throws', () => {
         const seenStates: InitialState[] = [];
-        let count = 1;
         const handler = () => {
           seenStates.push(stateService.state.value);
           return throwError('oops');
@@ -231,7 +230,7 @@ describe('createService', () => {
       });
 
       it('emits changes only on request, completed, error, unsubscribe, and when changed', () => {
-        const statuses = [];
+        const statuses: boolean[] = [];
         asyncService.isActive.subscribe((s) => statuses.push(s));
 
         asyncService();
@@ -258,7 +257,7 @@ describe('createService', () => {
       });
 
       it('has a final value of false on bus.reset()', async () => {
-        const statuses = [];
+        const statuses: boolean[] = [];
         asyncService.isActive.subscribe((s) => statuses.push(s));
 
         asyncService(); // true
@@ -271,7 +270,7 @@ describe('createService', () => {
       });
 
       it('has a final value of false on stop()', async () => {
-        const statuses = [];
+        const statuses: boolean[] = [];
         asyncService.isActive.subscribe((s) => statuses.push(s));
 
         asyncService(); // to true
