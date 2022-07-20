@@ -75,8 +75,10 @@ type HandlerReturnValue<TNext> =
  * - `time/canceled` - server: has canceled the current request for the time
  */
 export interface Service<TRequest, TNext, TError, TState> extends Stoppable {
-  /** Invoke the service as a function directly. */
+  /** Invoke the service as a function directly (RTK style). */
   (req: TRequest): void;
+  /** Explicitly pass a request object */
+  request(req: TRequest): void;
   /** The ActionCreator factories this service listens for, and responds with. */
   actions: ActionCreators<TRequest, TNext, TError>;
   /** An Observable of just the events of this service on the bus */
@@ -237,6 +239,7 @@ export function createService<TRequest, TNext, TError, TState = object>(
     isActive,
     state,
     bus,
+    request: requestor,
     events: bus.query(matchesAny(...Object.values(ACs))),
   });
 
