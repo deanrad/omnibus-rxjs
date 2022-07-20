@@ -8,7 +8,7 @@ import { Action } from 'typescript-fsa';
 
 import { Omnibus } from '../src/bus';
 import { after } from '../src/after';
-import { concat } from 'rxjs';
+import { concat, of, throwError } from 'rxjs';
 
 describe('createService', () => {
   const testNamespace = 'testService';
@@ -24,14 +24,24 @@ describe('createService', () => {
   beforeEach(() => {
     bus.reset(); // stops existing services, handlings
   });
+
+  it('triggers a request to the bus when called', () => {
+    const seen = eventsOf(bus);
+    testService('3');
+
+    expect(seen).toMatchObject([testService.actions.request('3')]);
+  });
+
   describe('arguments', () => {
+    describe('actionNamespace', () => {
+      it.todo('prefixes action types');
+    });
+
     describe('bus', () => {
       it.todo('recieves requests');
       it.todo('recieves observed events');
     });
-    describe('actionNamespace', () => {
-      it.todo('prefixes action types');
-    });
+
     describe('handler', () => {
       it('can return an item an Observable will be made from', async () => {
         const service = createService<void, number, Error>(
@@ -48,6 +58,7 @@ describe('createService', () => {
           payload: 3.14159,
         });
       });
+
       it('can return a zero-argument function', async () => {
         const service = createService<void, number, Error>(
           testNamespace,
@@ -64,6 +75,7 @@ describe('createService', () => {
         });
       });
     });
+
     describe('reducerProducer', () => {
       const initialState = { count: 0 };
       const reduxStyle = (state = initialState, e: Action<unknown>) => {
@@ -90,6 +102,7 @@ describe('createService', () => {
         counterService();
         expect(counterService.state.value).toHaveProperty('count', 1);
       });
+
       it('can return a ReduxToolkit-Style reducer', () => {
         const counterService = createService<
           void,
@@ -103,10 +116,11 @@ describe('createService', () => {
       });
     });
   });
+
   describe('return value', () => {
     describe('#state', () => {
       const initial = {
-        constants: [],
+        constants: [] as number[],
       };
       type InitialState = typeof initial;
       const handler = () => concat(after(0, 3.14), after(0, 2.718));
@@ -119,30 +133,74 @@ describe('createService', () => {
         };
         return reducer;
       };
+
       it('reduces into .state', () => {
         const stateService = createService<
           string | void,
           number,
           Error,
           InitialState
-        >(
-          testNamespace,
-          bus,
-          handler,
-          reducerProducer
-          // createReducer(initial, {
-          //   [ACs.next.type]: (all, e) => {
-          //     all.constants.push(e.payload);
-          //   },
-          // })
-        );
+        >(testNamespace, bus, handler, reducerProducer);
 
         expect(stateService.state.value).toEqual({ constants: [] });
 
         stateService();
         expect(stateService.state.value).toEqual({ constants: [3.14, 2.718] });
       });
+
+      it('does not reduce until after handlers', () => {
+        const seenStates: InitialState[] = [];
+        let count = 1;
+        const handler = () => {
+          seenStates.push(stateService.state.value);
+          return of(count++);
+        };
+
+        const stateService = createService<
+          string | void,
+          number,
+          Error,
+          InitialState
+        >(testNamespace, bus, handler, reducerProducer);
+
+        expect(stateService.state.value).toEqual({ constants: [] });
+
+        stateService();
+        expect(seenStates).toEqual([{ constants: [] }]);
+
+        stateService();
+        expect(seenStates).toEqual([{ constants: [] }, { constants: [1] }]);
+
+        expect(stateService.state.value).toEqual({ constants: [1, 2] });
+      });
+
+      it('does not reduce if handler throws', () => {
+        const seenStates: InitialState[] = [];
+        let count = 1;
+        const handler = () => {
+          seenStates.push(stateService.state.value);
+          return throwError('oops');
+        };
+
+        const stateService = createService<
+          string | void,
+          number,
+          Error,
+          InitialState
+        >(testNamespace, bus, handler, reducerProducer);
+
+        expect(stateService.state.value).toEqual({ constants: [] });
+
+        stateService();
+        expect(seenStates).toEqual([{ constants: [] }]);
+
+        stateService();
+        expect(seenStates).toEqual([{ constants: [] }, { constants: [] }]);
+
+        expect(stateService.state.value).toEqual({ constants: [] });
+      });
     });
+
     describe('#isActive', () => {
       let asyncHandler, asyncService;
       const ASYNC_DELAY = 10;
@@ -226,6 +284,7 @@ describe('createService', () => {
         expect(statuses).toEqual([false, true, false]);
       });
     });
+
     describe('#bus', () => {
       it('refers to the bus it was created with', () => {
         const stateService = createService(testNamespace, bus, handler);
@@ -329,17 +388,8 @@ describe('createService', () => {
         });
       });
     });
-
-    it('triggers a request to the bus when called', () => {
-      const seen = eventsOf(bus);
-      testService('3');
-
-      expect(seen).toMatchObject([
-        // { type: 'testService/requested', payload: '3' },
-        testService.actions.request('3'),
-      ]);
-    });
   });
+
   it('triggers events from observable handlers when no error', () => {
     const seen = eventsOf(bus);
     testService = createService<string, string, Error>(testNamespace, bus, () =>
@@ -353,6 +403,7 @@ describe('createService', () => {
       testService.actions.complete(),
     ]);
   });
+
   it('triggers events from Promise handlers when no error', async () => {
     const seen = eventsOf(bus);
     testService = createService<string, string, Error>(testNamespace, bus, () =>

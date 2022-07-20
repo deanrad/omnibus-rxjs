@@ -1,9 +1,11 @@
 import { Omnibus } from '../src/bus';
 import { createService, Service, ActionCreators } from '../src/createService';
 import { Observable, SubscriptionLike } from 'rxjs';
-import { distinctUntilChanged } from 'rxjs/operators';
 import { Action, ActionCreator } from 'typescript-fsa';
 
+/**
+ * @todo Make this a fuller, documented, object-style wrapper of the return value of createService.
+ */
 export class ServiceSubject<TRequest, TNext, TState>
   implements SubscriptionLike
 {
