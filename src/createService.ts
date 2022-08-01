@@ -31,6 +31,11 @@ export interface ActionCreators<TRequest, TNext, TError> {
   canceled: ActionCreator<void>;
 }
 
+/** Helpful, optional interface to differentiate service actions. */
+export interface HasSubtype {
+  subtype: string;
+}
+
 interface Stoppable {
   /** Terminates the listener, any of its Observable handlings.
    * @returns The closed subscription.

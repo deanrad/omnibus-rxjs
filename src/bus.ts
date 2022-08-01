@@ -257,7 +257,7 @@ export class Omnibus<TBusItem> {
   /** Run a function (synchronously) for all runtime events, prior to all spies and listeners.
    * Throwing an exception will raise to the triggerer, but not terminate the guard.*/
   public guard<TMatchType extends TBusItem = TBusItem>(
-    matcher: (i: TBusItem) => i is TMatchType,
+    matcher: ((i: TBusItem) => i is TMatchType) | ((i: TBusItem) => boolean),
     fn: (item: TBusItem) => void
   ) {
     this.guards.push([matcher, fn]);
@@ -267,7 +267,7 @@ export class Omnibus<TBusItem> {
   /** Run a function (synchronously) for all runtime events, prior to all spies and listeners.
    * Throwing an exception will raise to the triggerer, but not terminate the guard.*/
   public filter<TMatchType extends TBusItem = TBusItem>(
-    matcher: (i: TBusItem) => i is TMatchType,
+    matcher: ((i: TBusItem) => i is TMatchType) | ((i: TBusItem) => boolean),
     fn: (item: TBusItem) => TBusItem | null | undefined
   ) {
     this.filters.push([matcher, fn]);
