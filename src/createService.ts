@@ -32,8 +32,8 @@ export interface ActionCreators<TRequest, TNext, TError> {
 }
 
 /** Helpful, optional interface to differentiate service actions. */
-export interface HasSubtype {
-  subtype: string;
+export interface HasSubtype<T = string> {
+  subtype: T;
 }
 
 interface Stoppable {
