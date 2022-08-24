@@ -3,6 +3,7 @@ import {
   createSwitchingService,
   createBlockingService,
   createService,
+  createTogglingService,
 } from '../src/createService';
 import { Action } from 'typescript-fsa';
 
@@ -500,6 +501,31 @@ describe('createService', () => {
       testService = createBlockingService(testNamespace, bus, (s) =>
         after(0, s)
       );
+    });
+  });
+
+  describe('createTogglingService', () => {
+    it('calls createService with toggleMap', async () => {
+      testService = createTogglingService<void, void, void>(
+        testNamespace,
+        bus,
+        (s) => after(100, s)
+      );
+      const seen = [];
+      bus.spy((e) => seen.push(e));
+
+      testService();
+      await after(10);
+      testService();
+      await after(100);
+      expect(seen.map((e) => e.type)).toMatchInlineSnapshot(`
+        Array [
+          "testService/request",
+          "testService/started",
+          "testService/request",
+          "testService/canceled",
+        ]
+      `);
     });
   });
 });

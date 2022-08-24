@@ -15,8 +15,13 @@ import {
   distinctUntilChanged,
   endWith,
   takeUntil,
+  mergeMap,
+  concatMap,
+  switchMap,
+  exhaustMap,
 } from 'rxjs/operators';
 import { Action, ActionCreator, actionCreatorFactory } from 'typescript-fsa';
+import { toggleMap } from './toggleMap';
 
 /** A standardized convention of actions this service listens to, and responsds with. */
 export interface ActionCreators<TRequest, TNext, TError> {
@@ -126,10 +131,11 @@ export function createService<TRequest, TNext, TError, TState = object>(
       return state;
     },
   listenMode:
+    | typeof mergeMap
     | 'listen'
     | 'listenQueueing'
-    | 'listenSwitching'
-    | 'listenBlocking' = 'listen'
+    | 'listenBlocking'
+    | 'listenSwitching' = 'listen'
 ): Service<TRequest, TNext, TError, TState> {
   const namespacedAction = actionCreatorFactory(actionNamespace);
 
@@ -201,8 +207,21 @@ export function createService<TRequest, TNext, TError, TState = object>(
     }) as Observable<TNext>;
   };
 
+  // Determine the operator to combine handlings with
+  let listenOp;
+  // prettier-ignore
+  if (typeof listenMode === 'string') {
+    switch (listenMode) {
+      case 'listen': listenOp = mergeMap; break;
+      case 'listenQueueing': listenOp = concatMap; break;
+      case 'listenSwitching': listenOp = switchMap; break;
+      case 'listenBlocking': listenOp = exhaustMap; break;
+    }
+  } else {
+    listenOp = listenMode;
+  }
   /** The main subscription of this service */
-  const sub = bus[listenMode](
+  const sub = bus.listen(
     ACs.request.match,
     wrappedHandler,
     bus.observeWith({
@@ -216,7 +235,8 @@ export function createService<TRequest, TNext, TError, TState = object>(
       subscribe: ACs.started,
       // @ts-ignore
       unsubscribe: ACs.canceled,
-    })
+    }),
+    listenOp
   );
 
   // Enhance and return
@@ -347,5 +367,37 @@ export function createBlockingService<TRequest, TNext, TError, TState = object>(
     handler,
     reducerProducer,
     'listenBlocking'
+  );
+}
+
+/**
+ * Like Redux Toolkit's createAsyncThunk, but using an event bus, not Redux for communication,
+ * and both cancelable, and concurrency-controllable. If a handler is running, terminates it, and does not begin a new handling.
+ *
+ * @param actionNamespace - Prefix of all actions eg dog/request
+ * @param bus - The Omnibus event bus read and written to
+ * @param handler - Function returning Promise, Observable or generator from which events are generated
+ * @param reducerProducer - Function returning a reducer for #state - recieves ActionCreators as its argument.
+ * @param listenMode - Concurrency strategy for when an existing handler is in progress.
+ * @returns
+ */
+export function createTogglingService<TRequest, TNext, TError, TState = object>(
+  actionNamespace: string,
+  bus: Omnibus<Action<TRequest | TNext | TError | void>>,
+  handler: (e: TRequest) => HandlerReturnValue<TNext>,
+  reducerProducer: (
+    acs?: ActionCreators<TRequest, TNext, TError>
+  ) => (state: TState, action: Action<any>) => TState = () =>
+    (state: TState, _: any) => {
+      return state;
+    }
+): Service<TRequest, TNext, TError, TState> {
+  return createService(
+    actionNamespace,
+    bus,
+    handler,
+    reducerProducer,
+    // @ts-ignore
+    toggleMap
   );
 }
