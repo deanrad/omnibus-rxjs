@@ -34,10 +34,10 @@ export const toggleMap = (
       return source.subscribe({
         next(trigger) {
           if (!innerSub || innerSub.closed) {
-            innerSub = spawner(trigger).subscribe(
-              (inner) => notify.next(mapper(trigger, inner)),
-              (e) => notify.error(e)
-            );
+            innerSub = spawner(trigger).subscribe({
+              next: (inner) => notify.next(mapper(trigger, inner)),
+              error: (e) => notify.error(e),
+            });
           } else {
             innerSub.unsubscribe();
           }
