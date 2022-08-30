@@ -7,6 +7,7 @@ import {
   EMPTY,
   defer,
   BehaviorSubject,
+  firstValueFrom,
 } from 'rxjs';
 
 import {
@@ -61,6 +62,10 @@ interface Stoppable {
   addTeardown(teardownFn: Subscription['add']): void;
 }
 
+interface Queryable<TReq, TRes> {
+  send(arg: TReq): Promise<TRes>;
+}
+
 /**
  * A handler may return a Promise, a Promise-returning function, an Observable,
  * an iterable, or `void`. See RxJS' ObservableInput type, and `from` for more.
@@ -84,7 +89,9 @@ type HandlerReturnValue<TNext> =
  * - `time/error` - server: an error occurred (the listener remains alive due to internal rescueing)
  * - `time/canceled` - server: has canceled the current request for the time
  */
-export interface Service<TRequest, TNext, TError, TState> extends Stoppable {
+export interface Service<TRequest, TNext, TError, TState>
+  extends Stoppable,
+    Queryable<TRequest, Action<TNext>> {
   /** Invoke the service as a function directly (RTK style). */
   (req: TRequest): void;
   /** Explicitly pass a request object */
@@ -266,6 +273,13 @@ export function createService<TRequest, TNext, TError, TState = object>(
     bus,
     request: requestor,
     events: bus.query(matchesAny(...Object.values(ACs))),
+    send(arg: TRequest) {
+      const result = firstValueFrom(bus.query(ACs.next.match)) as Promise<
+        Action<TNext>
+      >;
+      bus.trigger(ACs.request(arg));
+      return result;
+    },
   });
 
   return returnValue;
