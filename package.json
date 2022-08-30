@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "start": "npm run example:debounced",
-    "example:debounced": "cd example/debounced-search; parcel index.html",
+    "example:debounced": "cd example/debounced-search; parcel --no-cache index.html",
     "lint": "eslint --ext .ts .",
     "lint:fix": "eslint --ext .ts --fix .",
     "test": "yarn test:fast",
