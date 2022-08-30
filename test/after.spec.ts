@@ -129,4 +129,20 @@ describe('after', () => {
       });
     });
   });
+
+  describe('observer arg', () => {
+    describe('#unsubscribe', () => {
+      it('is called back on unsubscribe()', () => {
+        let unsubbed = false;
+        const mini = after(50, 1, {
+          unsubscribe: () => {
+            unsubbed = true;
+          },
+        });
+        const miniSub = mini.subscribe();
+        miniSub.unsubscribe();
+        expect(unsubbed).toBeTruthy();
+      });
+    });
+  });
 });

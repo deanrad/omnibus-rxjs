@@ -1,5 +1,6 @@
 import { firstValueFrom, from, Observable, of, timer } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
+import { map, mergeMap, tap } from 'rxjs/operators';
+import { TapObserver } from './bus';
 
 interface AwaitableObservable<T> extends PromiseLike<T>, Observable<T> {}
 
@@ -17,12 +18,11 @@ export interface Thunk<T> {
  */
 export function after<T>(
   delaySpec: number | Promise<unknown> | typeof setTimeout,
-  objOrFn?: T | Thunk<T> | Observable<T>
+  objOrFn?: T | Thunk<T> | Observable<T>,
+  observer?: TapObserver<T>
 ): AwaitableObservable<T> {
   const resultMapper =
-    typeof objOrFn === 'function'
-      ? (objOrFn as (value: Number) => any)
-      : () => objOrFn;
+    typeof objOrFn === 'function' ? (objOrFn as () => any) : () => objOrFn;
 
   let delay =
     typeof delaySpec === 'number'
@@ -40,14 +40,17 @@ export function after<T>(
   function isObservable<T>(obj: any): obj is Observable<T> {
     return obj?.subscribe !== undefined;
   }
-  // prettier-ignore
-  const resultObs: Observable<T> = delay.pipe(
+
+  const ops = [
     isObservable<T>(objOrFn)
-      // then replace the delay emission with the observable's
-      ? mergeMap(() => objOrFn)
-      // otherwise emit the single value
-      : map(resultMapper)
-  );
+      ? // then replace the delay emission with the observable's
+        mergeMap(() => objOrFn)
+      : // otherwise emit the single value
+        map(resultMapper),
+    observer ? tap(observer) : undefined,
+  ];
+  // @ts-ignore
+  const resultObs: Observable<T> = delay.pipe(...ops.filter(Boolean));
 
   // after is a 'thenable, thus usable with await.
   // ref: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/await
