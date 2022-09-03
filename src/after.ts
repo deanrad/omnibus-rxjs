@@ -19,7 +19,7 @@ export interface Thunk<T> {
 export function after<T>(
   delaySpec: number | Promise<unknown> | typeof setTimeout,
   objOrFn?: T | Thunk<T> | Observable<T>,
-  observer?: TapObserver<T>
+  observer?: Partial<TapObserver<T>>
 ): AwaitableObservable<T> {
   const resultMapper =
     typeof objOrFn === 'function' ? (objOrFn as () => any) : () => objOrFn;

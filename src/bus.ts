@@ -84,7 +84,7 @@ export class Omnibus<TBusItem> {
         tap({
           error: (e) => this.errors.next(e),
         }),
-        retry()
+        retry() // XXXX Why retry?
       )
       .subscribe();
   }

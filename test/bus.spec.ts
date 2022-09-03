@@ -18,7 +18,7 @@ import {
   loadingCreator,
   resultCreator,
   searchRequestCreator,
-} from '../example/debounced-search/searchService';
+} from '../example/concurrency-viz/searchService';
 import { Omnibus } from '../src/bus';
 import { DURATION, is } from '../src/utils';
 import { after } from '../src/after';
