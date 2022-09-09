@@ -2,7 +2,6 @@ import { Omnibus } from './bus';
 import {
   Subscription,
   Observable,
-  ObservableInput,
   from,
   EMPTY,
   BehaviorSubject,
@@ -165,7 +164,10 @@ export function createService<TRequest, TNext, TError, TState = object>(
   );
   const stateSub = bus
     .query(matchesAny(...Object.values(ACs)))
-    .pipe(scan((all, e) => reducer(all, e), state.value))
+    .pipe(
+      scan((all, e) => reducer(all, e), state.value),
+      distinctUntilChanged()
+    )
     .subscribe(state);
 
   let cancelCounter = new BehaviorSubject<number>(0);
