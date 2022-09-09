@@ -32,6 +32,11 @@ export function Viz() {
       Object.values<BlockDisplay>(newer).forEach((v) => {
         if (v.requestOffset === undefined) {
           v.requestOffset = elapsed;
+          return;
+        }
+
+        if (v.status === 'Running') {
+          v.width = elapsed - v.requestOffset;
         }
         // console.log({ v });
       });

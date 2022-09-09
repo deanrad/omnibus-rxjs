@@ -4,14 +4,15 @@ import type { Block } from '../services/searchService';
 export interface BlockDisplay extends Block {
   requestOffset: number;
   startedOffset: number;
+  width: number;
   completedOffset: number;
 }
 
 const paddingLeft = 1;
 
 export function BlockRect(props: BlockDisplay & { idx: number }) {
-  const { idx, status, requestOffset } = props;
-  const length = '13%';
+  const { idx, status, requestOffset, width } = props;
+
   const baseY = idx * 30;
 
   return (
@@ -21,7 +22,7 @@ export function BlockRect(props: BlockDisplay & { idx: number }) {
         x={`${requestOffset ?? 0}%`}
         y={baseY}
         height="20px"
-        width={length}
+        width={width}
         stroke="black"
         fill="red"
         fillOpacity="0.3"
