@@ -40,11 +40,12 @@ export function Viz() {
   }, [elapsed]);
 
   // find out about new blocks
-  useWhileMounted(() =>
-    searchService.state.subscribe((newest) =>
+  useWhileMounted(() => {
+    // TODO merge with elapsed stream instead
+    return searchService.state.subscribe((newest) =>
       setBlocks((old) => merge(old, newest.blocks))
-    )
-  );
+    );
+  });
 
   // from 0 to TOTAL_DURATION move the offset so new BlockRects are indeed offset
   useWhileMounted(() => {
