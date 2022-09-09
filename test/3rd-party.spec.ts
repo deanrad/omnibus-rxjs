@@ -1,10 +1,10 @@
 import { of, asapScheduler, asyncScheduler } from 'rxjs';
-import * as ExampleService from '../example/concurrency-viz/searchService';
+import * as ExampleService from '../example/concurrency-viz/services/searchService';
 
 /** Specs that document how 3rd party libs we may use interact */
 describe('Reference: FSA', () => {
   it('creates an action', () => {
-    const action = ExampleService.searchRequestCreator({ query: 'app' });
+    const action = ExampleService.actions.request({ query: 'app' });
     expect([action]).toMatchInlineSnapshot(`
   Array [
     Object {
@@ -17,7 +17,7 @@ describe('Reference: FSA', () => {
   `);
   });
   it('provides a predicate #match', () => {
-    expect(ExampleService.searchRequestCreator.match).toMatchInlineSnapshot(
+    expect(ExampleService.actions.request.match).toMatchInlineSnapshot(
       `[Function]`
     );
   });

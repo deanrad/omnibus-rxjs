@@ -17,8 +17,8 @@ import {
   completeCreator,
   loadingCreator,
   resultCreator,
-  searchRequestCreator,
-} from '../example/concurrency-viz/searchService';
+  actions,
+} from '../example/concurrency-viz/services/searchService';
 import { Omnibus } from '../src/bus';
 import { DURATION, is } from '../src/utils';
 import { after } from '../src/after';
@@ -119,15 +119,15 @@ describe('Bus', () => {
       b.trigger({ foo: 'im foo' });
       await Promise.resolve();
       expect(seen).toMatchInlineSnapshot(`
-Array [
-  Object {
-    "foo": "im foo",
-  },
-  Object {
-    "bar": "i was: im foo",
-  },
-]
-`);
+        Array [
+          Object {
+            "foo": "im foo",
+          },
+          Object {
+            "bar": "i was: im foo",
+          },
+        ]
+      `);
     });
   });
   it('can be instantiated with the BusItemType it will accept', () => {
@@ -250,10 +250,10 @@ Array [
 
         // and we can see the errors
         expect(seenErrors).toMatchInlineSnapshot(`
-Array [
-  [Error: 5],
-]
-`);
+          Array [
+            [Error: 5],
+          ]
+        `);
       })
     );
     describe('Type Safety', () => {
@@ -277,41 +277,41 @@ Array [
               // on events of searchRequest
               // return an observable of next:{result: 'foo'}
               FSABus.listen(
-                searchRequestCreator.match,
+                actions.request.match,
                 () => of({ result: 'foo' }),
                 FSABus.observeWith({
-                  subscribe: loadingCreator,
-                  next: resultCreator,
-                  complete: completeCreator,
+                  subscribe: actions.started,
+                  next: actions.next,
+                  complete: actions.complete,
                 })
               );
-              FSABus.trigger(searchRequestCreator({ query: 'app', id: 3.14 }));
+              FSABus.trigger(actions.request({ query: 'app', id: 3.14 }));
 
               expect(events).toMatchInlineSnapshot(`
-Array [
-  Object {
-    "payload": Object {
-      "id": 3.14,
-      "query": "app",
-    },
-    "type": "search/request",
-  },
-  Object {
-    "payload": undefined,
-    "type": "search/loading",
-  },
-  Object {
-    "payload": Object {
-      "result": "foo",
-    },
-    "type": "search/result",
-  },
-  Object {
-    "payload": undefined,
-    "type": "search/complete",
-  },
-]
-`);
+                Array [
+                  Object {
+                    "payload": Object {
+                      "id": 3.14,
+                      "query": "app",
+                    },
+                    "type": "search/request",
+                  },
+                  Object {
+                    "payload": undefined,
+                    "type": "search/started",
+                  },
+                  Object {
+                    "payload": Object {
+                      "result": "foo",
+                    },
+                    "type": "search/next",
+                  },
+                  Object {
+                    "payload": undefined,
+                    "type": "search/complete",
+                  },
+                ]
+              `);
             })
           );
         });
@@ -348,11 +348,11 @@ Array [
               await DURATION.Timeout();
               expect(events).toHaveLength(2);
               expect(events).toMatchInlineSnapshot(`
-Array [
-  "bang",
-  "fooP",
-]
-`);
+                Array [
+                  "bang",
+                  "fooP",
+                ]
+              `);
             })
           );
         });
@@ -420,14 +420,14 @@ Array [
             StringBus.trigger('bang');
             expect(events).toHaveLength(5);
             expect(events).toMatchInlineSnapshot(`
-Array [
-  "bang",
-  "w",
-  "h",
-  "o",
-  "a",
-]
-`);
+              Array [
+                "bang",
+                "w",
+                "h",
+                "o",
+                "a",
+              ]
+            `);
           })
         );
         it(
@@ -856,16 +856,16 @@ Array [
           FSABus.trigger({ type: 'foo', payload });
 
           expect(seen).toMatchInlineSnapshot(`
-Array [
-  Object {
-    "payload": Object {
-      "fooId": "bazž",
-      "timestamp": "2020-01-01",
-    },
-    "type": "foo",
-  },
-]
-`);
+            Array [
+              Object {
+                "payload": Object {
+                  "fooId": "bazž",
+                  "timestamp": "2020-01-01",
+                },
+                "type": "foo",
+              },
+            ]
+          `);
         });
       });
     });

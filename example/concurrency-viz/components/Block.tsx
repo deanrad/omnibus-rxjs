@@ -15,8 +15,9 @@ export function BlockRect(props: BlockDisplay & { idx: number }) {
   const baseY = idx * 30;
 
   return (
-    <g key={idx} className="concurrency-graph-tracker">
+    <g key={idx}>
       <rect
+        className="concurrency-graph-tracker"
         x={`${requestOffset ?? 0}%`}
         y={baseY}
         height="20px"

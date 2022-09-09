@@ -72,10 +72,9 @@ export function Viz() {
 
   return (
     <svg>
-      {Object.entries(blocks).map(([_, block]) => {
-        // (block as BlockDisplay).offset = elapsed;
-        return React.createElement(BlockRect, block as BlockDisplay);
-      })}
+      {Object.entries(blocks).map(([_, block]) =>
+        React.createElement(BlockRect, block as BlockDisplay)
+      )}
     </svg>
   );
 }
