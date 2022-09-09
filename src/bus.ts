@@ -8,7 +8,7 @@ import {
   Subject,
   Subscription,
 } from 'rxjs';
-import { defer, EMPTY, from } from 'rxjs';
+import { EMPTY, from } from 'rxjs';
 import {
   catchError,
   concatMap,
@@ -334,11 +334,7 @@ export class Omnibus<TBusItem> {
     const obsResult: Observable<TConsequence> =
       typeof oneResult === 'function'
         ? // @ts-ignore
-          oneResult.length === 0
-          ? // @ts-ignore
-            defer(oneResult)
-          : // @ts-ignore
-            new Observable(oneResult)
+          new Observable(oneResult)
         : // @ts-ignore
           from(oneResult ?? EMPTY);
     return obsResult;

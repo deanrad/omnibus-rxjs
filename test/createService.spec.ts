@@ -59,22 +59,6 @@ describe('createService', () => {
           payload: 3.14159,
         });
       });
-
-      it('can return a zero-argument function', async () => {
-        const service = createService<void, number, Error>(
-          testNamespace,
-          bus,
-          () => () => Promise.resolve(3.14159)
-        );
-        const seen: Action<unknown>[] = [];
-        bus.spy((e) => seen.push(e));
-        service();
-        await Promise.resolve();
-        expect(seen).toContainEqual({
-          type: 'testService/next',
-          payload: 3.14159,
-        });
-      });
     });
 
     describe('reducerProducer', () => {
@@ -434,12 +418,10 @@ describe('createService', () => {
     ]);
   });
 
-  it('triggers events from Promise-factory handlers when no error', async () => {
+  it('triggers events from Promise-handlers when no error', async () => {
     const seen = eventsOf(bus);
-    testService = createService<string, string, Error>(
-      testNamespace,
-      bus,
-      () => () => Promise.resolve('bar')
+    testService = createService<string, string, Error>(testNamespace, bus, () =>
+      Promise.resolve('bar')
     );
     testService('foo');
 
@@ -465,28 +447,6 @@ describe('createService', () => {
       testService.actions.request('foo'),
       testService.actions.started(),
       testService.actions.error(new Error('dang!')),
-    ]);
-  });
-
-  it('triggers events from generator handlers when no error', async () => {
-    const seen = eventsOf(bus);
-    testService = createService<string, string, Error>(
-      testNamespace,
-      bus,
-      () =>
-        function* () {
-          yield 'bar';
-        }
-    );
-    testService('foo');
-
-    await Promise.resolve();
-
-    expect(seen).toEqual([
-      testService.actions.request('foo'),
-      testService.actions.started(),
-      testService.actions.next('bar'),
-      testService.actions.complete(),
     ]);
   });
 

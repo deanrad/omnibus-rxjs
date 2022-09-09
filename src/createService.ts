@@ -5,7 +5,6 @@ import {
   ObservableInput,
   from,
   EMPTY,
-  defer,
   BehaviorSubject,
   firstValueFrom,
 } from 'rxjs';
@@ -191,9 +190,7 @@ export function createService<TRequest, TNext, TError, TState = object>(
     /* istanbul ignore next */
     const obsResult: Observable<TNext> =
       typeof oneResult === 'function'
-        ? oneResult.length === 0
-          ? defer(oneResult)
-          : EMPTY
+        ? new Observable(oneResult)
         : from(oneResult ?? EMPTY);
 
     const { cancelIdxAtCreation } = e.meta || {};
