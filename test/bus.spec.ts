@@ -321,7 +321,7 @@ describe('Bus', () => {
             capturing(StringBus, async (events) => {
               StringBus.listen(
                 (s) => s === 'FOO',
-                () => () => Promise.resolve('BAR'),
+                () => Promise.resolve('BAR'),
                 StringBus.observeAll()
               );
               StringBus.trigger('FOO');
@@ -358,20 +358,6 @@ describe('Bus', () => {
         });
       });
       describe('Returning functions', () => {
-        it(
-          'can return 0-arity function to call defer()',
-          capturing(StringBus, async (events) => {
-            StringBus.listen(
-              (s) => s === 'FOO',
-              () => () => Promise.resolve('BAR'),
-              StringBus.observeAll()
-            );
-            StringBus.trigger('FOO');
-            StringBus.trigger('NOTFOO');
-            await after(1);
-            expect(events).toEqual(['FOO', 'NOTFOO', 'BAR']);
-          })
-        );
         it('can return 1-arity function to create Observable via new Observable()', async () => {
           StringBus.listen(
             (s) => s === 'FOO',
