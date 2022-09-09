@@ -22,6 +22,7 @@ import {
 } from 'rxjs/operators';
 import { Action, ActionCreator, actionCreatorFactory } from 'typescript-fsa';
 import { toggleMap } from './toggleMap';
+import type { ResultCreator } from './bus';
 
 /** A standardized convention of actions this service listens to, and responsds with. */
 export interface ActionCreators<TRequest, TNext, TError> {
@@ -64,15 +65,6 @@ interface Stoppable {
 interface Queryable<TReq, TRes> {
   send(arg: TReq): Promise<TRes>;
 }
-
-/**
- * A handler may return a Promise, a Promise-returning function, an Observable,
- * an iterable, or `void`. See RxJS' ObservableInput type, and `from` for more.
- */
-type HandlerReturnValue<TNext> =
-  | (() => ObservableInput<TNext>)
-  | ObservableInput<TNext>
-  | void;
 
 /**
  * A service is a listener over a bus, which triggers responses in some combination to
@@ -129,7 +121,7 @@ export function matchesAny(...acs: ActionCreator<any>[]) {
 export function createService<TRequest, TNext, TError, TState = object>(
   actionNamespace: string,
   bus: Omnibus<Action<TRequest | TNext | TError | void>>,
-  handler: (e: TRequest) => HandlerReturnValue<TNext>,
+  handler: ResultCreator<TRequest, TNext>,
   reducerProducer: (
     acs?: ActionCreators<TRequest, TNext, TError>
   ) => (state: TState, action: Action<any>) => TState = () =>
@@ -297,7 +289,7 @@ export function createService<TRequest, TNext, TError, TState = object>(
 export function createQueueingService<TRequest, TNext, TError, TState = object>(
   actionNamespace: string,
   bus: Omnibus<Action<TRequest | TNext | TError | void>>,
-  handler: (e: TRequest) => HandlerReturnValue<TNext>,
+  handler: ResultCreator<TRequest, TNext>,
   reducerProducer: (
     acs?: ActionCreators<TRequest, TNext, TError>
   ) => (state: TState, action: Action<any>) => TState = () =>
@@ -333,7 +325,7 @@ export function createSwitchingService<
 >(
   actionNamespace: string,
   bus: Omnibus<Action<TRequest | TNext | TError | void>>,
-  handler: (e: TRequest) => HandlerReturnValue<TNext>,
+  handler: ResultCreator<TRequest, TNext>,
   reducerProducer: (
     acs?: ActionCreators<TRequest, TNext, TError>
   ) => (state: TState, action: Action<any>) => TState = () =>
@@ -364,7 +356,7 @@ export function createSwitchingService<
 export function createBlockingService<TRequest, TNext, TError, TState = object>(
   actionNamespace: string,
   bus: Omnibus<Action<TRequest | TNext | TError | void>>,
-  handler: (e: TRequest) => HandlerReturnValue<TNext>,
+  handler: ResultCreator<TRequest, TNext>,
   reducerProducer: (
     acs?: ActionCreators<TRequest, TNext, TError>
   ) => (state: TState, action: Action<any>) => TState = () =>
@@ -395,7 +387,7 @@ export function createBlockingService<TRequest, TNext, TError, TState = object>(
 export function createTogglingService<TRequest, TNext, TError, TState = object>(
   actionNamespace: string,
   bus: Omnibus<Action<TRequest | TNext | TError | void>>,
-  handler: (e: TRequest) => HandlerReturnValue<TNext>,
+  handler: ResultCreator<TRequest, TNext>,
   reducerProducer: (
     acs?: ActionCreators<TRequest, TNext, TError>
   ) => (state: TState, action: Action<any>) => TState = () =>
