@@ -5,9 +5,9 @@ import { map, tap, takeUntil } from 'rxjs/operators';
 import {
   exampleState,
   initialState,
-  searchService,
+  blockService,
   TOTAL_DURATION,
-} from '../services/searchService';
+} from '../services/blockService';
 import { after } from '../../../src/after';
 import { BlockRect, BlockDisplay } from './Block';
 
@@ -47,7 +47,7 @@ export function Viz() {
   // find out about new blocks
   useWhileMounted(() => {
     // TODO merge with elapsed stream instead
-    return searchService.state.subscribe((newest) =>
+    return blockService.state.subscribe((newest) =>
       setBlocks((old) => merge(old, newest.blocks))
     );
   });
@@ -67,7 +67,7 @@ export function Viz() {
       takeUntil(timer(TOTAL_DURATION))
     );
     firstValueFrom(
-      searchService.bus.query(searchService.actions.request.match)
+      blockService.bus.query(blockService.actions.request.match)
     ).then(() => {
       updaterSub = updates.subscribe();
     });

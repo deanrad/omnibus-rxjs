@@ -1,10 +1,10 @@
 import React, { createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
-  searchService,
+  blockService,
   exampleState,
   initialState,
-} from './services/searchService';
+} from './services/blockService';
 import { Viz } from './components/Viz';
 
 const viz = document.getElementById('viz') as HTMLElement;
@@ -13,7 +13,7 @@ const vizRoot = createRoot(viz);
 
 window.addEventListener('DOMContentLoaded', () => {
   let i = 1;
-  reqBtn.addEventListener('click', () => searchService(i++));
+  reqBtn.addEventListener('click', () => blockService(i++));
 
   vizRoot.render(createElement(Viz, { blocks: initialState.blocks }));
 });

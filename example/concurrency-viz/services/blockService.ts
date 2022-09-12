@@ -7,9 +7,15 @@ import {
 } from '../../../src/createService';
 import { after } from '../../../src/after';
 import { bus } from './bus';
-import { queueOnlyLatest, TapObserver } from '../../../src';
-import { reducer, GraphShape } from './searchService.reducer';
-export * from './searchService.reducer';
+import {
+  HandlerReturnValue,
+  Omnibus,
+  queueOnlyLatest,
+  TapObserver,
+} from '../../../src';
+import { reducer, GraphShape } from './blockService.reducer';
+import { Action } from 'typescript-fsa';
+export * from './blockService.reducer';
 
 export const SINGLE_DURATION = 2000;
 export const TOTAL_DURATION = 5000;
@@ -19,15 +25,15 @@ export const TOTAL_DURATION = 5000;
 function includeRequestNumber<T>(i: T) {
   return {
     subscribe() {
-      bus.trigger(searchService.actions.started(i));
+      bus.trigger(blockService.actions.started(i));
     },
     unsubscribe() {
-      bus.trigger(searchService.actions.canceled(i));
+      bus.trigger(blockService.actions.canceled(i));
     },
   } as Partial<TapObserver<T>>;
 }
 
-export const searchService = createService<number, number, Error, GraphShape>(
+export const blockService = createService<number, number, Error, GraphShape>(
   'search',
   bus,
   (i) =>
@@ -36,15 +42,20 @@ export const searchService = createService<number, number, Error, GraphShape>(
   reducer
 );
 
-export const actions = searchService.actions;
+export const actions = blockService.actions;
 
 /** A strategy from ember-concurrency! */
 function createKeepLatestService<TRequest, TNext, TError, TState>(
-  ...args
+  ...args: Parameters<typeof createService>
 ): Service<TRequest, TNext, TError, TState> {
-  return createService(
+  const [ns, bus, handler, reducerProducer] = args;
+
+  return createService<TRequest, TNext, TError, TState>(
+    ns,
     // @ts-ignore
-    ...args,
+    bus,
+    handler,
+    reducerProducer,
     queueOnlyLatest
   );
 }
