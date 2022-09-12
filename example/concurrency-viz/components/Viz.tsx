@@ -21,28 +21,6 @@ function useWhileMounted(subsFactory: () => Subscription) {
 
 export function Viz() {
   const [blocks, setBlocks] = React.useState(exampleState.blocks);
-  const [elapsed, setElapsed] = React.useState(0); // 0 to 100
-
-  // tag requested with offsets
-  React.useEffect(() => {
-    setBlocks((old) => {
-      const newer = {
-        ...old,
-      };
-      Object.values<BlockDisplay>(newer).forEach((v) => {
-        if (v.requestOffset === undefined) {
-          v.requestOffset = elapsed;
-          return;
-        }
-
-        if (v.status === 'Running') {
-          v.width = elapsed - v.requestOffset;
-        }
-        // console.log({ v });
-      });
-      return newer;
-    });
-  }, [elapsed]);
 
   // find out about new blocks
   useWhileMounted(() => {
@@ -50,29 +28,6 @@ export function Viz() {
     return blockService.state.subscribe((newest) =>
       setBlocks((old) => merge(old, newest.blocks))
     );
-  });
-
-  // from 0 to TOTAL_DURATION move the offset so new BlockRects are indeed offset
-  useWhileMounted(() => {
-    const UPDATE_INTERVAL = 500;
-    const updater = concat(after(0, -1), interval(UPDATE_INTERVAL));
-    let updaterSub: Subscription;
-
-    const updates = updater.pipe(
-      map((i) => i + 1),
-      map((i) => (100 * (UPDATE_INTERVAL * i)) / TOTAL_DURATION),
-      tap((percent) => {
-        setElapsed(percent);
-      }),
-      takeUntil(timer(TOTAL_DURATION))
-    );
-    firstValueFrom(
-      blockService.bus.query(blockService.actions.request.match)
-    ).then(() => {
-      updaterSub = updates.subscribe();
-    });
-
-    return new Subscription(() => updaterSub.unsubscribe());
   });
 
   return (

@@ -2,8 +2,8 @@ import { createBlockingService, Service } from '../../../src/createService';
 import { after } from '../../../src/after';
 import { bus } from './bus';
 import { TOTAL_DURATION } from './constants';
-import { animationFrames } from 'rxjs';
-import { takeWhile, scan, map } from 'rxjs/operators';
+import { animationFrames, concat, interval } from 'rxjs';
+import { takeWhile, scan, map, takeUntil } from 'rxjs/operators';
 
 const deltaReducer = [
   (prev, { elapsed }) => {
@@ -28,9 +28,12 @@ function moveFrames(duration) {
   );
 }
 
+//
+const handler = () => moveFrames(500);
+
 export const animationService = createBlockingService<
   void,
-  {percent: number},
+  { percent: number },
   Error,
   number
->('search', bus, () => moveFrames(TOTAL_DURATION));
+>('ani', bus, handler);

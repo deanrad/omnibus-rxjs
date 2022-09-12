@@ -1,12 +1,19 @@
 import { ActionCreators } from '../../../src';
-import { createService } from '../../../src';
 
 export interface Block {
   idx: number;
   status: 'Running' | 'Requested' | 'Complete' | 'Canceled';
 }
+export interface BlockDisplay extends Block {
+  requestOffset: number;
+  startedOffset?: number;
+  completedOffset?: number;
+  canceledOffset?: number;
+  width: number;
+}
+
 export interface GraphShape {
-  blocks: Record<number, Block>;
+  blocks: Record<number, BlockDisplay>;
 }
 
 export const initialState: GraphShape = {
@@ -18,6 +25,8 @@ export const exampleState: GraphShape = {
     0: {
       idx: 0,
       status: 'Complete',
+      requestOffset: 0,
+      width: 20 * 5, // percent*pixels
     },
   },
 };

@@ -1,12 +1,5 @@
 import * as React from 'react';
-import type { Block } from '../services/searchService';
-
-export interface BlockDisplay extends Block {
-  requestOffset: number;
-  startedOffset: number;
-  width: number;
-  completedOffset: number;
-}
+import type { Block, BlockDisplay } from '../services/blockService';
 
 const paddingLeft = 1;
 

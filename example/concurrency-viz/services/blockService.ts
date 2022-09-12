@@ -1,18 +1,11 @@
-import {
-  createService,
-  Service,
-} from '../../../src/createService';
+import { createService, Service } from '../../../src/createService';
 import { after } from '../../../src/after';
 import { bus } from './bus';
-import {
-  HandlerReturnValue,
-  Omnibus,
-  queueOnlyLatest,
-  TapObserver,
-} from '../../../src';
+import { queueOnlyLatest, TapObserver } from '../../../src';
 import { reducer, GraphShape } from './blockService.reducer';
 export * from './blockService.reducer';
-import {SINGLE_DURATION} from './constants'
+import { SINGLE_DURATION } from './constants';
+import { animationService } from './animationService';
 
 // Started and complete dont usually have payloads to identify the request
 // that caused them so this observer will
@@ -37,6 +30,13 @@ export const blockService = createService<number, number, Error, GraphShape>(
 );
 
 export const actions = blockService.actions;
+
+// on block creations, start the animation service (no more than one )
+blockService.requests.subscribe({
+  next(r) {
+    animationService.request();
+  },
+});
 
 /** A strategy from ember-concurrency! */
 function createKeepLatestService<TRequest, TNext, TError, TState>(
