@@ -1,8 +1,5 @@
 import {
   createService,
-  createSwitchingService,
-  createQueueingService,
-  createBlockingService as createSingletonService,
   Service,
 } from '../../../src/createService';
 import { after } from '../../../src/after';
@@ -14,11 +11,8 @@ import {
   TapObserver,
 } from '../../../src';
 import { reducer, GraphShape } from './blockService.reducer';
-import { Action } from 'typescript-fsa';
 export * from './blockService.reducer';
-
-export const SINGLE_DURATION = 2000;
-export const TOTAL_DURATION = 5000;
+import {SINGLE_DURATION} from './constants'
 
 // Started and complete dont usually have payloads to identify the request
 // that caused them so this observer will

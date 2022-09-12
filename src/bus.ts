@@ -2,13 +2,14 @@
 import {
   Observable,
   ObservableInput,
-  Observer,
   OperatorFunction,
   PartialObserver,
   Subject,
   Subscription,
+  Subscriber,
+  TeardownLogic,
 } from 'rxjs';
-import { defer, EMPTY, from } from 'rxjs';
+import { EMPTY, from } from 'rxjs';
 import {
   catchError,
   concatMap,
@@ -23,14 +24,17 @@ import { filter, takeUntil, tap } from 'rxjs/operators';
 
 //#region types
 export type Predicate<T> = (item: T) => boolean;
-export type HandlerReturnValue<T, TConsequence> =
-  | ((o: Observer<T>) => void)
-  | (() => ObservableInput<TConsequence>)
-  | ObservableInput<TConsequence>
-  | void;
+
+/** A function accepting an item and returning a value, an Observable constructor, an ObservableInput, or void */
 export type ResultCreator<T, TConsequence> = (
   item: T
-) => HandlerReturnValue<T, TConsequence>;
+) =>
+  | ((
+      this: Observable<TConsequence>,
+      subscriber: Subscriber<TConsequence>
+    ) => TeardownLogic)
+  | ObservableInput<TConsequence>
+  | void;
 
 type SubscribeObserver = {
   subscribe: () => void;
@@ -181,6 +185,7 @@ export class Omnibus<TBusItem> {
     // @ts-ignore dynamic
     const consequences = this.query(matcher).pipe(
       operator((event) => {
+        // @ts-ignore
         const obsResult = this.getHandlingResult(handler, event);
 
         // @ts-ignore
@@ -325,18 +330,15 @@ export class Omnibus<TBusItem> {
     return observer;
   }
 
-  private getHandlingResult<SubType extends TBusItem, TConsequence>(
-    handler: ResultCreator<SubType, TConsequence>,
+  private getHandlingResult<TConsequence>(
+    handler: ResultCreator<TBusItem, TConsequence>,
     event: TBusItem
   ) {
-    // @ts-ignore dynamic
     const oneResult = handler(event);
     const obsResult: Observable<TConsequence> =
       typeof oneResult === 'function'
-        ? // @ts-ignore
-          new Observable(oneResult)
-        : // @ts-ignore
-          from(oneResult ?? EMPTY);
+        ? new Observable(oneResult)
+        : from(oneResult ?? EMPTY);
     return obsResult;
   }
 

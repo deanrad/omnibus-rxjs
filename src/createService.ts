@@ -2,11 +2,10 @@ import { Omnibus } from './bus';
 import {
   Subscription,
   Observable,
-  ObservableInput,
   from,
   EMPTY,
-  defer,
   BehaviorSubject,
+  firstValueFrom,
 } from 'rxjs';
 
 import {
@@ -22,6 +21,7 @@ import {
 } from 'rxjs/operators';
 import { Action, ActionCreator, actionCreatorFactory } from 'typescript-fsa';
 import { toggleMap } from './toggleMap';
+import type { ResultCreator } from './bus';
 
 /** A standardized convention of actions this service listens to, and responsds with. */
 export interface ActionCreators<TRequest, TNext, TError> {
@@ -61,14 +61,9 @@ interface Stoppable {
   addTeardown(teardownFn: Subscription['add']): void;
 }
 
-/**
- * A handler may return a Promise, a Promise-returning function, an Observable,
- * an iterable, or `void`. See RxJS' ObservableInput type, and `from` for more.
- */
-type HandlerReturnValue<TNext> =
-  | (() => ObservableInput<TNext>)
-  | ObservableInput<TNext>
-  | void;
+interface Queryable<TReq, TRes> {
+  send(arg: TReq): Promise<TRes>;
+}
 
 /**
  * A service is a listener over a bus, which triggers responses in some combination to
@@ -84,7 +79,9 @@ type HandlerReturnValue<TNext> =
  * - `time/error` - server: an error occurred (the listener remains alive due to internal rescueing)
  * - `time/canceled` - server: has canceled the current request for the time
  */
-export interface Service<TRequest, TNext, TError, TState> extends Stoppable {
+export interface Service<TRequest, TNext, TError, TState>
+  extends Stoppable,
+    Queryable<TRequest, Action<TNext>> {
   /** Invoke the service as a function directly (RTK style). */
   (req: TRequest): void;
   /** Explicitly pass a request object */
@@ -123,7 +120,7 @@ export function matchesAny(...acs: ActionCreator<any>[]) {
 export function createService<TRequest, TNext, TError, TState = object>(
   actionNamespace: string,
   bus: Omnibus<Action<TRequest | TNext | TError | void>>,
-  handler: (e: TRequest) => HandlerReturnValue<TNext>,
+  handler: ResultCreator<TRequest, TNext>,
   reducerProducer: (
     acs?: ActionCreators<TRequest, TNext, TError>
   ) => (state: TState, action: Action<any>) => TState = () =>
@@ -167,7 +164,10 @@ export function createService<TRequest, TNext, TError, TState = object>(
   );
   const stateSub = bus
     .query(matchesAny(...Object.values(ACs)))
-    .pipe(scan((all, e) => reducer(all, e), state.value))
+    .pipe(
+      scan((all, e) => reducer(all, e), state.value),
+      distinctUntilChanged()
+    )
     .subscribe(state);
 
   let cancelCounter = new BehaviorSubject<number>(0);
@@ -264,6 +264,13 @@ export function createService<TRequest, TNext, TError, TState = object>(
     bus,
     request: requestor,
     events: bus.query(matchesAny(...Object.values(ACs))),
+    send(arg: TRequest) {
+      const result = firstValueFrom(bus.query(ACs.next.match)) as Promise<
+        Action<TNext>
+      >;
+      bus.trigger(ACs.request(arg));
+      return result;
+    },
   });
 
   return returnValue;
@@ -284,7 +291,7 @@ export function createService<TRequest, TNext, TError, TState = object>(
 export function createQueueingService<TRequest, TNext, TError, TState = object>(
   actionNamespace: string,
   bus: Omnibus<Action<TRequest | TNext | TError | void>>,
-  handler: (e: TRequest) => HandlerReturnValue<TNext>,
+  handler: ResultCreator<TRequest, TNext>,
   reducerProducer: (
     acs?: ActionCreators<TRequest, TNext, TError>
   ) => (state: TState, action: Action<any>) => TState = () =>
@@ -320,7 +327,7 @@ export function createSwitchingService<
 >(
   actionNamespace: string,
   bus: Omnibus<Action<TRequest | TNext | TError | void>>,
-  handler: (e: TRequest) => HandlerReturnValue<TNext>,
+  handler: ResultCreator<TRequest, TNext>,
   reducerProducer: (
     acs?: ActionCreators<TRequest, TNext, TError>
   ) => (state: TState, action: Action<any>) => TState = () =>
@@ -351,7 +358,7 @@ export function createSwitchingService<
 export function createBlockingService<TRequest, TNext, TError, TState = object>(
   actionNamespace: string,
   bus: Omnibus<Action<TRequest | TNext | TError | void>>,
-  handler: (e: TRequest) => HandlerReturnValue<TNext>,
+  handler: ResultCreator<TRequest, TNext>,
   reducerProducer: (
     acs?: ActionCreators<TRequest, TNext, TError>
   ) => (state: TState, action: Action<any>) => TState = () =>
@@ -382,7 +389,7 @@ export function createBlockingService<TRequest, TNext, TError, TState = object>(
 export function createTogglingService<TRequest, TNext, TError, TState = object>(
   actionNamespace: string,
   bus: Omnibus<Action<TRequest | TNext | TError | void>>,
-  handler: (e: TRequest) => HandlerReturnValue<TNext>,
+  handler: ResultCreator<TRequest, TNext>,
   reducerProducer: (
     acs?: ActionCreators<TRequest, TNext, TError>
   ) => (state: TState, action: Action<any>) => TState = () =>

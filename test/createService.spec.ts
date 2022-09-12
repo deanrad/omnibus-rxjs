@@ -372,6 +372,19 @@ describe('createService', () => {
         });
       });
     });
+
+    describe('#send', () => {
+      it('gets a Promise for a response', async () => {
+        const counterService = createService<number, number, Error>(
+          'counter',
+          bus,
+          (i) => after(50, i + 1) // replies with increment soon
+        );
+
+        const response = await counterService.send(3);
+        expect(response.payload).toEqual(4);
+      });
+    });
   });
 
   it('triggers events from observable handlers when no error', () => {

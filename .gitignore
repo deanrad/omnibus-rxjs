@@ -11,3 +11,4 @@ temp
 .cache
 coverage
 example/*/node_modules
+*.mdb
