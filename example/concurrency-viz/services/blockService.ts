@@ -1,4 +1,8 @@
-import { createService, Service } from '../../../src/createService';
+import {
+  createService,
+  createQueueingService,
+  Service,
+} from '../../../src/createService';
 import { after } from '../../../src/after';
 import { bus } from './bus';
 import { queueOnlyLatest, TapObserver } from '../../../src';
@@ -23,7 +27,12 @@ function includeRequestNumber<T>(i: T) {
   } as Partial<TapObserver<T>>;
 }
 
-export const blockService = createService<number, number, Error, GraphShape>(
+export const blockService = createQueueingService<
+  number,
+  number,
+  Error,
+  GraphShape
+>(
   'block',
   bus,
   (i) =>
@@ -46,43 +55,32 @@ const slowFrames = concat(
 );
 export const animatedBlocks = combineLatest([
   blockService.state.pipe(tap((s) => console.log(JSON.stringify(s)))),
-  bus
-    .query(animationService.actions.request.match)
-    .pipe(switchMap(() => slowFrames)),
-  // bus.query(animationService.actions.next.match),
+  // bus
+  //   .query(animationService.actions.request.match)
+  //   .pipe(switchMap(() => slowFrames)),
+  bus.query(animationService.actions.next.match),
 ]).pipe(
-  // map(([{ blocks: b }, t]) => {
-  //   const newBlocks = JSON.parse(JSON.stringify(b));
-
-  //   Object.values<BlockDisplay>(newBlocks).forEach((v, i) => {
-  //     if (v.status === 'Requested') {
-  //       // v.width = t.payload.percent * 100;
-  //       if (!v.requestOffset) {
-  //         console.log('Updating again');
-  //         v.requestOffset = t.payload.percent * 100;
-  //       }
-  //     }
-  //   });
-
-  //   return { blocks: newBlocks };
-  // })
-  // LEFTOFF
   scan(
     (last, [{ blocks }, t]) => {
-      const newBlocks = merge({}, blocks);
       const currentOffset = t.payload.percent * 100;
-      Object.values<BlockDisplay>(newBlocks).forEach((b) => {
-        if (b.status === 'Requested') {
-          b.requestOffset || (b.requestOffset = currentOffset);
+
+      const newBlocks = merge({ blocks: {} }, last, { blocks });
+      Object.values<BlockDisplay>(newBlocks.blocks).forEach((b) => {
+        if (b.status === 'Requested' && b.requestOffset === undefined) {
+          b.requestOffset = currentOffset;
         }
-        if (b.status === 'Running') {
-          b.startedOffset || (b.startedOffset = currentOffset);
+        if (b.status === 'Running' && b.startedOffset === undefined) {
+          b.startedOffset = currentOffset;
+        }
+        if (b.status === 'Completed' && b.completedOffset === undefined) {
+          b.completedOffset = currentOffset;
+          // b.width = 100;
         }
         if (b.status !== 'Completed') {
-          b.width || (b.width = currentOffset);
+          b.width = currentOffset;
         }
       });
-      return merge({ blocks: {} }, last, { blocks: newBlocks });
+      return newBlocks;
     },
     { blocks: {} }
   )

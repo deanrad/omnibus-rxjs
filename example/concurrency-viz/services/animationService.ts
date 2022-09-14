@@ -29,7 +29,7 @@ function moveFrames(duration) {
 }
 
 //
-const handler = () => moveFrames(500);
+const handler = () => moveFrames(5000);
 
 export const animationService = createBlockingService<
   void,
