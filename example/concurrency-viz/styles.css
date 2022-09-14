@@ -1,9 +1,27 @@
 .concurrency-graph-tracker {
   background: repeating-linear-gradient(
-  45deg,
-  #606dbc,
-  #606dbc 10px,
-  #465298 10px,
-  #465298 20px
-);
+    45deg,
+    #606dbc,
+    #606dbc 10px,
+    #465298 10px,
+    #465298 20px
+  );
+}
+
+.hidden {
+  display: none;
+}
+
+#viz-display .request-line {
+  stroke-width: 2px;
+}
+
+#viz-display .waiting-line {
+  stroke-width: 1px;
+  stroke-dasharray: 4;
+}
+
+#viz-display .cancel-line {
+  stroke-dasharray: 4;
+
 }

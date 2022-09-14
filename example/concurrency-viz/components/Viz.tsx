@@ -1,14 +1,7 @@
 import * as React from 'react';
 import merge from 'lodash.merge';
-import { timer, firstValueFrom, interval, Subscription, concat } from 'rxjs';
-import { map, tap, takeUntil } from 'rxjs/operators';
-import {
-  exampleState,
-  initialState,
-  blockService,
-  TOTAL_DURATION,
-} from '../services/blockService';
-import { after } from '../../../src/after';
+import { Subscription } from 'rxjs';
+import { exampleState, blockService } from '../services/blockService';
 import { BlockRect, BlockDisplay } from './Block';
 
 function useWhileMounted(subsFactory: () => Subscription) {
@@ -31,7 +24,18 @@ export function Viz() {
   });
 
   return (
-    <svg>
+    <svg id="viz-display" style={{ border: '1px solid black' }}>
+      <defs>
+        <pattern
+          id="loading-1"
+          width="8"
+          height="10"
+          patternUnits="userSpaceOnUse"
+          patternTransform="rotate(45 50 50)"
+        >
+          <line stroke="#a6a6a6" stroke-width="7px" y2="10" />
+        </pattern>
+      </defs>
       {Object.entries(blocks).map(([_, block]) =>
         React.createElement(BlockRect, block as BlockDisplay)
       )}

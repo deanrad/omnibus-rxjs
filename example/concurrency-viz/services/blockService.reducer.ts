@@ -2,7 +2,7 @@ import { ActionCreators } from '../../../src';
 
 export interface Block {
   idx: number;
-  status: 'Running' | 'Requested' | 'Complete' | 'Canceled';
+  status: 'Running' | 'Requested' | 'Completed' | 'Canceled';
 }
 export interface BlockDisplay extends Block {
   requestOffset: number;
@@ -20,14 +20,50 @@ export const initialState: GraphShape = {
   blocks: {},
 };
 
+const COMPLETED: BlockDisplay = {
+  idx: 0,
+  status: 'Completed',
+  requestOffset: 20,
+  startedOffset: 40,
+  completedOffset: 80,
+  width: 40,
+};
+const REQUESTED = {
+  idx: 0,
+  status: 'Requested',
+  requestOffset: 20,
+  // startedOffset: 40,
+  // completedOffset: 80,
+  width: 30,
+};
+
+const RUNNING: BlockDisplay = {
+  idx: 0,
+  status: 'Running',
+  requestOffset: 40,
+  startedOffset: 40,
+  width: 40,
+};
+
+const CANCELED: BlockDisplay = {
+  idx: 0,
+  status: 'Canceled',
+  requestOffset: 40,
+  startedOffset: 40,
+  width: 30,
+};
+
+const EVERYTHING: BlockDisplay = {
+  idx: 0,
+  status: 'Completed',
+  requestOffset: 20,
+  startedOffset: 40,
+  completedOffset: 80,
+  width: 40,
+};
 export const exampleState: GraphShape = {
   blocks: {
-    0: {
-      idx: 0,
-      status: 'Complete',
-      requestOffset: 0,
-      width: 20 * 5, // percent*pixels
-    },
+    0: EVERYTHING,
   },
 };
 
