@@ -12,7 +12,7 @@ const reqBtn = document.getElementById('request') as HTMLButtonElement;
 const vizRoot = createRoot(viz);
 
 window.addEventListener('DOMContentLoaded', () => {
-  let i = 1;
+  let i = 0;
   reqBtn.addEventListener('click', () => blockService(i++));
 
   vizRoot.render(createElement(Viz, { blocks: initialState.blocks }));

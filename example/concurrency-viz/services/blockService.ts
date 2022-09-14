@@ -7,7 +7,8 @@ export * from './blockService.reducer';
 import { SINGLE_DURATION } from './constants';
 import { animationService } from './animationService';
 import { combineLatest, concat } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, scan, switchMap, tap } from 'rxjs/operators';
+import merge from 'lodash.merge';
 
 // Started and complete dont usually have payloads to identify the request
 // that caused them so this observer will
@@ -41,26 +42,50 @@ blockService.requests.subscribe({
 // debugging
 const slowFrames = concat(
   ...[0, 0.25, 0.5, 1].map((d) => after(d * 1000, { payload: { percent: d } }))
+  // ...[0, 0.1].map((d) => after(d * 1000, { payload: { percent: d } }))
 );
 export const animatedBlocks = combineLatest([
   blockService.state.pipe(tap((s) => console.log(JSON.stringify(s)))),
-  slowFrames,
+  bus
+    .query(animationService.actions.request.match)
+    .pipe(switchMap(() => slowFrames)),
   // bus.query(animationService.actions.next.match),
 ]).pipe(
-  map(([{ blocks: b }, t]) => {
-    const newBlocks = JSON.parse(JSON.stringify(b));
+  // map(([{ blocks: b }, t]) => {
+  //   const newBlocks = JSON.parse(JSON.stringify(b));
 
-    Object.values<BlockDisplay>(newBlocks).forEach((v, i) => {
-      if (v.status === 'Running') {
-        v.width = t.payload.percent * 100;
-        if (!v.startedOffset) {
-          v.startedOffset = 20; // t.payload.percent * 100;
+  //   Object.values<BlockDisplay>(newBlocks).forEach((v, i) => {
+  //     if (v.status === 'Requested') {
+  //       // v.width = t.payload.percent * 100;
+  //       if (!v.requestOffset) {
+  //         console.log('Updating again');
+  //         v.requestOffset = t.payload.percent * 100;
+  //       }
+  //     }
+  //   });
+
+  //   return { blocks: newBlocks };
+  // })
+  // LEFTOFF
+  scan(
+    (last, [{ blocks }, t]) => {
+      const newBlocks = merge({}, blocks);
+      const currentOffset = t.payload.percent * 100;
+      Object.values<BlockDisplay>(newBlocks).forEach((b) => {
+        if (b.status === 'Requested') {
+          b.requestOffset || (b.requestOffset = currentOffset);
         }
-      }
-    });
-
-    return { blocks: newBlocks };
-  })
+        if (b.status === 'Running') {
+          b.startedOffset || (b.startedOffset = currentOffset);
+        }
+        if (b.status !== 'Completed') {
+          b.width || (b.width = currentOffset);
+        }
+      });
+      return merge({ blocks: {} }, last, { blocks: newBlocks });
+    },
+    { blocks: {} }
+  )
 );
 
 /** A strategy from ember-concurrency! */

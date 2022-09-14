@@ -14,7 +14,7 @@ function useWhileMounted(subsFactory: () => Subscription) {
 }
 
 export function Viz() {
-  const [blocks, setBlocks] = React.useState(exampleState.blocks);
+  const [blocks, setBlocks] = React.useState({});
 
   // find out about new blocks
   useWhileMounted(() => {

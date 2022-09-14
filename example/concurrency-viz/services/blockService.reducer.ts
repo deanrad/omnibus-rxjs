@@ -23,43 +23,43 @@ export const initialState: GraphShape = {
 const COMPLETED: BlockDisplay = {
   idx: 0,
   status: 'Completed',
-  requestOffset: 20,
-  startedOffset: 20,
-  completedOffset: 80,
-  width: 60,
+  // requestOffset: 20,
+  // startedOffset: 20,
+  // completedOffset: 80,
+  // width: 60,
 };
 const REQUESTED = {
   idx: 2,
   status: 'Requested',
-  requestOffset: 20,
+  // requestOffset: 20,
   // startedOffset: 40,
   // completedOffset: 80,
-  width: 30,
+  // width: 30,
 };
 
 const RUNNING: BlockDisplay = {
   idx: 1,
   status: 'Running',
-  requestOffset: 40,
-  startedOffset: 40,
-  width: 40,
+  // requestOffset: 40,
+  // startedOffset: 40,
+  // width: 40,
 };
 
 const CANCELED: BlockDisplay = {
   idx: 3,
   status: 'Canceled',
-  requestOffset: 40,
-  startedOffset: 40,
-  width: 60,
+  // requestOffset: 40,
+  // startedOffset: 40,
+  // width: 60,
 };
 
 const EVERYTHING: BlockDisplay = {
   idx: 4,
   status: 'Completed',
-  requestOffset: 20,
-  startedOffset: 40,
-  completedOffset: 80,
-  width: 40,
+  // requestOffset: 20,
+  // startedOffset: 40,
+  // completedOffset: 80,
+  // width: 40,
 };
 export const exampleState: GraphShape = {
   blocks: {
@@ -74,7 +74,7 @@ export const exampleState: GraphShape = {
 
 export const reducer =
   (ACs?: ActionCreators<number, number, Error>) =>
-  (old = exampleState, event) => {
+  (old = initialState, event) => {
     if (!event) return old;
 
     // update this clone instead
