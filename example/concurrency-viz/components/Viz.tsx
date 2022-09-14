@@ -35,6 +35,15 @@ export function Viz() {
         >
           <line stroke="#a6a6a6" stroke-width="7px" y2="10" />
         </pattern>
+        <pattern
+          id="loading-0"
+          width="8"
+          height="10"
+          patternUnits="userSpaceOnUse"
+          patternTransform="rotate(-45 50 50)"
+        >
+          <line stroke="#a6a6a6" stroke-width="7px" y2="10" />
+        </pattern>
       </defs>
       {Object.entries(blocks).map(([_, block]) =>
         React.createElement(BlockRect, block as BlockDisplay)

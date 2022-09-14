@@ -10,7 +10,8 @@ export function BlockRect(props: BlockDisplay & { idx: number }) {
     props;
 
   const baseY = idx * 30;
-  const color = 'red';
+  const color = 'black';
+
   return (
     <g key={idx}>
       {/* the requested process */}
@@ -18,16 +19,16 @@ export function BlockRect(props: BlockDisplay & { idx: number }) {
         className="request-line"
         x1={`${requestOffset ?? 0}`}
         x2={`${requestOffset ?? 0}`}
-        y1="0"
-        y2="20"
+        y1={baseY}
+        y2={baseY + boxHeight}
         stroke="black"
       />
       <line
         className="waiting-line"
         x1={`${requestOffset ?? 0}`}
         x2={`${startedOffset ?? width}`}
-        y1="20"
-        y2="20"
+        y1={baseY + boxHeight}
+        y2={baseY + boxHeight}
         stroke="black"
       />
       {/* the running process */}
@@ -38,7 +39,7 @@ export function BlockRect(props: BlockDisplay & { idx: number }) {
         height={`${boxHeight}px`}
         width={width}
         stroke="black"
-        fill="url(#loading-1)"
+        fill={`url(#loading-${idx % 2})`}
         fillOpacity="0.3"
       ></rect>
       {/* hide the end */}
@@ -52,15 +53,14 @@ export function BlockRect(props: BlockDisplay & { idx: number }) {
         fill={color}
       ></rect>
       {/* show cancelation */}
-      {/* <rect
+      <rect
         className={(status === 'Canceled' ? '' : 'hidden') + ' cancel-line'}
         x={`${startedOffset + width}`}
-        y={baseY}
-        height={`${boxHeight}px`}
-        width={1}
-        stroke="gray"
-      ></rect> */}
-      
+        y={baseY - 3}
+        height={`${boxHeight + 6}px`}
+        width={2}
+      ></rect>
+
       <text
         x={`${(requestOffset ?? 0) + paddingLeft}`}
         y={baseY + boxHeight - 5}

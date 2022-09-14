@@ -24,12 +24,12 @@ const COMPLETED: BlockDisplay = {
   idx: 0,
   status: 'Completed',
   requestOffset: 20,
-  startedOffset: 40,
+  startedOffset: 20,
   completedOffset: 80,
-  width: 40,
+  width: 60,
 };
 const REQUESTED = {
-  idx: 0,
+  idx: 2,
   status: 'Requested',
   requestOffset: 20,
   // startedOffset: 40,
@@ -38,7 +38,7 @@ const REQUESTED = {
 };
 
 const RUNNING: BlockDisplay = {
-  idx: 0,
+  idx: 1,
   status: 'Running',
   requestOffset: 40,
   startedOffset: 40,
@@ -46,15 +46,15 @@ const RUNNING: BlockDisplay = {
 };
 
 const CANCELED: BlockDisplay = {
-  idx: 0,
+  idx: 3,
   status: 'Canceled',
   requestOffset: 40,
   startedOffset: 40,
-  width: 30,
+  width: 60,
 };
 
 const EVERYTHING: BlockDisplay = {
-  idx: 0,
+  idx: 4,
   status: 'Completed',
   requestOffset: 20,
   startedOffset: 40,
@@ -63,7 +63,11 @@ const EVERYTHING: BlockDisplay = {
 };
 export const exampleState: GraphShape = {
   blocks: {
-    0: EVERYTHING,
+    0: COMPLETED,
+    1: RUNNING,
+    2: REQUESTED,
+    3: CANCELED,
+    4: EVERYTHING,
   },
 };
 
@@ -98,7 +102,7 @@ export const reducer =
 
       // An update (occurs right before completion)
       case ACs?.next.type:
-        newBlocks[event.payload].status = 'Complete';
+        newBlocks[event.payload].status = 'Completed';
         return { blocks: newBlocks };
 
       // A cancelation
