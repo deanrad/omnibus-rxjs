@@ -1,6 +1,9 @@
 import {
   createService,
+  createSwitchingService,
   createQueueingService,
+  createBlockingService,
+  createTogglingService,
   Service,
 } from '../../../src/createService';
 import { after } from '../../../src/after';
@@ -10,8 +13,8 @@ import { reducer, GraphShape, BlockDisplay } from './blockService.reducer';
 export * from './blockService.reducer';
 import { SINGLE_DURATION } from './constants';
 import { animationService } from './animationService';
-import { combineLatest, concat } from 'rxjs';
-import { map, scan, switchMap, tap } from 'rxjs/operators';
+import { combineLatest, concat, fromEvent } from 'rxjs';
+import { map, scan, switchMap, tap, takeUntil } from 'rxjs/operators';
 import merge from 'lodash.merge';
 
 // Started and complete dont usually have payloads to identify the request
@@ -27,7 +30,7 @@ function includeRequestNumber<T>(i: T) {
   } as Partial<TapObserver<T>>;
 }
 
-export const blockService = createQueueingService<
+export const blockService = createSwitchingService<
   number,
   number,
   Error,
@@ -48,6 +51,31 @@ blockService.requests.subscribe({
   },
 });
 
+const updateOffsets = (last, [{ blocks }, timeEvent]) => {
+  const currentOffset = timeEvent.payload.percent * 100;
+  const newBlocks = merge({ blocks: {} }, last, { blocks });
+
+  Object.values<BlockDisplay>(newBlocks.blocks).forEach((b) => {
+    if (b.status === 'Requested') {
+      b.requestOffset ?? (b.requestOffset = currentOffset);
+    }
+    if (b.status === 'Running') {
+      b.requestOffset ?? (b.requestOffset = currentOffset);
+      b.startedOffset ?? (b.startedOffset = currentOffset);
+    }
+    if (b.status === 'Completed' && b.completedOffset === undefined) {
+      b.completedOffset ?? (b.completedOffset = currentOffset);
+    }
+    if (b.status === 'Canceled' && b.canceledOffset === undefined) {
+      b.canceledOffset ?? (b.canceledOffset = currentOffset);
+    }
+    if (b.status !== 'Canceled' && b.status !== 'Completed') {
+      b.width = currentOffset;
+    }
+  });
+  return newBlocks;
+};
+
 // debugging
 const slowFrames = concat(
   ...[0, 0.25, 0.5, 1].map((d) => after(d * 1000, { payload: { percent: d } }))
@@ -55,35 +83,13 @@ const slowFrames = concat(
 );
 export const animatedBlocks = combineLatest([
   blockService.state.pipe(tap((s) => console.log(JSON.stringify(s)))),
-  // bus
-  //   .query(animationService.actions.request.match)
-  //   .pipe(switchMap(() => slowFrames)),
+  // bus.query(animationService.actions.request.match).pipe(
+  //   switchMap(() => slowFrames)
+  // ),
   bus.query(animationService.actions.next.match),
 ]).pipe(
-  scan(
-    (last, [{ blocks }, t]) => {
-      const currentOffset = t.payload.percent * 100;
-
-      const newBlocks = merge({ blocks: {} }, last, { blocks });
-      Object.values<BlockDisplay>(newBlocks.blocks).forEach((b) => {
-        if (b.status === 'Requested' && b.requestOffset === undefined) {
-          b.requestOffset = currentOffset;
-        }
-        if (b.status === 'Running' && b.startedOffset === undefined) {
-          b.startedOffset = currentOffset;
-        }
-        if (b.status === 'Completed' && b.completedOffset === undefined) {
-          b.completedOffset = currentOffset;
-          // b.width = 100;
-        }
-        if (b.status !== 'Completed') {
-          b.width = currentOffset;
-        }
-      });
-      return newBlocks;
-    },
-    { blocks: {} }
-  )
+  scan(updateOffsets, { blocks: {} }),
+  takeUntil(fromEvent(document.getElementById('viz'), 'click'))
 );
 
 /** A strategy from ember-concurrency! */

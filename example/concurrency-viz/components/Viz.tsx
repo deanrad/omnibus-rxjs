@@ -27,7 +27,11 @@ export function Viz() {
   });
 
   return (
-    <svg id="viz-display" style={{ border: '1px solid black' }}>
+    <svg
+      id="viz-display"
+      viewBox="0 0 180 180"
+      style={{ border: '1px solid black' }}
+    >
       <defs key="defs">
         <pattern
           id="loading-1"

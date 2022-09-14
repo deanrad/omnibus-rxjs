@@ -93,7 +93,7 @@ export const reducer =
 
       // The beginning of actual execution
       case ACs?.started.type:
-        if (!event.payload) return old;
+        if (typeof event.payload !== 'number') return old;
 
         newBlocks[event.payload] = {
           idx: event.payload,
@@ -108,7 +108,7 @@ export const reducer =
 
       // A cancelation
       case ACs?.canceled.type:
-        if (!event.payload) return old;
+        if (typeof event.payload !== 'number') return old;
 
         newBlocks[event.payload].status = 'Canceled';
         return { blocks: newBlocks };

@@ -11,7 +11,7 @@ export function BlockRect(props: BlockDisplay & { idx: number }) {
 
   const baseY = idx * 30;
   const color = 'black';
-
+  const isStarted = typeof startedOffset === 'number';
   return (
     <g key={idx}>
       {/* the requested process */}
@@ -25,15 +25,15 @@ export function BlockRect(props: BlockDisplay & { idx: number }) {
       />
       <line
         className="waiting-line"
-        x1={`${requestOffset ?? 0}`}
-        x2={`${startedOffset ? startedOffset : width ?? 0}`}
+        x1={`${requestOffset}`}
+        x2={`${isStarted ? startedOffset : width ?? 0}`}
         y1={baseY + boxHeight}
         y2={baseY + boxHeight}
         stroke="black"
       />
       {/* the running process */}
       <rect
-        className={(startedOffset ? '' : 'hidden') + ' process-box'}
+        className={(isStarted ? '' : 'hidden') + ' process-box'}
         x={`${startedOffset ?? 0}`}
         y={baseY}
         height={`${boxHeight}px`}
