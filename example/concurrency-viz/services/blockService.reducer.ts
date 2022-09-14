@@ -63,11 +63,12 @@ const EVERYTHING: BlockDisplay = {
 };
 export const exampleState: GraphShape = {
   blocks: {
-    0: COMPLETED,
-    1: RUNNING,
+    // 0: COMPLETED,
+    // 1: RUNNING,
+    // 2: REQUESTED,
+    // 3: CANCELED,
+    // 4: EVERYTHING,
     2: REQUESTED,
-    3: CANCELED,
-    4: EVERYTHING,
   },
 };
 
