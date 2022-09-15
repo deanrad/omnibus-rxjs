@@ -9,11 +9,16 @@ import {
 import { after } from '../../../src/after';
 import { bus } from './bus';
 import { queueOnlyLatest, TapObserver } from '../../../src';
-import { reducer, GraphShape, BlockDisplay } from './blockService.reducer';
+import {
+  reducer,
+  GraphShape,
+  BlockDisplay,
+  Block,
+} from './blockService.reducer';
 export * from './blockService.reducer';
 import { SINGLE_DURATION } from './constants';
 import { animationService } from './animationService';
-import { combineLatest, concat, fromEvent } from 'rxjs';
+import { combineLatest, concat, fromEvent, Subscription } from 'rxjs';
 import { map, scan, switchMap, tap, takeUntil } from 'rxjs/operators';
 import merge from 'lodash.merge';
 
@@ -45,17 +50,16 @@ switch (q) {
   case 'replacing':
     serviceFactory = createSwitchingService;
     break;
+  case 'keepLatest':
+    serviceFactory = createKeepLatestService;
+    break;
   case 'immediate':
   default:
     serviceFactory = createService;
     break;
 }
-export const blockService = serviceFactory<
-  number,
-  number,
-  Error,
-  GraphShape
->(
+
+export const blockService = serviceFactory<number, number, Error, GraphShape>(
   'block',
   bus,
   (i) =>
@@ -70,6 +74,31 @@ blockService.requests.subscribe({
     animationService.request();
   },
 });
+
+// for visualization purposes, we need to denote requests that wont start
+// by canceling them right away
+let vizFilter = new Subscription();
+if (['blocking', 'toggling'].includes(q)) {
+  vizFilter = bus.guard(blockService.actions.request.match, ({ payload }) => {
+    if (blockService.isActive.value) {
+      after(Promise.resolve(), () => {
+        bus.trigger(blockService.actions.complete(payload));
+      }).subscribe();
+    }
+  });
+} else if (q === 'keepLatest') {
+  vizFilter = bus.guard(blockService.actions.request.match, ({ payload }) => {
+    // if the previous one is pending
+    const prev = payload - 1;
+    if (blockService.state.value.blocks[prev]?.status === 'Requested') {
+      after(Promise.resolve(), () => {
+        bus.trigger(blockService.actions.complete(prev));
+      }).subscribe();
+    }
+  });
+} else {
+  vizFilter?.unsubscribe();
+}
 
 const updateOffsets = (last, [{ blocks }, timeEvent]) => {
   const currentOffset = timeEvent.payload.percent * 100;
@@ -86,10 +115,13 @@ const updateOffsets = (last, [{ blocks }, timeEvent]) => {
     if (b.status === 'Completed' && b.completedOffset === undefined) {
       b.completedOffset ?? (b.completedOffset = currentOffset);
     }
-    if (b.status === 'Canceled' && b.canceledOffset === undefined) {
+    if (
+      ['Canceled', 'Dropped'].includes(b.status) &&
+      b.canceledOffset === undefined
+    ) {
       b.canceledOffset ?? (b.canceledOffset = currentOffset);
     }
-    if (b.status !== 'Canceled' && b.status !== 'Completed') {
+    if (!['Canceled', 'Completed', 'Dropped'].includes(b.status)) {
       b.width = currentOffset;
     }
   });

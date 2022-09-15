@@ -1,7 +1,11 @@
 import * as React from 'react';
 import merge from 'lodash.merge';
 import { Subscription } from 'rxjs';
-import { exampleState, animatedBlocks } from '../services/blockService';
+import {
+  exampleState,
+  animatedBlocks,
+  blockService,
+} from '../services/blockService';
 
 import { BlockRect, BlockDisplay } from './Block';
 
@@ -15,7 +19,9 @@ function useWhileMounted(subsFactory: () => Subscription) {
 
 export function Viz() {
   const [blocks, setBlocks] = React.useState({});
+  const [isActive, setIsActive] = React.useState(blockService.isActive.value);
 
+  useWhileMounted(() => blockService.isActive.subscribe({ next: setIsActive }));
   // find out about new blocks
   useWhileMounted(() => {
     // TODO merge with elapsed stream instead
@@ -31,11 +37,12 @@ export function Viz() {
       <div>
         <a href="?immediate">Immediate</a> |<a href="?queueing">Queueing</a> |
         <a href="?replacing">Replacing</a> |<a href="?blocking">Blocking</a> |
-        <a href="?toggling">Toggling</a>
+        <a href="?toggling">Toggling</a> | <a href="?keepLatest">Keep Latest</a>
       </div>
+      <div>isActive: {isActive ? '⏳' : ''} </div>
       <svg
         id="viz-display"
-        viewBox="0 0 180 180"
+        viewBox="0 0 300 300"
         style={{ border: '1px solid black' }}
       >
         <defs key="defs">

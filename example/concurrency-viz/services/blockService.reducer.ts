@@ -2,7 +2,7 @@ import { ActionCreators } from '../../../src';
 
 export interface Block {
   idx: number;
-  status: 'Running' | 'Requested' | 'Completed' | 'Canceled';
+  status: 'Running' | 'Requested' | 'Completed' | 'Canceled' | 'Dropped';
 }
 export interface BlockDisplay extends Block {
   requestOffset: number;
@@ -61,6 +61,15 @@ const EVERYTHING: BlockDisplay = {
   // completedOffset: 80,
   // width: 40,
 };
+
+const DROPPED: BlockDisplay = {
+  idx: 5,
+  status: 'Dropped',
+  // requestOffset: 20,
+  // startedOffset: 40,
+  // completedOffset: 80,
+  // width: 40,
+};
 export const exampleState: GraphShape = {
   blocks: {
     // 0: COMPLETED,
@@ -111,6 +120,12 @@ export const reducer =
         if (typeof event.payload !== 'number') return old;
 
         newBlocks[event.payload].status = 'Canceled';
+        return { blocks: newBlocks };
+
+      // A request that will not be started
+      case ACs?.complete.type:
+        if (typeof event.payload !== 'number') return old;
+        newBlocks[event.payload].status = 'Dropped';
         return { blocks: newBlocks };
 
       default:
