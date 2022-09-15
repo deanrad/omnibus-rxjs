@@ -8,6 +8,9 @@ interface Spawner {
 }
 
 /**
+ * Implements the Ember-Concurrency strategy which is like createQueueingService
+ * with a maximum queue depth of 1. In the event of multiple conflicting events,
+ * only the latest will trigger a handling, after the current handling is complete.
  * @param spawner The Observable-factory whose latest subscription is to be enqueued
  * @param mapper A function to combine each emission of the togglable with the trigger itself, making it the new value of the togglable.
  * @example ```
