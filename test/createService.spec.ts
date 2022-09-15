@@ -276,6 +276,13 @@ describe('createService', () => {
       });
     });
 
+    describe('#namespace', () => {
+      it('returns the namespace it was created with', () => {
+        const stateService = createService(testNamespace, bus, handler);
+        expect(stateService.namespace).toEqual(testNamespace);
+      });
+    });
+
     describe('#addTeardown', () => {
       it('adds a function to be called once when stop() is invoked', () => {
         let tornDownTimes = 0;

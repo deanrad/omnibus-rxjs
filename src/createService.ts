@@ -96,6 +96,8 @@ export interface Service<TRequest, TNext, TError, TState>
   state: BehaviorSubject<TState>;
   /** An untyped reference to the bus this service listens and triggers on */
   bus: Omnibus<any>;
+  /** The namespace given at construction time */
+  namespace: string;
 }
 
 /** @example bus.listen(matchesAny(Actions.complete, Actions.error), handler) */
@@ -262,6 +264,7 @@ export function createService<TRequest, TNext, TError, TState = object>(
     isActive,
     state,
     bus,
+    namespace: actionNamespace,
     request: requestor,
     events: bus.query(matchesAny(...Object.values(ACs))),
     send(arg: TRequest) {
