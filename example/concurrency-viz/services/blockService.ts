@@ -30,7 +30,27 @@ function includeRequestNumber<T>(i: T) {
   } as Partial<TapObserver<T>>;
 }
 
-export const blockService = createSwitchingService<
+let serviceFactory: typeof createSwitchingService;
+const q = document.location.search.substring(1);
+switch (q) {
+  case 'queueing':
+    serviceFactory = createQueueingService;
+    break;
+  case 'blocking':
+    serviceFactory = createBlockingService;
+    break;
+  case 'toggling':
+    serviceFactory = createTogglingService;
+    break;
+  case 'replacing':
+    serviceFactory = createSwitchingService;
+    break;
+  case 'immediate':
+  default:
+    serviceFactory = createService;
+    break;
+}
+export const blockService = serviceFactory<
   number,
   number,
   Error,

@@ -27,34 +27,41 @@ export function Viz() {
   });
 
   return (
-    <svg
-      id="viz-display"
-      viewBox="0 0 180 180"
-      style={{ border: '1px solid black' }}
-    >
-      <defs key="defs">
-        <pattern
-          id="loading-1"
-          width="8"
-          height="10"
-          patternUnits="userSpaceOnUse"
-          patternTransform="rotate(45 50 50)"
-        >
-          <line stroke="#a6a6a6" strokeWidth="7px" y2="10" />
-        </pattern>
-        <pattern
-          id="loading-0"
-          width="8"
-          height="10"
-          patternUnits="userSpaceOnUse"
-          patternTransform="rotate(-45 50 50)"
-        >
-          <line stroke="#a6a6a6" strokeWidth="7px" y2="10" />
-        </pattern>
-      </defs>
-      {Object.entries(blocks).map(([_, block], i) =>
-        React.createElement(BlockRect, { ...block, key: i })
-      )}
-    </svg>
+    <div>
+      <div>
+        <a href="?immediate">Immediate</a> |<a href="?queueing">Queueing</a> |
+        <a href="?replacing">Replacing</a> |<a href="?blocking">Blocking</a> |
+        <a href="?toggling">Toggling</a>
+      </div>
+      <svg
+        id="viz-display"
+        viewBox="0 0 180 180"
+        style={{ border: '1px solid black' }}
+      >
+        <defs key="defs">
+          <pattern
+            id="loading-1"
+            width="8"
+            height="10"
+            patternUnits="userSpaceOnUse"
+            patternTransform="rotate(45 50 50)"
+          >
+            <line stroke="#a6a6a6" strokeWidth="7px" y2="10" />
+          </pattern>
+          <pattern
+            id="loading-0"
+            width="8"
+            height="10"
+            patternUnits="userSpaceOnUse"
+            patternTransform="rotate(-45 50 50)"
+          >
+            <line stroke="#a6a6a6" strokeWidth="7px" y2="10" />
+          </pattern>
+        </defs>
+        {Object.entries(blocks).map(([_, block], i) =>
+          React.createElement(BlockRect, { ...block, key: i })
+        )}
+      </svg>
+    </div>
   );
 }

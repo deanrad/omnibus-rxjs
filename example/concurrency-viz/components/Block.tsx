@@ -9,7 +9,7 @@ export function BlockRect(props: BlockDisplay & { idx: number }) {
   const { idx, status, requestOffset, startedOffset, completedOffset, width } =
     props;
 
-  const baseY = idx * 30;
+  const baseY = idx * 30 + 3;
   const color = 'black';
   const isStarted = typeof startedOffset === 'number';
   return (
@@ -55,7 +55,7 @@ export function BlockRect(props: BlockDisplay & { idx: number }) {
       {/* show cancelation */}
       <rect
         className={(status === 'Canceled' ? '' : 'hidden') + ' cancel-line'}
-        x={`${(startedOffset ?? 0) + (width ?? 0)}`}
+        x={`${(startedOffset ?? 0) + (width ?? 0) - 1}`}
         y={baseY - 3}
         height={`${boxHeight + 6}px`}
         width={2}
