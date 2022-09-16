@@ -3,13 +3,13 @@ import type { BlockDisplay } from '../services/blockService';
 export * from '../services/blockService';
 
 const paddingLeft = 4;
-const boxHeight = 20;
+const boxHeight = 18;
 
 export function BlockRect(props: BlockDisplay & { idx: number }) {
   const { idx, status, requestOffset, startedOffset, completedOffset, width } =
     props;
 
-  const baseY = idx * 30 + 3;
+  const baseY = idx * 30 + 5;
   const color = 'black';
   const isStarted = typeof startedOffset === 'number';
   return (
@@ -69,7 +69,7 @@ export function BlockRect(props: BlockDisplay & { idx: number }) {
         textDecoration="none"
         fontStyle="normal"
       >
-        {status}
+        {status === 'Requested' ? 'Queued' : status}
       </text>
     </g>
   );
