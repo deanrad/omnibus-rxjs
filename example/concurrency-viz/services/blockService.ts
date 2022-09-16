@@ -122,7 +122,7 @@ const updateOffsets = (last, [{ blocks }, timeEvent]) => {
       b.canceledOffset ?? (b.canceledOffset = currentOffset);
     }
     if (!['Canceled', 'Completed', 'Dropped'].includes(b.status)) {
-      b.width = currentOffset - b.requestOffset;
+      b.width = currentOffset - (b.startedOffset ?? b.requestOffset);
     }
     // if (!['Canceled', 'Completed', 'Dropped'].includes(b.status)) {
     //   b.width = currentOffset;

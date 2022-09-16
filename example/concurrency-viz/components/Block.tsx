@@ -27,7 +27,7 @@ export function BlockRect(props: BlockDisplay & { idx: number }) {
       <line
         className="waiting-line"
         x1={`${requestOffset}`}
-        x2={`${requestOffset + width}`}
+        x2={`${isRunning ? startedOffset : requestOffset + width}`}
         y1={baseY + boxHeight}
         y2={baseY + boxHeight}
         stroke="black"
@@ -61,7 +61,7 @@ export function BlockRect(props: BlockDisplay & { idx: number }) {
         height={`${boxHeight + 6}px`}
         width={2}
       ></rect>
-
+      {/* status label */}
       <text
         x={`${(requestOffset ?? 0) + wordPadding}`}
         y={baseY + boxHeight - 5}
@@ -71,6 +71,17 @@ export function BlockRect(props: BlockDisplay & { idx: number }) {
         fontStyle="normal"
       >
         {status === 'Requested' ? 'Queued' : status}
+      </text>
+      {/* event label */}
+      <text
+        x={requestOffset - 3}
+        y={-5}
+        fill={color}
+        fontSize="10"
+        textDecoration="none"
+        fontStyle="normal"
+      >
+        ✶
       </text>
     </g>
   );
