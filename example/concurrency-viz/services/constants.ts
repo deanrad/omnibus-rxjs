@@ -1,2 +1,2 @@
-export const SINGLE_DURATION = 3000; //2000;
-export const TOTAL_DURATION = 10000;
+export const SINGLE_DURATION = 2500; //2000;
+export const TOTAL_DURATION = 5000;

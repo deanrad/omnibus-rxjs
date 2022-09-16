@@ -5,16 +5,6 @@ import { TOTAL_DURATION } from './constants';
 import { animationFrames, concat, interval } from 'rxjs';
 import { takeWhile, scan, map, takeUntil } from 'rxjs/operators';
 
-const deltaReducer = [
-  (prev, { elapsed }) => {
-    const last = prev.last || performance.now();
-    return {
-      last: performance.now(),
-      delta: performance.now() - last,
-    };
-  },
-  { delta: 0 },
-];
 
 function moveFrames(duration) {
   return animationFrames().pipe(
@@ -29,7 +19,7 @@ function moveFrames(duration) {
 }
 
 //
-const handler = () => moveFrames(5000);
+const handler = () => moveFrames(TOTAL_DURATION);
 
 export const animationService = createBlockingService<
   void,
