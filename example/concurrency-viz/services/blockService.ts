@@ -122,23 +122,34 @@ const updateOffsets = (last, [{ blocks }, timeEvent]) => {
       b.canceledOffset ?? (b.canceledOffset = currentOffset);
     }
     if (!['Canceled', 'Completed', 'Dropped'].includes(b.status)) {
-      b.width = currentOffset;
+      b.width = currentOffset - b.requestOffset;
     }
+    // if (!['Canceled', 'Completed', 'Dropped'].includes(b.status)) {
+    //   b.width = currentOffset;
+    // }
   });
   return newBlocks;
 };
 
 // debugging
-const slowFrames = concat(
-  ...[0, 0.25, 0.5, 1].map((d) => after(d * 1000, { payload: { percent: d } }))
-  // ...[0, 0.1].map((d) => after(d * 1000, { payload: { percent: d } }))
-);
+// the real frames
+const animationFrames = bus.query(animationService.actions.next.match);
+// some slowed down ones
+// const animationFrames = bus
+//   .query(animationService.actions.request.match)
+//   .pipe(
+//     switchMap(() =>
+//       concat(
+//         ...[0, 0.25, 0.5, 1].map((d) =>
+//           after(d * 1000, { payload: { percent: d } })
+//         )
+//       )
+//     )
+//   );
+
 export const animatedBlocks = combineLatest([
-  blockService.state.pipe(tap((s) => console.log(JSON.stringify(s)))),
-  // bus.query(animationService.actions.request.match).pipe(
-  //   switchMap(() => slowFrames)
-  // ),
-  bus.query(animationService.actions.next.match),
+  blockService.state,
+  animationFrames,
 ]).pipe(
   scan(updateOffsets, { blocks: {} }),
   takeUntil(fromEvent(document.getElementById('viz'), 'click'))

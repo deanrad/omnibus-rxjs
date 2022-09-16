@@ -39,10 +39,11 @@ export function Viz() {
         <a href="?replacing">Replacing</a> |<a href="?blocking">Blocking</a> |
         <a href="?toggling">Toggling</a> | <a href="?keepLatest">Keep Latest</a>
       </div>
-      <div>isActive: {isActive ? '⏳' : ''} </div>
+      {/* We cant do isActive because we throw extra events that mess up the count */}
+      {/* <div>isActive: {isActive ? '⏳' : ''} </div> */}
       <svg
         id="viz-display"
-        viewBox="0 0 300 300"
+        viewBox="-10 -10 300 300"
         style={{ border: '1px solid black' }}
       >
         <defs key="defs">

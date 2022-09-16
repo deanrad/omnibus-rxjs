@@ -2,16 +2,17 @@ import * as React from 'react';
 import type { BlockDisplay } from '../services/blockService';
 export * from '../services/blockService';
 
-const paddingLeft = 4;
+const wordPadding = 4;
 const boxHeight = 18;
 
 export function BlockRect(props: BlockDisplay & { idx: number }) {
   const { idx, status, requestOffset, startedOffset, completedOffset, width } =
     props;
 
-  const baseY = idx * 30 + 5;
+  const baseY = idx * (boxHeight + 5);
   const color = 'black';
-  const isStarted = typeof startedOffset === 'number';
+  const isRunning = typeof startedOffset === 'number';
+
   return (
     <g key={idx}>
       {/* the requested process */}
@@ -26,14 +27,14 @@ export function BlockRect(props: BlockDisplay & { idx: number }) {
       <line
         className="waiting-line"
         x1={`${requestOffset}`}
-        x2={`${isStarted ? startedOffset : width ?? 0}`}
+        x2={`${requestOffset + width}`}
         y1={baseY + boxHeight}
         y2={baseY + boxHeight}
         stroke="black"
       />
       {/* the running process */}
       <rect
-        className={(isStarted ? '' : 'hidden') + ' process-box'}
+        className={(isRunning ? '' : 'hidden') + ' process-box'}
         x={`${startedOffset ?? 0}`}
         y={baseY}
         height={`${boxHeight}px`}
@@ -62,7 +63,7 @@ export function BlockRect(props: BlockDisplay & { idx: number }) {
       ></rect>
 
       <text
-        x={`${(requestOffset ?? 0) + paddingLeft}`}
+        x={`${(requestOffset ?? 0) + wordPadding}`}
         y={baseY + boxHeight - 5}
         fill={color}
         fontSize="12"
