@@ -100,32 +100,24 @@ export const reducer =
         };
         return { blocks: newBlocks };
 
-      // The beginning of actual execution
-      case ACs?.started.type:
-        if (typeof event.payload !== 'number') return old;
-
-        newBlocks[event.payload] = {
-          idx: event.payload,
-          status: 'Running',
-        };
-        return { blocks: newBlocks };
-
-      // An update (occurs right before completion)
+      // Custom events
       case ACs?.next.type:
+        if (event.payload.subtype === 'Canceled') {
+          if (typeof event.payload.idx !== 'number') return old;
+          newBlocks[event.payload.idx].status = 'Canceled';
+          return { blocks: newBlocks };
+        }
+        if (event.payload.subtype === 'Started') {
+          if (typeof event.payload.idx !== 'number') return old;
+          newBlocks[event.payload.idx].status = 'Running';
+          return { blocks: newBlocks };
+        }
+        if (event.payload.subtype === 'Dropped') {
+          if (typeof event.payload.idx !== 'number') return old;
+          newBlocks[event.payload.idx].status = 'Dropped';
+          return { blocks: newBlocks };
+        }
         newBlocks[event.payload].status = 'Completed';
-        return { blocks: newBlocks };
-
-      // A cancelation
-      case ACs?.canceled.type:
-        if (typeof event.payload !== 'number') return old;
-
-        newBlocks[event.payload].status = 'Canceled';
-        return { blocks: newBlocks };
-
-      // A request that will not be started
-      case ACs?.complete.type:
-        if (typeof event.payload !== 'number') return old;
-        newBlocks[event.payload].status = 'Dropped';
         return { blocks: newBlocks };
 
       default:

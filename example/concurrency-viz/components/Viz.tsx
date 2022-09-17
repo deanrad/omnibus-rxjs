@@ -40,7 +40,7 @@ export function Viz() {
         <a href="?toggling">Toggling</a> | <a href="?keepLatest">Keep Latest</a>
       </div>
       {/* We cant do isActive because we throw extra events that mess up the count */}
-      {/* <div>isActive: {isActive ? '⏳' : ''} </div> */}
+      <div>isActive: {isActive ? '⏳' : ''} </div>
       <svg
         id="viz-display"
         viewBox="-10 -15 300 300"
