@@ -23,7 +23,7 @@ import { map, scan, switchMap, tap, takeUntil } from 'rxjs/operators';
 import merge from 'lodash.merge';
 
 // Started and complete dont usually have payloads to identify the request
-// that caused them so this observer will add some 
+// that caused them so this observer will add some
 function includeRequestNumber<T>(idx: T) {
   return {
     subscribe() {
@@ -82,7 +82,9 @@ if (['blocking', 'toggling'].includes(q)) {
   vizFilter = bus.guard(blockService.actions.request.match, ({ payload }) => {
     if (blockService.isActive.value) {
       after(Promise.resolve(), () => {
-        bus.trigger(blockService.actions.next({ subtype: 'Dropped', idx: payload }));
+        bus.trigger(
+          blockService.actions.next({ subtype: 'Dropped', idx: payload })
+        );
       }).subscribe();
     }
   });
@@ -92,7 +94,9 @@ if (['blocking', 'toggling'].includes(q)) {
     const prev = payload - 1;
     if (blockService.state.value.blocks[prev]?.status === 'Requested') {
       after(Promise.resolve(), () => {
-        bus.trigger(blockService.actions.complete({ subtype: 'Dropped', idx: prev }));
+        bus.trigger(
+          blockService.actions.next({ subtype: 'Dropped', idx: prev })
+        );
       }).subscribe();
     }
   });

@@ -43,7 +43,7 @@ export function Viz() {
       <div>isActive: {isActive ? '⏳' : ''} </div>
       <svg
         id="viz-display"
-        viewBox="-10 -15 300 300"
+        viewBox="-10 -15 200 200"
         style={{ border: '1px solid black' }}
       >
         <defs key="defs">
