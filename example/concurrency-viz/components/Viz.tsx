@@ -21,7 +21,14 @@ export function Viz() {
   const [blocks, setBlocks] = React.useState({});
   const [isActive, setIsActive] = React.useState(blockService.isActive.value);
 
-  useWhileMounted(() => blockService.isActive.subscribe({ next: setIsActive }));
+  useWhileMounted(() =>
+    blockService.isActive.subscribe({
+      next(isActive) {
+        const classes = document.getElementById('activity')?.classList;
+        isActive ? classes?.remove('viz-hidden') : classes?.add('viz-hidden');
+      },
+    })
+  );
   // find out about new blocks
   useWhileMounted(() => {
     // TODO merge with elapsed stream instead
@@ -38,7 +45,6 @@ export function Viz() {
         <a href="?immediate">Immediate</a> |<a href="?queueing">Queueing</a> |
         <a href="?replacing">Replacing</a> |<a href="?blocking">Blocking</a> |
         <a href="?toggling">Toggling</a> | <a href="?keepLatest">Keep Latest</a>
-        <span id="activity">isActive: {isActive ? '⏳' : ''} </span>
       </div>
 
       <svg

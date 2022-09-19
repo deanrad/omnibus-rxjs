@@ -3,7 +3,7 @@ import { after } from '../../../src/after';
 import { bus } from './bus';
 import { TOTAL_DURATION } from './constants';
 import { animationFrames, concat, interval } from 'rxjs';
-import { takeWhile, scan, map, takeUntil } from 'rxjs/operators';
+import { takeWhile, scan, map, takeUntil, retry } from 'rxjs/operators';
 
 const XSCALE = 2.5; // 100 percent => 250 pixels
 
