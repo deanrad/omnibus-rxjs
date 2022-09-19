@@ -117,6 +117,9 @@ export const reducer =
           newBlocks[event.payload.idx].status = 'Dropped';
           return { blocks: newBlocks };
         }
+        if (event.payload.subtype === 'Reset') {
+          return { blocks: [] };
+        }
         newBlocks[event.payload].status = 'Completed';
         return { blocks: newBlocks };
 

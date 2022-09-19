@@ -2,6 +2,12 @@
   display: none;
 }
 
+#viz-display {
+  margin-top: 2rem;
+}
+#activity {
+  margin-left: 2rem;
+}
 #viz-display .request-line {
   stroke-width: 2px;
 }
@@ -14,4 +20,10 @@
 #viz-display .cancel-line {
   stroke-dasharray: 4;
   color: gray;
+}
+
+#viz-display .time-mark-line {
+  /* stroke-dasharray: 4; */
+  stroke-width: 0.3;
+  color: #ccc;
 }

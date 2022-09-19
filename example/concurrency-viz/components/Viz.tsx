@@ -38,12 +38,12 @@ export function Viz() {
         <a href="?immediate">Immediate</a> |<a href="?queueing">Queueing</a> |
         <a href="?replacing">Replacing</a> |<a href="?blocking">Blocking</a> |
         <a href="?toggling">Toggling</a> | <a href="?keepLatest">Keep Latest</a>
+        <span id="activity">isActive: {isActive ? '⏳' : ''} </span>
       </div>
-      {/* We cant do isActive because we throw extra events that mess up the count */}
-      <div>isActive: {isActive ? '⏳' : ''} </div>
+
       <svg
         id="viz-display"
-        viewBox="-10 -15 200 200"
+        viewBox="-10 -15 300 300"
         style={{ border: '1px solid black' }}
       >
         <defs key="defs">
@@ -66,6 +66,25 @@ export function Viz() {
             <line stroke="#a6a6a6" strokeWidth="7px" y2="10" />
           </pattern>
         </defs>
+        <line
+          className="time-mark-line"
+          x1={0}
+          x2={250}
+          y1={-8.5}
+          y2={-8.5}
+          stroke="#ccc"
+        />
+        <line
+          className="time-mark-line"
+          x1={247}
+          x2={250}
+          y1={-11}
+          y2={-8.5}
+          stroke="#ccc"
+        />
+        <text x={251} y={-8} fontStyle="italic" fontSize={6} fill="#ccc">
+          time
+        </text>
         {Object.entries(blocks).map(([_, block], i) =>
           React.createElement(BlockRect, { ...block, key: i })
         )}

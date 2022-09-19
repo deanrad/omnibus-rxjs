@@ -15,6 +15,17 @@ export function BlockRect(props: BlockDisplay & { idx: number }) {
 
   return (
     <g key={idx}>
+      {/* event label */}
+      <text
+        x={requestOffset - 3}
+        y={-5}
+        fill={color}
+        fontSize="10"
+        textDecoration="none"
+        fontStyle="normal"
+      >
+        ✶
+      </text>
       {/* the requested process */}
       <line
         className="request-line"
@@ -71,17 +82,6 @@ export function BlockRect(props: BlockDisplay & { idx: number }) {
         fontStyle="normal"
       >
         {status === 'Requested' ? 'Queued' : status}
-      </text>
-      {/* event label */}
-      <text
-        x={requestOffset - 3}
-        y={-5}
-        fill={color}
-        fontSize="10"
-        textDecoration="none"
-        fontStyle="normal"
-      >
-        ✶
       </text>
     </g>
   );

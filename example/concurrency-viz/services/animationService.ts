@@ -5,12 +5,13 @@ import { TOTAL_DURATION } from './constants';
 import { animationFrames, concat, interval } from 'rxjs';
 import { takeWhile, scan, map, takeUntil } from 'rxjs/operators';
 
+const XSCALE = 2.5; // 100 percent => 250 pixels
 
 function moveFrames(duration) {
   return animationFrames().pipe(
     takeWhile(({ elapsed }) => elapsed < duration),
     map(({ elapsed }) => {
-      const percent = elapsed / duration;
+      const percent = (elapsed / duration) * XSCALE;
       return {
         percent,
       };
