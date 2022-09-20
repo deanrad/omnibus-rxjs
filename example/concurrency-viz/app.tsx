@@ -6,9 +6,10 @@ import {
   initialState,
 } from './services/blockService';
 import { animationService } from './services/animationService';
+import { bus } from './services/bus';
 import { after } from '../../src/after';
 import { Viz } from './components/Viz';
-import { concat } from 'rxjs';
+import { concat, takeUntil } from 'rxjs';
 
 const viz = document.getElementById('viz') as HTMLElement;
 const reqBtn = document.getElementById('request') as HTMLButtonElement;
@@ -24,7 +25,9 @@ window.addEventListener('DOMContentLoaded', () => {
     concat(
       after(0, () => blockService(i++)),
       after(1200, () => blockService(i++))
-    ).subscribe();
+    )
+      .pipe(takeUntil(bus.query(blockService.actions.cancel.match)))
+      .subscribe();
   });
   resetBtn.addEventListener('click', () => {
     document.location.reload();

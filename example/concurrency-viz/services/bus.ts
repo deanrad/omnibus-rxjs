@@ -7,3 +7,5 @@ bus.guard(
   (e) => !e.type.startsWith('ani'),
   (e) => console.log(e.type, e.payload)
 );
+
+window.bus = bus;

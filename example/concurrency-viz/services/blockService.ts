@@ -106,16 +106,15 @@ if (['blocking', 'toggling'].includes(q)) {
     }
   });
 } else if (q === 'keepLatest' || q === 'max-2' || q === 'queueing') {
-  vizFilter = bus.guard(blockService.actions.canceled.match, () => {
-    after(Promise.resolve(), () => {
-      console.error({ blocks: blockService.state.value.blocks });
-      Object.values(blockService.state.value.blocks).forEach((b) => {
-        if (b.status === 'Requested') {
-          bus.trigger(
-            blockService.actions.next({ subtype: 'Dropped', idx: b.idx })
-          );
-        }
-      });
+  vizFilter = bus.guard(blockService.actions.cancel.match, async () => {
+    await Promise.resolve();
+    // bus.trigger(blockService.actions.next({ subtype: 'Dropped', idx: 1 }));
+    Object.values(blockService.state.value.blocks).forEach((b) => {
+      if (b.status === 'Requested') {
+        bus.trigger(
+          blockService.actions.next({ subtype: 'Dropped', idx: b.idx })
+        );
+      }
     });
   });
 } else {
