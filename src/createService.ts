@@ -313,7 +313,11 @@ export function createQueueingService<TRequest, TNext, TError, TState = object>(
     bus,
     handler,
     reducerProducer,
-    'listenQueueing'
+    // LEFTOFF HACK FOR mergeMap(2)
+    (spawner) =>
+      function (source) {
+        return source.pipe(mergeMap(spawner, 2));
+      }
   );
 }
 
