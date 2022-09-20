@@ -50,7 +50,7 @@ export function Viz() {
 
       <svg
         id="viz-display"
-        viewBox="-10 -15 300 300"
+        viewBox="-10 -20 300 300"
         style={{ border: '1px solid black' }}
       >
         <defs key="defs">
