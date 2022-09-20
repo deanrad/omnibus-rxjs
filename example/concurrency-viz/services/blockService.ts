@@ -1,21 +1,19 @@
-import {
-  createService,
-  Service,
-} from '../../../src/createService';
+import { createService } from '../../../src/createService';
 import { after } from '../../../src/after';
 import { bus } from './bus';
 import { queueOnlyLatest, TapObserver, toggleMap } from '../../../src';
-import {
-  reducer,
-  GraphShape,
-  BlockDisplay,
-  Block,
-} from './blockService.reducer';
+import { reducer, GraphShape, BlockDisplay } from './blockService.reducer';
 export * from './blockService.reducer';
 import { SINGLE_DURATION } from './constants';
 import { animationService } from './animationService';
-import { combineLatest, fromEvent, Subscription } from 'rxjs';
-import { scan, switchMap, takeUntil, concatMap, exhaustMap, mergeMap } from 'rxjs/operators';
+import {
+  combineLatest,
+  fromEvent,
+  MonoTypeOperatorFunction,
+  pipe,
+  Subscription,
+} from 'rxjs';
+import { scan, takeUntil, mergeMap } from 'rxjs/operators';
 import merge from 'lodash.merge';
 
 // Started and complete dont usually have payloads to identify the request
@@ -31,17 +29,23 @@ function includeRequestNumber<T>(idx: T) {
   } as Partial<TapObserver<T>>;
 }
 
+/** An example of a custom operator */
+const withMaxConcurrency = (n = 1) =>
+  function (spawner) {
+    return pipe(mergeMap(spawner, n));
+  };
+
 let serviceOp;
 const q =
   typeof document !== 'undefined' && document.location.search.substring(1);
 switch (q) {
   case 'queueing':
-    serviceOp = 'listenQueueing'
+    serviceOp = 'listenQueueing';
     break;
-    case 'replacing':
-      serviceOp = 'listenSwitching'; // replacing
-      break;
-    case 'blocking':
+  case 'replacing':
+    serviceOp = 'listenSwitching'; // replacing
+    break;
+  case 'blocking':
     serviceOp = 'listenBlocking'; // blocking
     break;
   case 'toggling':
@@ -50,10 +54,10 @@ switch (q) {
   case 'keepLatest':
     serviceOp = queueOnlyLatest; // custom
     break;
-    case 'max-2':
-      serviceOp = queueOnlyLatest; 
-      break;
-    case 'immediate':
+  case 'max-2':
+    serviceOp = withMaxConcurrency(2);
+    break;
+  case 'immediate':
   default:
     serviceOp = mergeMap;
     break;
@@ -160,21 +164,5 @@ export const animatedBlocks = combineLatest([
   // XXX if commented out below
   takeUntil(fromEvent(document.getElementById('viz'), 'click'))
 );
-
-/** A strategy from ember-concurrency! */
-function createKeepLatestService<TRequest, TNext, TError, TState>(
-  ...args: Parameters<typeof createService>
-): Service<TRequest, TNext, TError, TState> {
-  const [ns, bus, handler, reducerProducer] = args;
-
-  return createService<TRequest, TNext, TError, TState>(
-    ns,
-    // @ts-ignore
-    bus,
-    handler,
-    reducerProducer,
-    queueOnlyLatest
-  );
-}
 
 export const actions = blockService.actions;

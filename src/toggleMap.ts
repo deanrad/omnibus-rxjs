@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { Observable, Subscription } from 'rxjs';
+import { MonoTypeOperatorFunction, Observable, Subscription } from 'rxjs';
 
 export interface Spawner {
   (event: any): Observable<any>;
@@ -24,11 +24,11 @@ export interface Spawner {
  * switch.next(); switch.next();
  * ```
  */
-export const toggleMap = (
+export function toggleMap<T>(
   spawner: Spawner,
   mapper = (_: any, inner: any) => inner
-) => {
-  return function (source: Observable<any>) {
+): MonoTypeOperatorFunction<T> {
+  return function (source: Observable<T>) {
     return new Observable((notify) => {
       let innerSub: Subscription;
       return source.subscribe({
@@ -51,4 +51,4 @@ export const toggleMap = (
       });
     });
   };
-};
+}

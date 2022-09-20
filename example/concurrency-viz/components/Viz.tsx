@@ -42,9 +42,10 @@ export function Viz() {
   return (
     <div>
       <div>
-        <a href="?immediate">Immediate</a> |<a href="?queueing">Queueing</a> |
-        <a href="?replacing">Replacing</a> |<a href="?blocking">Blocking</a> |
-        <a href="?toggling">Toggling</a> | <a href="?keepLatest">Keep Latest</a>
+        <a href="?immediate">Immediate</a> |<a href="?queueing">Queueing</a> (
+        <a href="?max-2">2 concurrent</a>) |<a href="?replacing">Replacing</a> |
+        <a href="?blocking">Blocking</a> |<a href="?toggling">Toggling</a> |{' '}
+        <a href="?keepLatest">Keep Latest</a>
       </div>
 
       <svg
