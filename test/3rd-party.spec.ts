@@ -1,5 +1,5 @@
 import { of, asapScheduler, asyncScheduler } from 'rxjs';
-import * as ExampleService from '../example/concurrency-viz/services/searchService';
+import * as ExampleService from '../example/concurrency-viz/services/blockService';
 
 /** Specs that document how 3rd party libs we may use interact */
 describe('Reference: FSA', () => {

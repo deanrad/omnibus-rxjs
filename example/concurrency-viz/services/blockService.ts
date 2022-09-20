@@ -36,7 +36,8 @@ function includeRequestNumber<T>(idx: T) {
 }
 
 let serviceFactory: typeof createSwitchingService;
-const q = document.location.search.substring(1);
+const q =
+  typeof document !== 'undefined' && document.location.search.substring(1);
 switch (q) {
   case 'queueing':
     serviceFactory = createQueueingService;
@@ -156,6 +157,7 @@ export const animatedBlocks = combineLatest([
   animationFrames,
 ]).pipe(
   scan(updateOffsets, { blocks: {} }),
+  // XXX if commented out below
   takeUntil(fromEvent(document.getElementById('viz'), 'click'))
 );
 
@@ -174,3 +176,5 @@ function createKeepLatestService<TRequest, TNext, TError, TState>(
     queueOnlyLatest
   );
 }
+
+export const actions = blockService.actions;

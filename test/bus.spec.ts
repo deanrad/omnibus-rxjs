@@ -18,7 +18,7 @@ import {
   loadingCreator,
   resultCreator,
   actions,
-} from '../example/concurrency-viz/services/searchService';
+} from '../example/concurrency-viz/services/blockService';
 import { Omnibus } from '../src/bus';
 import { DURATION, is } from '../src/utils';
 import { after } from '../src/after';
@@ -294,21 +294,21 @@ describe('Bus', () => {
                       "id": 3.14,
                       "query": "app",
                     },
-                    "type": "search/request",
+                    "type": "block/request",
                   },
                   Object {
                     "payload": undefined,
-                    "type": "search/started",
+                    "type": "block/started",
                   },
                   Object {
                     "payload": Object {
                       "result": "foo",
                     },
-                    "type": "search/next",
+                    "type": "block/next",
                   },
                   Object {
                     "payload": undefined,
-                    "type": "search/complete",
+                    "type": "block/complete",
                   },
                 ]
               `);
