@@ -77,7 +77,7 @@ export function BlockRect(props: BlockDisplay & { idx: number }) {
         x={`${(requestOffset ?? 0) + wordPadding}`}
         y={baseY + boxHeight - 5}
         fill={color}
-        fontSize="12"
+        fontSize="10"
         textDecoration="none"
         fontStyle="normal"
       >

@@ -76,20 +76,20 @@ export function Viz() {
         <line
           className="time-mark-line"
           x1={0}
-          x2={250}
+          x2={190}
           y1={-8.5}
           y2={-8.5}
           stroke="#ccc"
         />
         <line
           className="time-mark-line"
-          x1={247}
-          x2={250}
-          y1={-11}
+          x1={187}
+          x2={190}
+          y1={-10}
           y2={-8.5}
           stroke="#ccc"
         />
-        <text x={251} y={-8} fontStyle="italic" fontSize={6} fill="#ccc">
+        <text x={191} y={-8} fontStyle="italic" fontSize={6} fill="#ccc">
           time
         </text>
         {Object.entries(blocks).map(([_, block], i) =>

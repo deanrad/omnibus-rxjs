@@ -105,6 +105,19 @@ if (['blocking', 'toggling'].includes(q)) {
       }).subscribe();
     }
   });
+} else if (q === 'keepLatest' || q === 'max-2' || q === 'queueing') {
+  vizFilter = bus.guard(blockService.actions.canceled.match, () => {
+    after(Promise.resolve(), () => {
+      console.error({ blocks: blockService.state.value.blocks });
+      Object.values(blockService.state.value.blocks).forEach((b) => {
+        if (b.status === 'Requested') {
+          bus.trigger(
+            blockService.actions.next({ subtype: 'Dropped', idx: b.idx })
+          );
+        }
+      });
+    });
+  });
 } else {
   vizFilter?.unsubscribe();
 }
@@ -121,7 +134,7 @@ const updateOffsets = (last, [{ blocks }, timeEvent]) => {
       b.requestOffset ?? (b.requestOffset = currentOffset);
       b.startedOffset ?? (b.startedOffset = currentOffset);
     }
-    if (b.status === 'Completed' && b.completedOffset === undefined) {
+    if (b.status === 'Complete' && b.completedOffset === undefined) {
       b.completedOffset ?? (b.completedOffset = currentOffset);
     }
     if (
@@ -130,10 +143,10 @@ const updateOffsets = (last, [{ blocks }, timeEvent]) => {
     ) {
       b.canceledOffset ?? (b.canceledOffset = currentOffset);
     }
-    if (!['Canceled', 'Completed', 'Dropped'].includes(b.status)) {
+    if (!['Canceled', 'Complete', 'Dropped'].includes(b.status)) {
       b.width = currentOffset - (b.startedOffset ?? b.requestOffset);
     }
-    // if (!['Canceled', 'Completed', 'Dropped'].includes(b.status)) {
+    // if (!['Canceled', 'Complete', 'Dropped'].includes(b.status)) {
     //   b.width = currentOffset;
     // }
   });
