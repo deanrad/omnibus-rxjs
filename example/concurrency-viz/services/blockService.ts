@@ -1,14 +1,10 @@
 import {
   createService,
-  createSwitchingService,
-  createQueueingService,
-  createBlockingService,
-  createTogglingService,
   Service,
 } from '../../../src/createService';
 import { after } from '../../../src/after';
 import { bus } from './bus';
-import { queueOnlyLatest, TapObserver } from '../../../src';
+import { queueOnlyLatest, TapObserver, toggleMap } from '../../../src';
 import {
   reducer,
   GraphShape,
@@ -18,8 +14,8 @@ import {
 export * from './blockService.reducer';
 import { SINGLE_DURATION } from './constants';
 import { animationService } from './animationService';
-import { combineLatest, concat, fromEvent, Subscription } from 'rxjs';
-import { map, scan, switchMap, tap, takeUntil } from 'rxjs/operators';
+import { combineLatest, fromEvent, Subscription } from 'rxjs';
+import { scan, switchMap, takeUntil, concatMap, exhaustMap, mergeMap } from 'rxjs/operators';
 import merge from 'lodash.merge';
 
 // Started and complete dont usually have payloads to identify the request
@@ -35,38 +31,42 @@ function includeRequestNumber<T>(idx: T) {
   } as Partial<TapObserver<T>>;
 }
 
-let serviceFactory: typeof createSwitchingService;
+let serviceOp;
 const q =
   typeof document !== 'undefined' && document.location.search.substring(1);
 switch (q) {
   case 'queueing':
-    serviceFactory = createQueueingService;
+    serviceOp = 'listenQueueing'
     break;
-  case 'blocking':
-    serviceFactory = createBlockingService;
+    case 'replacing':
+      serviceOp = 'listenSwitching'; // replacing
+      break;
+    case 'blocking':
+    serviceOp = 'listenBlocking'; // blocking
     break;
   case 'toggling':
-    serviceFactory = createTogglingService;
-    break;
-  case 'replacing':
-    serviceFactory = createSwitchingService;
+    serviceOp = toggleMap; // toggling
     break;
   case 'keepLatest':
-    serviceFactory = createKeepLatestService;
+    serviceOp = queueOnlyLatest; // custom
     break;
-  case 'immediate':
+    case 'max-2':
+      serviceOp = queueOnlyLatest; 
+      break;
+    case 'immediate':
   default:
-    serviceFactory = createService;
+    serviceOp = mergeMap;
     break;
 }
 
-export const blockService = serviceFactory<number, number, Error, GraphShape>(
+export const blockService = createService<number, number, Error, GraphShape>(
   'block',
   bus,
   (i) =>
     // a single process which notifies on all lifecycles (subscribe)
     after(SINGLE_DURATION, i, includeRequestNumber(i)),
-  reducer
+  reducer,
+  serviceOp
 );
 
 // on block creations, start the animation service (no more than one )
